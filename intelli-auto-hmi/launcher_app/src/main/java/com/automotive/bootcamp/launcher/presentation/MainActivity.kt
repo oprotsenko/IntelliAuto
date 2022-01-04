@@ -1,7 +1,8 @@
-package com.automotive.bootcamp.launcher
+`package com.automotive.bootcamp.launcher.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.automotive.bootcamp.launcher.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
