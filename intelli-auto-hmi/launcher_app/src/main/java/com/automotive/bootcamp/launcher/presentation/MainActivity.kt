@@ -1,4 +1,4 @@
-`package com.automotive.bootcamp.launcher.presentation
+package com.automotive.bootcamp.launcher.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
