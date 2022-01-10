@@ -37,6 +37,7 @@ android {
 
 dependencies {
 
+    implementation project(":common")
     implementation project(":media_player")
 
     implementation 'androidx.core:core-ktx:1.7.0'

@@ -1,4 +1,4 @@
-package com.automotive.bootcamp.launcher.presentation
+package com.automotive.bootcamp.common.base
 
 import android.os.Bundle
 import android.view.LayoutInflater
