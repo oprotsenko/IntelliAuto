@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">IntelliAuto</string>
+    <string name="welcome">Welcome to IntelliAuto</string>
 </resources>

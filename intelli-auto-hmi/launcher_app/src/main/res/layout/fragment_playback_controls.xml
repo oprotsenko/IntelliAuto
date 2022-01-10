@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/blue_gray"
+    android:padding="@dimen/padding">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imageNowPlayingAlbum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_album"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvNowPlayingSongTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="title"
+        app:layout_constraintBottom_toTopOf="@+id/tvNowPlayingDuration"
+        app:layout_constraintStart_toEndOf="@+id/imageNowPlayingAlbum"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvNowPlayingDuration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00:00"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageNowPlayingAlbum"
+        app:layout_constraintTop_toBottomOf="@+id/tvNowPlayingSongTitle" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/ibNowPlayingPrevious"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@android:color/transparent"
+        android:padding="@dimen/padding"
+        android:src="@drawable/ic_previous"
+        app:layout_constraintBottom_toBottomOf="@+id/ibNowPlayingPlayPause"
+        app:layout_constraintEnd_toStartOf="@+id/ibNowPlayingPlayPause"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toEndOf="@+id/tvNowPlayingDuration"
+        app:layout_constraintTop_toTopOf="@+id/ibNowPlayingPlayPause" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/ibNowPlayingPlayPause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@android:color/transparent"
+        android:padding="@dimen/padding"
+        android:src="@drawable/ic_play"
+        app:layout_constraintBottom_toBottomOf="@+id/ibNowPlayingNext"
+        app:layout_constraintEnd_toStartOf="@+id/ibNowPlayingNext"
+        app:layout_constraintTop_toTopOf="@+id/ibNowPlayingNext" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/ibNowPlayingNext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@android:color/transparent"
+        android:padding="@dimen/padding"
+        android:src="@drawable/ic_next"
+        app:layout_constraintBottom_toBottomOf="@+id/imageNowPlayingAlbum"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imageNowPlayingAlbum" />
+</androidx.constraintlayout.widget.ConstraintLayout>
