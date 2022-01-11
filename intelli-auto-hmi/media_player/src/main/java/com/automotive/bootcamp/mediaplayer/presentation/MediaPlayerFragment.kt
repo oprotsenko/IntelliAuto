@@ -3,33 +3,31 @@ package com.automotive.bootcamp.mediaplayer.presentation
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.GridLayoutManager
+import com.automotive.bootcamp.common.base.AutoFitGridLayoutManager
 import com.automotive.bootcamp.common.base.BaseFragment
-import com.automotive.bootcamp.mediaplayer.databinding.MediaPlayerFragmentBinding
-import kotlinx.android.synthetic.main.media_player_fragment.*
+import com.automotive.bootcamp.mediaplayer.databinding.FragmentMediaPlayerBinding
 
-class MediaPlayerFragment : BaseFragment<MediaPlayerFragmentBinding>(MediaPlayerFragmentBinding::inflate) {
+class MediaPlayerFragment :
+    BaseFragment<FragmentMediaPlayerBinding>(FragmentMediaPlayerBinding::inflate) {
     private val viewModel: MediaPlayerViewModel by viewModels()
-    private lateinit var mediaPlayerAdapter: MediaPlayerRecyclerViewAdapter
+    private val mediaPlayerAdapter: MediaPlayerRecyclerViewAdapter by lazy { MediaPlayerRecyclerViewAdapter() }
 
-    override fun onViewCreated(itemView: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(itemView, savedInstanceState)
-        
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         initRecyclerView()
-
-        viewModel.getAlbums()
     }
 
     override fun setObservers() {
-        viewModel.albumsList.observe(viewLifecycleOwner) {
+        viewModel.albumsListData.observe(viewLifecycleOwner) { it ->
             mediaPlayerAdapter.submitList(it)
         }
     }
 
-    private fun initRecyclerView(){
-        mediaPlayerAdapter = MediaPlayerRecyclerViewAdapter()
-        rvAlbums.apply {
-            layoutManager = GridLayoutManager(requireContext(),3)
+    private fun initRecyclerView() {
+        binding.rvAlbums.apply {
+            layoutManager = AutoFitGridLayoutManager(requireContext(), 200)
+//          GridLayoutManager( requireContext(), 3, GridLayoutManager.VERTICAL,false)
             adapter = mediaPlayerAdapter
         }
     }

@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 
 interface AlbumsRepository {
 
-    suspend fun getAlbums(): LiveData<List<MediaAlbum>>
+    suspend fun getAlbums(): List<MediaAlbum>
 
     suspend fun getAlbum(albumId: String): MediaAlbum
 }

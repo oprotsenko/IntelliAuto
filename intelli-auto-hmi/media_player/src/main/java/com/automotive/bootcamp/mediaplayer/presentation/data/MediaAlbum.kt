@@ -1,6 +1,9 @@
 package com.automotive.bootcamp.mediaplayer.presentation.data
 
 data class MediaAlbum (
-    var artUrl: String,
+    val id: String,
+    val artImage: String,
     val songTitle: String,
-    val singerName: String)
+    val singerName: String,
+    val songDuration: String,
+)

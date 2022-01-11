@@ -1,6 +1,6 @@
 package com.automotive.bootcamp.mediaplayer.presentation
 
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.automotive.bootcamp.mediaplayer.presentation.data.FakeAlbumsRepository
@@ -10,15 +10,11 @@ import kotlinx.coroutines.launch
 class MediaPlayerViewModel : ViewModel() {
     private val repository = FakeAlbumsRepository()
 
-    val albumsList : LiveData<List<MediaAlbum>>
+    val albumsListData by lazy { MutableLiveData<List<MediaAlbum>>() }
 
     init {
-        albumsList = repository.albums
-    }
-
-    fun getAlbums(){
-       viewModelScope.launch {
-           repository.getAlbums()
-       }
+        viewModelScope.launch {
+            albumsListData.value = repository.getAlbums()
+        }
     }
 }
