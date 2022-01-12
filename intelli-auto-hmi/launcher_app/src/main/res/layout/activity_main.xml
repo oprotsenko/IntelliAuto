@@ -36,7 +36,7 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/playbackControlsPanel"
-            android:name="com.automotive.bootcamp.launcher.presentation.PlaybackControlsFragment"
+            android:name="com.automotive.bootcamp.mediaplayer.presentation.PlaybackControlsFragment"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
