@@ -13,7 +13,6 @@
         android:layout_height="wrap_content"
         android:drawableTop="@drawable/ic_local_music"
         android:text="@string/local_music"
-        android:textColor="#fff"
         app:layout_constraintBottom_toBottomOf="@+id/appCompatButton"
         app:layout_constraintEnd_toStartOf="@+id/appCompatButton"
         app:layout_constraintHorizontal_bias="0.5"
