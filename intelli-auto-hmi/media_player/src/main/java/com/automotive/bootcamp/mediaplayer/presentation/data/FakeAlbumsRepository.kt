@@ -39,7 +39,7 @@ class FakeAlbumsRepository:AlbumsRepository {
         TODO("Not yet implemented")
     }
 
-    fun getRandomImage(): String {
+    private fun getRandomImage(): String {
         var random = (500..5000).random()
         while (Uri.parse("https://cspromogame.ru//storage/upload_images/avatars/$random.jpg") == null)
             random = (500..5000).random()
