@@ -8,7 +8,7 @@
     android:padding="@dimen/padding">
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/imageNowPlayingAlbum"
+        android:id="@+id/imagePlaybackControlsAlbum"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_album"
@@ -17,55 +17,55 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tvNowPlayingSongTitle"
+        android:id="@+id/tvPlaybackControlsSongTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="title"
-        app:layout_constraintBottom_toTopOf="@+id/tvNowPlayingDuration"
-        app:layout_constraintStart_toEndOf="@+id/imageNowPlayingAlbum"
+        app:layout_constraintBottom_toTopOf="@+id/tvPlaybackControlsDuration"
+        app:layout_constraintStart_toEndOf="@+id/imagePlaybackControlsAlbum"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tvNowPlayingDuration"
+        android:id="@+id/tvPlaybackControlsDuration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="00:00"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageNowPlayingAlbum"
-        app:layout_constraintTop_toBottomOf="@+id/tvNowPlayingSongTitle" />
+        app:layout_constraintStart_toEndOf="@+id/imagePlaybackControlsAlbum"
+        app:layout_constraintTop_toBottomOf="@+id/tvPlaybackControlsSongTitle" />
 
     <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/ibNowPlayingPrevious"
+        android:id="@+id/ibPlaybackControlsPrevious"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@android:color/transparent"
         android:padding="@dimen/padding"
         android:src="@drawable/ic_previous"
-        app:layout_constraintBottom_toBottomOf="@+id/ibNowPlayingPlayPause"
-        app:layout_constraintEnd_toStartOf="@+id/ibNowPlayingPlayPause"
+        app:layout_constraintBottom_toBottomOf="@+id/ibPlaybackControlsPlayPause"
+        app:layout_constraintEnd_toStartOf="@+id/ibPlaybackControlsPlayPause"
         app:layout_constraintHorizontal_bias="1"
-        app:layout_constraintStart_toEndOf="@+id/tvNowPlayingDuration"
-        app:layout_constraintTop_toTopOf="@+id/ibNowPlayingPlayPause" />
+        app:layout_constraintStart_toEndOf="@+id/tvPlaybackControlsDuration"
+        app:layout_constraintTop_toTopOf="@+id/ibPlaybackControlsPlayPause" />
 
     <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/ibNowPlayingPlayPause"
+        android:id="@+id/ibPlaybackControlsPlayPause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@android:color/transparent"
         android:padding="@dimen/padding"
         android:src="@drawable/ic_play"
-        app:layout_constraintBottom_toBottomOf="@+id/ibNowPlayingNext"
-        app:layout_constraintEnd_toStartOf="@+id/ibNowPlayingNext"
-        app:layout_constraintTop_toTopOf="@+id/ibNowPlayingNext" />
+        app:layout_constraintBottom_toBottomOf="@+id/ibPlaybackControlsNext"
+        app:layout_constraintEnd_toStartOf="@+id/ibPlaybackControlsNext"
+        app:layout_constraintTop_toTopOf="@+id/ibPlaybackControlsNext" />
 
     <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/ibNowPlayingNext"
+        android:id="@+id/ibPlaybackControlsNext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@android:color/transparent"
         android:padding="@dimen/padding"
         android:src="@drawable/ic_next"
-        app:layout_constraintBottom_toBottomOf="@+id/imageNowPlayingAlbum"
+        app:layout_constraintBottom_toBottomOf="@+id/imagePlaybackControlsAlbum"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageNowPlayingAlbum" />
+        app:layout_constraintTop_toTopOf="@+id/imagePlaybackControlsAlbum" />
 </androidx.constraintlayout.widget.ConstraintLayout>

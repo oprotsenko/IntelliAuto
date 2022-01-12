@@ -3,4 +3,9 @@
     <style name="TextStyle" parent="Widget.AppCompat.TextView">
         <item name="android:textColor">?attr/colorOnPrimary</item>
     </style>
+
+    <style name="ButtonStyle" parent="TextAppearance.AppCompat.Widget.Button.Borderless.Colored">
+<!--        <item name="android:textColor">?attr/colorOnPrimary</item>-->
+        <item name="textAppearanceButton">@style/TextStyle</item>
+    </style>
 </resources>
