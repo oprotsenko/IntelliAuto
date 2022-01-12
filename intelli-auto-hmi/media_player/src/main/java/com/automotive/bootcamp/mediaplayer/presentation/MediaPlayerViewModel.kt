@@ -8,6 +8,7 @@ import com.automotive.bootcamp.mediaplayer.presentation.domain.useCases.GetLocal
 import kotlinx.coroutines.launch
 
 class MediaPlayerViewModel(private val getLocalMusic: GetLocalMusic) : ViewModel() {
+
     val albumsListData by lazy { MutableLiveData<List<MediaAlbum>>() }
 
     init {

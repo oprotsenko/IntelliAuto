@@ -1,5 +1,6 @@
 package com.automotive.bootcamp.mediaplayer.presentation
 
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,7 +28,11 @@ class MediaPlayerRecyclerViewAdapter :
     class AlbumViewHolder(private val binding: ItemMediaPlayerAlbumBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(album: MediaAlbum){
             binding.apply {
-                ivAlbumArt.loadCircleImage(album.artImage)
+                ivAlbumArt.setImageBitmap(album.artImage?.size?.let {
+                    BitmapFactory.decodeByteArray(album.artImage, 0,
+                        it
+                    )
+                })
                 tvSingerName.text = album.singerName
                 tvSongTitle.text = album.songTitle
                 root.setOnClickListener {
