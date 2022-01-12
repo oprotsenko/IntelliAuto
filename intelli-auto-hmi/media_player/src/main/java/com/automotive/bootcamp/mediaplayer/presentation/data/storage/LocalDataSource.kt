@@ -1,11 +1,9 @@
-package com.automotive.bootcamp.mediaplayer.presentation.data
+package com.automotive.bootcamp.mediaplayer.presentation.data.storage
 
 import android.net.Uri
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import com.automotive.bootcamp.mediaplayer.presentation.data.MediaAlbum
 
-class FakeAlbumsRepository:AlbumsRepository {
-
+class LocalDataSource:LocalData {
     override suspend fun getAlbums(): List<MediaAlbum> {
         val list = mutableListOf<MediaAlbum>()
         (0..15).forEach { i ->
@@ -35,11 +33,7 @@ class FakeAlbumsRepository:AlbumsRepository {
         return list
     }
 
-    override suspend fun getAlbum(albumId: String): MediaAlbum {
-        TODO("Not yet implemented")
-    }
-
-    fun getRandomImage(): String {
+    private fun getRandomImage(): String {
         var random = (500..5000).random()
         while (Uri.parse("https://cspromogame.ru//storage/upload_images/avatars/$random.jpg") == null)
             random = (500..5000).random()

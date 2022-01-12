@@ -2,14 +2,14 @@ package com.automotive.bootcamp.mediaplayer.presentation
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.viewModels
 import com.automotive.bootcamp.common.base.AutoFitGridLayoutManager
 import com.automotive.bootcamp.common.base.BaseFragment
 import com.automotive.bootcamp.mediaplayer.databinding.FragmentMediaPlayerBinding
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MediaPlayerFragment :
     BaseFragment<FragmentMediaPlayerBinding>(FragmentMediaPlayerBinding::inflate) {
-    private val viewModel: MediaPlayerViewModel by viewModels()
+    private val viewModel: MediaPlayerViewModel by viewModel()
     private val mediaPlayerAdapter: MediaPlayerRecyclerViewAdapter by lazy { MediaPlayerRecyclerViewAdapter() }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
