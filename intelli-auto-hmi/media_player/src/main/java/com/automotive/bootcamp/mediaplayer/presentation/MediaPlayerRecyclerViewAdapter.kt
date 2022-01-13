@@ -10,7 +10,7 @@ import com.automotive.bootcamp.mediaplayer.databinding.ItemMediaPlayerAlbumBindi
 import com.automotive.bootcamp.mediaplayer.presentation.data.MediaAlbum
 import com.automotive.bootcamp.mediaplayer.presentation.data.loadCircleImage
 
-class MediaPlayerRecyclerViewAdapter :
+class MediaPlayerRecyclerViewAdapter(private val onMediaItemClickListener: MediaItemClickListener) :
     ListAdapter<MediaAlbum, MediaPlayerRecyclerViewAdapter.AlbumViewHolder>(AlbumDiffCallBack()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlbumViewHolder {
         val view: View =  LayoutInflater.from(parent.context).inflate(
@@ -22,17 +22,18 @@ class MediaPlayerRecyclerViewAdapter :
 
     override fun onBindViewHolder(holder: AlbumViewHolder, position: Int) {
         holder.bind(getItem(position))
+        holder.root.setOnClickListener {
+            onMediaItemClickListener.onMediaClickListener(position)
+        }
     }
 
     class AlbumViewHolder(private val binding: ItemMediaPlayerAlbumBinding) : RecyclerView.ViewHolder(binding.root) {
+        val root = binding.root
         fun bind(album: MediaAlbum){
             binding.apply {
                 ivAlbumArt.loadCircleImage(album.artImage)
                 tvSingerName.text = album.singerName
                 tvSongTitle.text = album.songTitle
-                root.setOnClickListener {
-                    // add smth
-                }
             }
         }
     }

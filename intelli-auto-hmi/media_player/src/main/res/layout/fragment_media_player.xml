@@ -9,22 +9,18 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/mediaServiceControl"
+        android:name="com.automotive.bootcamp.mediaplayer.presentation.MediaServiceControlPanelFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:name="com.automotive.bootcamp.mediaplayer.presentation.MediaServiceControlPanelFragment"
-        tools:layout="@layout/fragment_media_service_control_panel"/>
+        tools:layout="@layout/fragment_media_service_control_panel" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvAlbums"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/mediaServiceContent"
+        android:name="com.automotive.bootcamp.mediaplayer.presentation.MediaPlayerListingFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="5"
-        android:padding="@dimen/padding"
+        tools:layout="@layout/fragment_media_player_listing" />
 
-        tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        tools:listitem="@layout/item_media_player_album"
-        tools:itemCount="12"
-        tools:orientation="vertical"
-        tools:spanCount="3" />
 </LinearLayout>

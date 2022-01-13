@@ -1,6 +1,6 @@
 package com.automotive.bootcamp.mediaplayer.presentation.di
 
-import com.automotive.bootcamp.mediaplayer.presentation.MediaPlayerViewModel
+import com.automotive.bootcamp.mediaplayer.presentation.MediaPlayerListingViewModel
 import com.automotive.bootcamp.mediaplayer.presentation.data.MediaRepository
 import com.automotive.bootcamp.mediaplayer.presentation.data.storage.LocalData
 import com.automotive.bootcamp.mediaplayer.presentation.data.storage.LocalDataSource
@@ -11,7 +11,7 @@ import org.koin.dsl.module
 
 val appModule = module {
     viewModel {
-        MediaPlayerViewModel(get())
+        MediaPlayerListingViewModel(get())
     }
     single {
         GetLocalMusic(get())

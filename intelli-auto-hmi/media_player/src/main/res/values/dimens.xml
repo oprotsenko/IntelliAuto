@@ -2,4 +2,5 @@
 <resources>
     <dimen name="media_item_art">150dp</dimen>
     <dimen name="padding">8dp</dimen>
+    <dimen name="margin">16dp</dimen>
 </resources>
