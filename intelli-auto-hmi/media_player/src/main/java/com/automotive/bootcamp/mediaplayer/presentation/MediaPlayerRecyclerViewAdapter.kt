@@ -31,9 +31,15 @@ class MediaPlayerRecyclerViewAdapter(private val onMediaItemClickListener: Media
         val root = binding.root
         fun bind(album: MediaAlbum){
             binding.apply {
-                ivAlbumArt.loadCircleImage(album.artImage)
+                ivAlbumArt.loadImage(
+                    album.artImage ?:
+                     "https://27mi124bz6zg1hqy6n192jkb-wpengine.netdna-ssl.com/wp-content/uploads/2019/10/Our-Top-10-Songs-About-School-768x569.png"
+                )
                 tvSingerName.text = album.singerName
                 tvSongTitle.text = album.songTitle
+                root.setOnClickListener {
+                    // add smth
+                }
             }
         }
     }
