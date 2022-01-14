@@ -6,4 +6,5 @@ data class MediaAlbum(
     val songTitle: String?,
     val singerName: String?,
     val songDuration: String?,
+    val songURL: String
 )

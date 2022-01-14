@@ -34,7 +34,7 @@ class LocalDataSource:LocalData {
                 MediaAlbum(
                     i.toLong(), null,
                     "$i songTitle", "$i singerName", "$i 5.0",
-                )
+                "")
             )
         }
 

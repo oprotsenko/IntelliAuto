@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.ItemMediaPlayerAlbumBinding
 import com.automotive.bootcamp.mediaplayer.presentation.data.MediaAlbum
-import com.automotive.bootcamp.mediaplayer.presentation.data.loadCircleImage
+import com.automotive.bootcamp.mediaplayer.presentation.data.loadImage
 
 class MediaPlayerRecyclerViewAdapter(private val onMediaItemClickListener: MediaItemClickListener) :
     ListAdapter<MediaAlbum, MediaPlayerRecyclerViewAdapter.AlbumViewHolder>(AlbumDiffCallBack()) {
