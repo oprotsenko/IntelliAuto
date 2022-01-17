@@ -1,23 +1,11 @@
-package com.automotive.bootcamp.mediaplayer.presentation.data.storage
+package com.automotive.bootcamp.mediaplayer.data.storage
 
-import android.media.MediaMetadataRetriever
 import android.net.Uri
-import android.os.Environment
-import android.provider.MediaStore
-import android.util.Log
-import androidx.activity.result.contract.ActivityResultContracts
-import com.automotive.bootcamp.mediaplayer.presentation.data.MediaAlbum
+import com.automotive.bootcamp.mediaplayer.domain.models.Song
 
-class LocalDataSource:LocalData {
+class LocalMusicSource: LocalMedia {
 
-
-
-//    val filePath = Environment.getExternalStorageDirectory().path
-//    val filePath = "/sdcard/Music/Two Feet – Her Life(seehall.me).mp3"
-//    val filePath = MediaStore.Audio.Media.INTERNAL_CONTENT_URI.toString()
-//    val selection = MediaStore.Audio.Media.IS_MUSIC
-
-    override suspend fun getAlbums(): List<MediaAlbum> {
+    override suspend fun getAlbums(): List<Song> {
 //        Log.d("TAG", filePath)
 //        val metaRetriever = MediaMetadataRetriever()
 //        metaRetriever.setDataSource(filePath)
@@ -26,12 +14,12 @@ class LocalDataSource:LocalData {
 //        val songTitle = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
 //        val artist = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
 //        val duration = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-        val list = mutableListOf<MediaAlbum>()
+        val list = mutableListOf<Song>()
 //        list.add(MediaAlbum("0", null, songTitle, artist, duration))
 //        metaRetriever.release()
         (0..15).forEach { i ->
             list.add(
-                MediaAlbum(
+                Song(
                     i.toLong(), null,
                     "$i songTitle", "$i singerName", "$i 5.0",
                 "")

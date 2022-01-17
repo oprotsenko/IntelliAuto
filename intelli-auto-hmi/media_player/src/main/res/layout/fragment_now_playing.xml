@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clickable="true"
-    android:background="?android:attr/colorPrimary">
+    android:background="?android:attr/colorPrimary"
+    tools:background="@color/design_default_color_primary_dark">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/ivNowPlayingBackground"
@@ -95,7 +96,7 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/transparent"
             android:padding="@dimen/padding"
-            android:src="@drawable/ic_previous"
+            android:src="@drawable/ic_shuffle"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/ibNowPlayingPrevious"
             app:layout_constraintHorizontal_bias="0.5"
@@ -146,7 +147,7 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/transparent"
             android:padding="@dimen/padding"
-            android:src="@drawable/ic_next"
+            android:src="@drawable/ic_repeat_one"
             app:layout_constraintBottom_toBottomOf="@+id/ibNowPlayingNext"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

@@ -1,4 +1,4 @@
-package com.automotive.bootcamp.common.base
+package com.automotive.bootcamp.common.utils
 
 import android.content.Context
 import android.util.TypedValue
@@ -18,13 +18,19 @@ class AutoFitGridLayoutManager : GridLayoutManager {
     }
 
     private fun checkedColumnWidth(context: Context, columnWidth: Int): Int {
-        var columnWidth = columnWidth
-        if (columnWidth <= 0) {
-            columnWidth = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, 48f,
-                context.resources.displayMetrics
-            ).toInt()
-        }
+        var columnWidth =
+            if (columnWidth <= 0) {
+                TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, 200f,
+                    context.resources.displayMetrics
+                ).toInt()
+            } else {
+                TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, columnWidth.toFloat(),
+                    context.resources.displayMetrics
+                ).toInt()
+            }
+
         return columnWidth
     }
 

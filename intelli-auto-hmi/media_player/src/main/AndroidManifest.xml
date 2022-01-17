@@ -3,7 +3,7 @@
     package="com.automotive.bootcamp.mediaplayer">
 
     <application
-        android:name=".presentation.MediaPlayerApp"
+        android:name=".MediaPlayerApp"
         android:requestLegacyExternalStorage="true"
         />
 
