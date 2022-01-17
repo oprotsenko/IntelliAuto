@@ -1,15 +1,13 @@
-package com.automotive.bootcamp.mediaplayer.presentation
+package com.automotive.bootcamp.mediaplayer.viewModels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.automotive.bootcamp.mediaplayer.presentation.data.MediaAlbum
-import com.automotive.bootcamp.mediaplayer.presentation.domain.useCases.GetLocalMusic
-import kotlinx.coroutines.launch
+import com.automotive.bootcamp.mediaplayer.domain.models.Song
+import com.automotive.bootcamp.mediaplayer.domain.useCases.GetLocalMusic
 
 class MediaPlayerListingViewModel(private val getLocalMusic: GetLocalMusic) : ViewModel() {
 
-    val albumsListData by lazy { MutableLiveData<MutableList<MediaAlbum>>() }
+    val albumsListData by lazy { MutableLiveData<MutableList<Song>>() }
 
 //    init {
 //        viewModelScope.launch {

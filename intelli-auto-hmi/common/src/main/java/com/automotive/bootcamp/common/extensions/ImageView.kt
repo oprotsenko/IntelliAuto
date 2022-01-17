@@ -1,4 +1,4 @@
-package com.automotive.bootcamp.mediaplayer.presentation.data
+package com.automotive.bootcamp.common.extensions
 
 import android.widget.ImageView
 import com.bumptech.glide.Glide
