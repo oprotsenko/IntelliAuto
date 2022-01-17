@@ -24,8 +24,6 @@ class MediaPlayerListingFragment :
         )
     }
 
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         loadSong()
@@ -33,7 +31,7 @@ class MediaPlayerListingFragment :
     }
 
     private fun loadSong() {
-        val collection = MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_INTERNAL)
+        val collection = MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
         val projection = arrayOf(
             MediaStore.Audio.Media.ALBUM_ID,
             MediaStore.Audio.Media.TITLE,
