@@ -17,7 +17,7 @@ class ControlsPanelFragment :
 
     private val permissions = arrayOf(
         Manifest.permission.READ_EXTERNAL_STORAGE,
-
+//        Manifest.permission.MANAGE_EXTERNAL_STORAGE
     )
 
     override fun setListeners() {
@@ -39,28 +39,28 @@ class ControlsPanelFragment :
         }
     }
 
-    private fun checkPermission() {
-        when {
-            hasPermissions() -> {
-                requireActivity().supportFragmentManager.beginTransaction().addToBackStack(null)
-                    .replace(R.id.containerControls, MediaPlayerFragment()).commit()
-            }
-            else -> {
-                permissions.forEach { permission ->
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(
-                            requireActivity(), permission)
-                    ) {
-                        ActivityCompat.requestPermissions(
-                            requireActivity(),
-                            permissions,
-                            SUCCESS_CODE
-                        )
-                        checkPermission()
-                    }
-                }
-            }
-        }
-    }
+//    private fun checkPermission() {
+//        when {
+//            hasPermissions() -> {
+//                requireActivity().supportFragmentManager.beginTransaction().addToBackStack(null)
+//                    .replace(R.id.containerControls, MediaPlayerFragment()).commit()
+//            }
+//            else -> {
+//                permissions.forEach { permission ->
+//                    if (ActivityCompat.shouldShowRequestPermissionRationale(
+//                            requireActivity(), permission)
+//                    ) {
+//                        ActivityCompat.requestPermissions(
+//                            requireActivity(),
+//                            permissions,
+//                            SUCCESS_CODE
+//                        )
+//                        checkPermission()
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
