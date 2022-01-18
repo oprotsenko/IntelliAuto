@@ -40,14 +40,10 @@ class NowPlayingFragment :
 
         media?.let {
             binding.apply {
-                ivNowPlayingBackground.loadImage(
-                    it.cover
-                        ?: "https://27mi124bz6zg1hqy6n192jkb-wpengine.netdna-ssl.com/wp-content/uploads/2019/10/Our-Top-10-Songs-About-School-768x569.png"
-                )
-                ivNowPlayingAlbumArt.loadImage(
-                    it.cover
-                        ?: "https://27mi124bz6zg1hqy6n192jkb-wpengine.netdna-ssl.com/wp-content/uploads/2019/10/Our-Top-10-Songs-About-School-768x569.png"
-                )
+                ivNowPlayingAlbumArt.setImageBitmap(it.cover)
+                ivNowPlayingBackground.setImageBitmap(it.cover)
+//                ivNowPlayingBackground.loadImage(it.cover?: "https://27mi124bz6zg1hqy6n192jkb-wpengine.netdna-ssl.com/wp-content/uploads/2019/10/Our-Top-10-Songs-About-School-768x569.png")
+//                ivNowPlayingAlbumArt.loadImage(it.cover?: "https://27mi124bz6zg1hqy6n192jkb-wpengine.netdna-ssl.com/wp-content/uploads/2019/10/Our-Top-10-Songs-About-School-768x569.png")
                 tvNowPlayingSingerName.text = it.artist
                 tvNowPlayingSongTitle.text = it.title
 

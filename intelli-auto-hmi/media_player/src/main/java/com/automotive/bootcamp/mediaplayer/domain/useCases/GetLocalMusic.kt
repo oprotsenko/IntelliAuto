@@ -1,9 +1,9 @@
 package com.automotive.bootcamp.mediaplayer.domain.useCases
 
-import com.automotive.bootcamp.mediaplayer.domain.MediaRepository
+import com.automotive.bootcamp.mediaplayer.domain.LocalMediaRepository
 
-class GetLocalMusic(private val repository: MediaRepository) {
+class GetLocalMusic(private val repositoryLocal: LocalMediaRepository) {
 
-    suspend fun getAlbums() = repository.getAlbums()
+    suspend fun getLocalSongs() = repositoryLocal.getLocalSongs()
 
 }
