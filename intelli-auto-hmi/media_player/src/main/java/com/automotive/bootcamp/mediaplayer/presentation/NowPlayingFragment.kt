@@ -1,14 +1,11 @@
 package com.automotive.bootcamp.mediaplayer.presentation
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import com.automotive.bootcamp.common.base.BaseFragment
-import com.automotive.bootcamp.common.extensions.loadImage
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.FragmentNowPlayingBinding
 import com.automotive.bootcamp.mediaplayer.domain.models.Song
-import com.automotive.bootcamp.mediaplayer.viewModels.MediaPlayerViewModel
 import com.automotive.bootcamp.mediaplayer.viewModels.NowPlayingViewModel
 import com.automotive.bootcamp.mediaplayer.viewModels.SongsListViewModel
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel

@@ -3,7 +3,6 @@ package com.automotive.bootcamp.mediaplayer.di
 import android.content.ContentResolver
 import android.content.Context
 import com.automotive.bootcamp.mediaplayer.domain.useCases.GetLocalMusic
-import com.automotive.bootcamp.mediaplayer.viewModels.MediaPlayerViewModel
 import com.automotive.bootcamp.mediaplayer.viewModels.NowPlayingViewModel
 import com.automotive.bootcamp.mediaplayer.viewModels.SongsListViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
