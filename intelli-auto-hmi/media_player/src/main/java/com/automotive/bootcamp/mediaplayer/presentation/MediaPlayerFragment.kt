@@ -1,6 +1,5 @@
 package com.automotive.bootcamp.mediaplayer.presentation
 
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -10,15 +9,16 @@ import com.automotive.bootcamp.common.utils.AutoFitGridLayoutManager
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.FragmentMediaPlayerBinding
 import com.automotive.bootcamp.mediaplayer.domain.models.Song
-import com.automotive.bootcamp.mediaplayer.viewModels.MediaPlayerListingViewModel
+import com.automotive.bootcamp.mediaplayer.viewModels.MediaPlayerViewModel
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MediaPlayerFragment :
     BaseFragment<FragmentMediaPlayerBinding>(FragmentMediaPlayerBinding::inflate),
     MediaItemClickListener {
 
-    private val viewModel: MediaPlayerListingViewModel by viewModel()
-    private val mediaPlayerAdapter: MediaPlayerRecyclerViewAdapter by lazy {
+    private val mediaPlayerViewModel by sharedViewModel<MediaPlayerViewModel>()
+    private val mediaPlayerAdapter by lazy {
         MediaPlayerRecyclerViewAdapter(
             onMediaItemClickListener = this
         )
@@ -61,13 +61,13 @@ class MediaPlayerFragment :
 //                    ContentUris.withAppendedId(MediaStore.Audio.Media.INTERNAL_CONTENT_URI, id)
 //                        .toString()
                 Log.d("URL", url)
-                viewModel.albumsListData.value?.add(Song(id, null, title, artist, duration, url))
+                mediaPlayerViewModel.albumsListData.value?.add(Song(id, null, title, artist, duration, url))
             }
         }
     }
 
     override fun setObservers() {
-        viewModel.albumsListData.observe(viewLifecycleOwner) { it ->
+        mediaPlayerViewModel.albumsListData.observe(viewLifecycleOwner) {
             mediaPlayerAdapter.submitList(it)
         }
     }
@@ -93,20 +93,11 @@ class MediaPlayerFragment :
 //        }
 //    }
 
-    var player: MediaPlayer? = null
-
     override fun onMediaClickListener(position: Int) {
-        val media = viewModel.albumsListData.value?.get(position)
-
-        if (player == null) {
-            player = MediaPlayer()
-        }
-        player?.setDataSource(media?.songURL)
-        player?.prepare()
-        player?.start()
+        mediaPlayerViewModel.select(position)
 
         this.requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.launchMediaPlayer, NowPlayingFragment(media)).addToBackStack(null)
+            .replace(R.id.launchMediaPlayer, NowPlayingFragment()).addToBackStack(null)
             .commit()
     }
 }
