@@ -1,15 +1,7 @@
 package com.automotive.bootcamp.mediaplayer.di
 
-import com.automotive.bootcamp.mediaplayer.data.MusicRepository
-import com.automotive.bootcamp.mediaplayer.data.storage.LocalMedia
-import com.automotive.bootcamp.mediaplayer.data.storage.LocalMusicSource
-import com.automotive.bootcamp.mediaplayer.domain.MediaRepository
-import com.automotive.bootcamp.mediaplayer.DefaultMusicPlayer
-import com.automotive.bootcamp.mediaplayer.MusicPlayer
-import com.automotive.bootcamp.mediaplayer.data.MusicRepository
-import com.automotive.bootcamp.mediaplayer.data.storage.LocalMedia
-import com.automotive.bootcamp.mediaplayer.data.storage.LocalMusicSource
-import com.automotive.bootcamp.mediaplayer.domain.MediaRepository
+import com.automotive.bootcamp.mediaplayer.utils.DefaultMusicPlayer
+import com.automotive.bootcamp.mediaplayer.utils.MusicPlayer
 import android.content.ContentResolver
 import com.automotive.bootcamp.mediaplayer.data.LocalMusicRepository
 import com.automotive.bootcamp.mediaplayer.data.local.LocalMedia

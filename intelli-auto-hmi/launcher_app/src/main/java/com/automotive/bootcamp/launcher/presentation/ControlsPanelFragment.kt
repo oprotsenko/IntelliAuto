@@ -23,13 +23,13 @@ class ControlsPanelFragment :
     override fun setListeners() {
         binding.apply {
             ibMusic.setOnClickListener {
-                checkPermission()
-//                if (hasPermissions()) {
-//                    requireActivity().supportFragmentManager.beginTransaction().addToBackStack(null)
-//                        .replace(R.id.containerControls, MediaPlayerFragment()).commit()
-//                } else {
-//                    requestStoragePermissions();
-//                }
+//                checkPermission()
+                if (hasPermissions()) {
+                    requireActivity().supportFragmentManager.beginTransaction().addToBackStack(null)
+                        .replace(R.id.containerControls, MediaPlayerFragment()).commit()
+                } else {
+                    requestStoragePermissions();
+                }
             }
 
             ibClimate.setOnClickListener {
@@ -62,51 +62,51 @@ class ControlsPanelFragment :
         }
     }
 
-//    override fun onRequestPermissionsResult(
-//        requestCode: Int,
-//        permissions: Array<String?>,
-//        grantResults: IntArray
-//    ) {
-//        if (requestCode == SUCCESS_CODE) {
-//            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                Toast.makeText(requireContext(), "Permission GRANTED", Toast.LENGTH_SHORT)
-//                    .show()
-//            } else {
-//                Toast.makeText(requireContext(), "Permission DENIED", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//    }
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String?>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == SUCCESS_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(requireContext(), "Permission GRANTED", Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                Toast.makeText(requireContext(), "Permission DENIED", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
-//    private fun requestStoragePermissions() {
-//        permissions.forEach { permission ->
-//            if (ActivityCompat.shouldShowRequestPermissionRationale(
-//                    requireActivity(),
-//                    permission
-//                )
-//            ) {
-//                AlertDialog.Builder(requireContext())
-//                    .setTitle("Permission needed")
-//                    .setMessage("This permission is needed because of this and that")
-//                    .setPositiveButton(
-//                        "ok"
-//                    ) { _, _ ->
-//                        ActivityCompat.requestPermissions(
-//                            requireActivity(), permissions, SUCCESS_CODE
-//                        )
-//                    }
-//                    .setNegativeButton(
-//                        "cancel"
-//                    ) { dialog, _ -> dialog.dismiss() }
-//                    .create().show()
-//            } else {
-//                ActivityCompat.requestPermissions(
-//                    requireActivity(),
-//                    permissions,
-//                    SUCCESS_CODE
-//                )
-//            }
-//        }
-//    }
+    private fun requestStoragePermissions() {
+        permissions.forEach { permission ->
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    requireActivity(),
+                    permission
+                )
+            ) {
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Permission needed")
+                    .setMessage("This permission is needed because of this and that")
+                    .setPositiveButton(
+                        "ok"
+                    ) { _, _ ->
+                        ActivityCompat.requestPermissions(
+                            requireActivity(), permissions, SUCCESS_CODE
+                        )
+                    }
+                    .setNegativeButton(
+                        "cancel"
+                    ) { dialog, _ -> dialog.dismiss() }
+                    .create().show()
+            } else {
+                ActivityCompat.requestPermissions(
+                    requireActivity(),
+                    permissions,
+                    SUCCESS_CODE
+                )
+            }
+        }
+    }
 
     private fun hasPermissions(): Boolean = permissions.all { permission ->
         ActivityCompat.checkSelfPermission(

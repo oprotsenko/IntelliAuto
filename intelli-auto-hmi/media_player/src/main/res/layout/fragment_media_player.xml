@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".presentation.MediaPlayerFragment">
+    android:orientation="vertical">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -49,19 +48,13 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/bGoogleMusic"
             app:layout_constraintTop_toTopOf="parent" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvAlbums"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/launchMediaPlayer"
+        android:name="com.automotive.bootcamp.mediaplayer.presentation.SongsListFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="7"
-        android:padding="@dimen/padding"
-
-        tools:itemCount="12"
-        tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        tools:listitem="@layout/item_media_player_album"
-        tools:orientation="vertical"
-        tools:spanCount="3" />
-</LinearLayout>
+        android:layout_weight="6"
+        tools:layout="@layout/fragment_songs_list"/>
+</androidx.appcompat.widget.LinearLayoutCompat>

@@ -10,6 +10,7 @@ import com.automotive.bootcamp.mediaplayer.databinding.FragmentNowPlayingBinding
 import com.automotive.bootcamp.mediaplayer.domain.models.Song
 import com.automotive.bootcamp.mediaplayer.viewModels.MediaPlayerViewModel
 import com.automotive.bootcamp.mediaplayer.viewModels.NowPlayingViewModel
+import com.automotive.bootcamp.mediaplayer.viewModels.SongsListViewModel
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -17,7 +18,7 @@ class NowPlayingFragment :
     BaseFragment<FragmentNowPlayingBinding>(FragmentNowPlayingBinding::inflate) {
 
     private val nowPlayingViewModel: NowPlayingViewModel by viewModel()
-    private val mediaPlayerViewModel: MediaPlayerViewModel by sharedViewModel()
+    private val mediaPlayerViewModel: SongsListViewModel by sharedViewModel()
     private lateinit var media: Song
     private var position: Int = 0
 

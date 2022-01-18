@@ -1,4 +1,4 @@
-package com.automotive.bootcamp.mediaplayer
+package com.automotive.bootcamp.mediaplayer.utils
 
 import com.automotive.bootcamp.mediaplayer.domain.models.Song
 
