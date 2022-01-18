@@ -12,7 +12,6 @@ import kotlinx.coroutines.withContext
 
 class SongsListViewModel(private val getLocalMusic: GetLocalMusic) : CoroutineViewModel() {
 
-
     val albumsListData by lazy { MutableLiveData<List<Song>>() }
 
     init {

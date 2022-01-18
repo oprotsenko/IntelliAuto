@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="?attr/colorPrimaryVariant"
-    android:padding="@dimen/padding">
+    android:layout_height="match_parent"
+    android:padding="@dimen/padding"
+    tools:background="@color/cardview_dark_background">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imagePlaybackControlsAlbum"
@@ -23,7 +23,8 @@
         android:text="title"
         app:layout_constraintBottom_toTopOf="@+id/tvPlaybackControlsDuration"
         app:layout_constraintStart_toEndOf="@+id/imagePlaybackControlsAlbum"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvPlaybackControlsDuration"
