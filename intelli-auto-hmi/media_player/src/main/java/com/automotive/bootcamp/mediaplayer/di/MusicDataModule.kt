@@ -11,9 +11,7 @@ import org.koin.dsl.module
 
 val dataModule = module {
 
-    single<MusicPlayer> {
-        DefaultMusicPlayer()
-    }
+    single<MusicPlayer> { DefaultMusicPlayer() }
     single { provideMusicRepository(get()) }
     single { provideLocalMusicSource(get()) }
 }

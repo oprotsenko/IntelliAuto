@@ -24,7 +24,6 @@ val appModule = module {
         )
     }
     single { GetLocalMusic(get()) }
-
     single { getContentResolver(get()) }
 }
 

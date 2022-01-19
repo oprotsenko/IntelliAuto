@@ -8,22 +8,10 @@ val domainModule = module {
         GetLocalMusic(get())
     }
 
-    factory {
-        PlaySong(musicPlayer = get())
-    }
-    factory {
-        PauseSong(musicPlayer = get())
-    }
-    factory {
-        NextSong(musicPlayer = get())
-    }
-    factory {
-        PreviousSong(musicPlayer = get())
-    }
-    factory {
-        ShuffleSongs(musicPlayer = get())
-    }
-    factory {
-        RepeatOneSong()
-    }
+    factory { PlaySong(musicPlayer = get()) }
+    factory { PauseSong(musicPlayer = get()) }
+    factory { NextSong(musicPlayer = get()) }
+    factory { PreviousSong(musicPlayer = get()) }
+    factory { ShuffleSongs(musicPlayer = get()) }
+    factory { RepeatOneSong() }
 }
