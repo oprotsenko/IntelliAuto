@@ -10,21 +10,14 @@ import org.koin.dsl.module
 
 val appModule = module {
     viewModel {
-        SongsListViewModel(get())
+        SongsListViewModel(getLocalMusic = get())
     }
 
     viewModel {
-        NowPlayingViewModel(
-            shuffleSongs = get(),
-            previousSong = get(),
-            playSong = get(),
-            pauseSong = get(),
-            nextSong = get(),
-            repeatOneSong = get()
-        )
+        NowPlayingViewModel(playerCommandRunner = get())
     }
-    single { GetLocalMusic(get()) }
 
+    single { GetLocalMusic( get()) }
     single { getContentResolver(get()) }
 }
 

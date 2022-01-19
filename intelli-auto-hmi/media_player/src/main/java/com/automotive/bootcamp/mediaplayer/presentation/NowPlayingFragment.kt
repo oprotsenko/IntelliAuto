@@ -5,7 +5,6 @@ import android.view.View
 import com.automotive.bootcamp.common.base.BaseFragment
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.FragmentNowPlayingBinding
-import com.automotive.bootcamp.mediaplayer.domain.models.Song
 import com.automotive.bootcamp.mediaplayer.viewModels.NowPlayingViewModel
 import com.automotive.bootcamp.mediaplayer.viewModels.SongsListViewModel
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -15,28 +14,48 @@ class NowPlayingFragment :
     BaseFragment<FragmentNowPlayingBinding>(FragmentNowPlayingBinding::inflate) {
 
     private val nowPlayingViewModel: NowPlayingViewModel by viewModel()
-    private val mediaPlayerViewModel: SongsListViewModel by sharedViewModel()
-    private lateinit var media: Song
-    private var position: Int = 0
+    private val songsListViewModel: SongsListViewModel by sharedViewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         initView()
-        playSong()
+        nowPlayingViewModel.playSong()
     }
 
     private fun initView() {
-        mediaPlayerViewModel.apply {
-            selected.value?.let {
-                media = it
-                albumsListData.value?.let { it ->
-                    position = it.indexOf(media)
+        nowPlayingViewModel.setAlbumsListData(songsListViewModel.albumsListData.value)
+        nowPlayingViewModel.setPosition(songsListViewModel.position)
+
+        binding.apply {
+            ibNowPlayingPlayPause.setOnClickListener {
+                if (nowPlayingViewModel.isPlaying.value == true) {
+                    nowPlayingViewModel.pauseSong()
+                } else {
+                    nowPlayingViewModel.playSong()
                 }
             }
-        }
 
-        media?.let {
+            ibNowPlayingNext.setOnClickListener {
+                nowPlayingViewModel.nextSong()
+            }
+
+            ibNowPlayingPrevious.setOnClickListener {
+                nowPlayingViewModel.previousSong()
+            }
+
+            ibNowPlayingShuffle.setOnClickListener {
+                nowPlayingViewModel.shuffleSongs()
+            }
+
+            ibNowPlayingRepeat.setOnClickListener {
+                nowPlayingViewModel.repeatOneSong()
+            }
+        }
+    }
+
+    override fun setListeners() {
+        nowPlayingViewModel.currentSong.observe(viewLifecycleOwner) {
             binding.apply {
                 ivNowPlayingAlbumArt.setImageBitmap(it.cover)
                 ivNowPlayingBackground.setImageBitmap(it.cover)
@@ -44,83 +63,21 @@ class NowPlayingFragment :
 //                ivNowPlayingAlbumArt.loadImage(it.cover?: "https://27mi124bz6zg1hqy6n192jkb-wpengine.netdna-ssl.com/wp-content/uploads/2019/10/Our-Top-10-Songs-About-School-768x569.png")
                 tvNowPlayingSingerName.text = it.artist
                 tvNowPlayingSongTitle.text = it.title
-
-                nowPlayingViewModel.isPlaying.observe(viewLifecycleOwner) {
-                    updatePlayPauseButtonView(it)
-                }
-
-                ibNowPlayingPlayPause.setOnClickListener {
-                    if (nowPlayingViewModel.isPlaying.value == true) {
-                        onPauseButtonClicked()
-                    } else {
-                        onPlayButtonClicked()
-                    }
-                }
-
-                ibNowPlayingNext.setOnClickListener {
-                    onNextButtonClicked()
-                }
-
-                ibNowPlayingPrevious.setOnClickListener {
-                    onPreviousButtonClicked()
-                }
-
-                ibNowPlayingShuffle.setOnClickListener {
-                    onShuffleButtonClicked();
-                }
             }
         }
-    }
 
-    private fun playSong() {
-        nowPlayingViewModel.playSong(media?.songURL)
+        nowPlayingViewModel.isPlaying.observe(viewLifecycleOwner) {
+            updatePlayPauseButtonView(it)
+        }
     }
 
     private fun updatePlayPauseButtonView(isPlaying: Boolean) {
-        if (isPlaying) {
-            binding.ibNowPlayingPlayPause.setImageResource(R.drawable.ic_pause)
+        val bImageResource = if (isPlaying) {
+            R.drawable.ic_pause
         } else {
-            binding.ibNowPlayingPlayPause.setImageResource(R.drawable.ic_play)
-        }
-    }
-
-    private fun onPlayButtonClicked() {
-        playSong()
-    }
-
-    private fun onPauseButtonClicked() {
-        nowPlayingViewModel.pauseSong()
-    }
-
-    private fun onNextButtonClicked() {
-        if (++position == mediaPlayerViewModel.albumsListData.value?.size) {
-            position = 0;
+            R.drawable.ic_play
         }
 
-        mediaPlayerViewModel.albumsListData.value?.let {
-            media = it[position]
-            nowPlayingViewModel.nextSong(media?.songURL)
-        }
-    }
-
-    private fun onPreviousButtonClicked() {
-        if (--position < 0) {
-            mediaPlayerViewModel.albumsListData.value?.let {
-                position = it.size - 1
-            }
-        }
-
-        mediaPlayerViewModel.albumsListData.value?.let {
-            media = it[position]
-            nowPlayingViewModel.previousSong(media?.songURL)
-        }
-    }
-
-    private fun onShuffleButtonClicked() {
-
-    }
-
-    private fun onRepeatOneButtonClicked() {
-
+        binding.ibNowPlayingPlayPause.setImageResource(bImageResource)
     }
 }

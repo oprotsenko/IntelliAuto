@@ -13,7 +13,7 @@ import kotlinx.coroutines.withContext
 class SongsListViewModel(private val getLocalMusic: GetLocalMusic) : CoroutineViewModel() {
     val albumsListData by lazy { MutableLiveData<List<Song>>() }
 
-    val selected = MutableLiveData<Song>()
+    var position = 0
 
     init {
         viewModelScope.launch {
@@ -22,10 +22,6 @@ class SongsListViewModel(private val getLocalMusic: GetLocalMusic) : CoroutineVi
     }
 
     fun select(position: Int) {
-        val media = albumsListData.value?.get(position)
-
-        media?.let {
-            selected.value = it
-        }
+        this.position = position
     }
 }

@@ -3,45 +3,91 @@ package com.automotive.bootcamp.mediaplayer.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.automotive.bootcamp.mediaplayer.domain.models.Song
 import com.automotive.bootcamp.mediaplayer.domain.useCases.*
 
-class NowPlayingViewModel(
-    private val playSong: PlaySong,
-    private val pauseSong: PauseSong,
-    private val nextSong: NextSong,
-    private val previousSong: PreviousSong,
-    private val shuffleSongs: ShuffleSongs,
-    private val repeatOneSong: RepeatOneSong
-) : ViewModel() {
+class NowPlayingViewModel(private val playerCommandRunner: MediaPlayerCommandRunner) : ViewModel() {
+    private var albumsListData = mutableListOf<Song>()
 
     private val _isPlaying: MutableLiveData<Boolean> = MutableLiveData()
+    private val _currentSong: MutableLiveData<Song> = MutableLiveData()
+
+    private var position: Int = 0
 
     val isPlaying: LiveData<Boolean>
         get() = _isPlaying
 
-    fun playSong(songUrl: String?) {
-        playSong.execute(songUrl)
-        _isPlaying.value = true
+    val currentSong: LiveData<Song>
+        get() = _currentSong
+
+    fun setAlbumsListData(albumsListData: List<Song>?) {
+        albumsListData?.let {
+            this.albumsListData.clear()
+            this.albumsListData.addAll(it)
+        }
+    }
+
+    fun setPosition(position: Int) {
+        this.position = position
+
+        _currentSong.value = albumsListData[position]
+    }
+
+    fun playSong() {
+        _currentSong.value?.let {
+            playerCommandRunner.playSong(it.songURL)
+            _isPlaying.value = true
+        }
     }
 
     fun pauseSong() {
-        if(_isPlaying.value == true){
-            pauseSong.execute()
+        if (_isPlaying.value == true) {
+            playerCommandRunner.pauseSong()
             _isPlaying.value = false
         }
     }
 
-    fun nextSong(songUrl: String?) {
-        nextSong.execute(songUrl)
-        _isPlaying.value = true
+    fun nextSong() {
+        if (++position == albumsListData.size) {
+            position = 0;
+        }
+
+        albumsListData.let {
+            val media = it[position]
+            playerCommandRunner.nextSong(media.songURL)
+            _currentSong.value = media
+            _isPlaying.value = true
+        }
     }
 
-    fun previousSong(songUrl: String?) {
-        previousSong.execute(songUrl)
-        _isPlaying.value = true
+    fun previousSong() {
+        if (--position < 0) {
+            albumsListData.let {
+                position = it.size - 1
+            }
+        }
+
+        albumsListData.let {
+            val media = it[position]
+            playerCommandRunner.previousSong(media.songURL)
+            _currentSong.value = media
+            _isPlaying.value = true
+        }
     }
 
-    fun shuffleSongs(){
-      //  shuffleSongs.e
+    fun shuffleSongs() {
+        currentSong.value?.let {
+            val albumsListMinusCurrentSong = albumsListData.minus(it)
+            val shuffledAlbumsList = albumsListMinusCurrentSong.shuffled()
+
+            position = 0
+            albumsListData.clear()
+            albumsListData.add(it)
+            albumsListData.addAll(shuffledAlbumsList)
+        }
+    }
+
+    fun repeatOneSong() {
+        //  shuffleSongs.e
     }
 }

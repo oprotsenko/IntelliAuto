@@ -1,7 +1,6 @@
 package com.automotive.bootcamp.mediaplayer.utils
 
 import android.media.MediaPlayer
-import com.automotive.bootcamp.mediaplayer.domain.models.Song
 
 class DefaultMusicPlayer : MusicPlayer {
     private val player: MediaPlayer by lazy { MediaPlayer() }
@@ -35,13 +34,5 @@ class DefaultMusicPlayer : MusicPlayer {
     override fun nextSong(songURL: String?) {
         length = 0
         play(songURL)
-    }
-
-    override fun shufflePlaylist(songs: ArrayList<Song>) {
-        TODO("Not yet implemented")
-    }
-
-    override fun repeatOne() {
-        TODO("Not yet implemented")
     }
 }
