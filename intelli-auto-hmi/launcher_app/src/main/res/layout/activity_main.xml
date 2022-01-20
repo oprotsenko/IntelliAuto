@@ -1,58 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.fragment.app.FragmentContainerView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@id/fullScreenContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".presentation.MainActivity">
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="6">
-
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/controlsPanel"
-            android:name="com.automotive.bootcamp.launcher.presentation.ControlsPanelFragment"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            tools:layout="@layout/fragment_controls_panel" />
-
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/containerControls"
-            android:name="com.automotive.bootcamp.launcher.presentation.WelcomeFragment"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="7"
-            tools:layout="@layout/fragment_welcome" />
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="?attr/colorPrimaryVariant">
-
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/playbackControlsPanel"
-            android:name="com.automotive.bootcamp.mediaplayer.presentation.PlaybackControlsFragment"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            tools:layout="@layout/fragment_playback_controls" />
-
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="@color/blue_gray_dark" />
-
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/statusIndicationPanel"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-</androidx.appcompat.widget.LinearLayoutCompat>
+    android:name="com.automotive.bootcamp.launcher.presentation.MainFragment"
+    tools:layout="@layout/fragment_main">
+</androidx.fragment.app.FragmentContainerView>

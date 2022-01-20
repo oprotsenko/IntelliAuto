@@ -37,7 +37,7 @@ class SongsListFragment :
         sharedViewModel.select(position)
 
         this.requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.launchMediaPlayer, NowPlayingFragment()).addToBackStack(null)
+            .replace(R.id.fullScreenContainer, NowPlayingFragment()).addToBackStack(null)
             .commit()
     }
 
