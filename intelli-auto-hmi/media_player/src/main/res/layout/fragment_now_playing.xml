@@ -57,13 +57,13 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvNowPlayingPlayedTime"
+            android:id="@+id/tvNowPlayingProgress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin"
             android:text="00:00"
-            app:layout_constraintBottom_toTopOf="@+id/pbNowPlayingProgress"
-            app:layout_constraintStart_toStartOf="@+id/pbNowPlayingProgress"
+            app:layout_constraintBottom_toTopOf="@+id/sbNowPlayingProgress"
+            app:layout_constraintStart_toStartOf="@+id/sbNowPlayingProgress"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -72,12 +72,12 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/margin"
             android:text="00:00"
-            app:layout_constraintBottom_toTopOf="@+id/pbNowPlayingProgress"
-            app:layout_constraintEnd_toEndOf="@+id/pbNowPlayingProgress"
+            app:layout_constraintBottom_toTopOf="@+id/sbNowPlayingProgress"
+            app:layout_constraintEnd_toEndOf="@+id/sbNowPlayingProgress"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ProgressBar
-            android:id="@+id/pbNowPlayingProgress"
+        <SeekBar
+            android:id="@+id/sbNowPlayingProgress"
             style="@android:style/Widget.Holo.Light.ProgressBar.Horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

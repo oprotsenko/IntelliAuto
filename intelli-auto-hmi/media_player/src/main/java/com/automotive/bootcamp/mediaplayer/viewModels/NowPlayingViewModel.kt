@@ -7,9 +7,10 @@ import com.automotive.bootcamp.mediaplayer.domain.models.SongWrapper
 import com.automotive.bootcamp.mediaplayer.domain.useCases.*
 import com.automotive.bootcamp.mediaplayer.enums.RepeatMode
 import com.automotive.bootcamp.mediaplayer.presentation.SongCompletionListener
+import com.automotive.bootcamp.mediaplayer.presentation.SongRunningListener
 
 class NowPlayingViewModel(private val playerCommandRunner: MediaPlayerCommandRunner) : ViewModel(),
-    SongCompletionListener {
+    SongCompletionListener, SongRunningListener {
     private var albumsListData = mutableListOf<SongWrapper>()
     private var originalAlbumsListData = mutableListOf<SongWrapper>()
 
@@ -17,6 +18,8 @@ class NowPlayingViewModel(private val playerCommandRunner: MediaPlayerCommandRun
     private val _isShuffled by lazy { MutableLiveData<Boolean>() }
     private val _repeatMode by lazy { MutableLiveData<RepeatMode>() }
     private val _currentSong by lazy { MutableLiveData<SongWrapper>() }
+    private val _currentSongDuration by lazy { MutableLiveData<Int>() }
+    private val _currentSongProgress by lazy { MutableLiveData<Int>() }
 
     private var position: Int = 0
 
@@ -31,6 +34,12 @@ class NowPlayingViewModel(private val playerCommandRunner: MediaPlayerCommandRun
 
     val repeatMode: LiveData<RepeatMode>
         get() = _repeatMode
+
+    val currentSongDuration: LiveData<Int>
+        get() = _currentSongDuration
+
+    val currentSongProgress: LiveData<Int>
+        get() = _currentSongProgress
 
     fun init(albumsListData: List<SongWrapper>?, position: Int) {
         this.position = position
@@ -48,6 +57,7 @@ class NowPlayingViewModel(private val playerCommandRunner: MediaPlayerCommandRun
         _repeatMode.value = RepeatMode.DEFAULT
 
         playerCommandRunner.setOnSongCompletionListener(this)
+        playerCommandRunner.setOnSongRunningListener(this)
     }
 
     fun playSong() {
@@ -155,5 +165,10 @@ class NowPlayingViewModel(private val playerCommandRunner: MediaPlayerCommandRun
             }
             else -> {}
         }
+    }
+
+    override fun onSongRunning(duration: Int, currentProgress: Int) {
+        _currentSongDuration.value = duration
+        _currentSongProgress.value = currentProgress
     }
 }

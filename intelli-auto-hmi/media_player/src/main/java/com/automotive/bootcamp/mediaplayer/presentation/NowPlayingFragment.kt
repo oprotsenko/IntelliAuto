@@ -7,10 +7,12 @@ import com.automotive.bootcamp.common.utils.POSITION_BUNDLE
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.FragmentNowPlayingBinding
 import com.automotive.bootcamp.mediaplayer.enums.RepeatMode
-import com.automotive.bootcamp.mediaplayer.viewModels.NowPlayingViewModel
+import com.automotive.bootcamp.mediaplayer.extensions.toTimeString
 import com.automotive.bootcamp.mediaplayer.viewModels.LocalMusicViewModel
+import com.automotive.bootcamp.mediaplayer.viewModels.NowPlayingViewModel
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.concurrent.TimeUnit
 
 class NowPlayingFragment :
     BaseFragment<FragmentNowPlayingBinding>(FragmentNowPlayingBinding::inflate) {
@@ -32,7 +34,7 @@ class NowPlayingFragment :
                 it
             )
         }
-        
+
         binding.apply {
             ibNowPlayingPlayPause.setOnClickListener {
                 if (nowPlayingViewModel.isPlaying.value == true) {
@@ -83,10 +85,23 @@ class NowPlayingFragment :
         nowPlayingViewModel.repeatMode.observe(viewLifecycleOwner) {
             updateRepeatButtonView(it)
         }
+
+        nowPlayingViewModel.currentSongDuration.observe(viewLifecycleOwner) {
+            binding.apply {
+                tvNowPlayingSongDuration.text = it.toTimeString()
+                sbNowPlayingProgress.max = it
+            }
+        }
+
+        nowPlayingViewModel.currentSongProgress.observe(viewLifecycleOwner) {
+            binding.apply {
+                sbNowPlayingProgress.progress = it
+                tvNowPlayingProgress.text = it.toTimeString()
+            }
+        }
     }
 
     private fun updatePlayPauseButtonView(isPlaying: Boolean) {
-        requireActivity().supportFragmentManager.popBackStack()
         val bImageResource = if (isPlaying) {
             R.drawable.ic_pause
         } else {
