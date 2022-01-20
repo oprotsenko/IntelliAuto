@@ -36,7 +36,7 @@ class SongsListFragment :
     override fun onMediaClickListener(position: Int) {
         sharedViewModel.select(position)
 
-        this.requireActivity().supportFragmentManager.beginTransaction()
+        requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.fullScreenContainer, NowPlayingFragment()).addToBackStack(null)
             .commit()
     }
