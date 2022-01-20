@@ -3,7 +3,6 @@ package com.automotive.bootcamp.mediaplayer.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.automotive.bootcamp.mediaplayer.domain.models.Song
 import com.automotive.bootcamp.mediaplayer.domain.models.SongWrapper
 import com.automotive.bootcamp.mediaplayer.domain.useCases.*
 import com.automotive.bootcamp.mediaplayer.enums.RepeatMode
@@ -12,17 +11,16 @@ import com.automotive.bootcamp.mediaplayer.presentation.SongCompletionListener
 class NowPlayingViewModel(private val playerCommandRunner: MediaPlayerCommandRunner) : ViewModel(),
     SongCompletionListener {
     private var albumsListData = mutableListOf<SongWrapper>()
+    private var originalAlbumsListData = mutableListOf<SongWrapper>()
 
-    private var originalAlbumsListData = mutableListOf<Song>()
-
-    private val _isPlaying: MutableLiveData<Boolean> = MutableLiveData()
-    private val _isShuffled: MutableLiveData<Boolean> = MutableLiveData()
-    private val _repeatMode: MutableLiveData<RepeatMode> = MutableLiveData()
-    private val _currentSong: MutableLiveData<SongWrapper> = MutableLiveData()
+    private val _isPlaying by lazy { MutableLiveData<Boolean>() }
+    private val _isShuffled by lazy { MutableLiveData<Boolean>() }
+    private val _repeatMode by lazy { MutableLiveData<RepeatMode>() }
+    private val _currentSong by lazy { MutableLiveData<SongWrapper>() }
 
     private var position: Int = 0
 
-    val currentSong: LiveData<Song>
+    val currentSong: LiveData<SongWrapper>
         get() = _currentSong
 
     val isPlaying: LiveData<Boolean>
@@ -30,16 +28,12 @@ class NowPlayingViewModel(private val playerCommandRunner: MediaPlayerCommandRun
 
     val isShuffled: LiveData<Boolean>
         get() = _isShuffled
-    val currentSong: LiveData<SongWrapper>
 
-    fun setAlbumsListData(albumsListData: List<Song>?) {
     val repeatMode: LiveData<RepeatMode>
         get() = _repeatMode
 
-    fun init(albumsListData: List<Song>?, position: Int) {
+    fun init(albumsListData: List<SongWrapper>?, position: Int) {
         this.position = position
-
-    fun setAlbumsListData(albumsListData: List<SongWrapper>?) {
         albumsListData?.let {
             this.albumsListData.clear()
             this.albumsListData.addAll(it)

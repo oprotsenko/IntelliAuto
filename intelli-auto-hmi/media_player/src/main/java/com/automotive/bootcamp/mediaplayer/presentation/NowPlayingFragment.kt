@@ -26,13 +26,13 @@ class NowPlayingFragment :
     }
 
     private fun initView() {
-        nowPlayingViewModel.init(
-            songsListViewModel.albumsListData.value,
-            songsListViewModel.position
-        )
-        nowPlayingViewModel.setAlbumsListData(localMusicViewModel.localMusicData.value)
-        arguments?.getInt(POSITION_BUNDLE)?.let { nowPlayingViewModel.setPosition(it) }
-
+        arguments?.getInt(POSITION_BUNDLE)?.let {
+            nowPlayingViewModel.init(
+                localMusicViewModel.localMusicData.value,
+                it
+            )
+        }
+        
         binding.apply {
             ibNowPlayingPlayPause.setOnClickListener {
                 if (nowPlayingViewModel.isPlaying.value == true) {
@@ -101,6 +101,7 @@ class NowPlayingFragment :
             when (isShuffled) {
                 true -> 1f
                 false -> 0.5f
+            }
     }
 
     private fun updateRepeatButtonView(repeatMode: RepeatMode) {
@@ -117,10 +118,11 @@ class NowPlayingFragment :
         }
     }
 
-  companion object{
+    companion object {
         fun newInstance(position: Int) =
             NowPlayingFragment().apply {
                 arguments = Bundle()
                 arguments?.putInt(POSITION_BUNDLE, position)
             }
+    }
 }
