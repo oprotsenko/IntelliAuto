@@ -83,6 +83,7 @@ class NowPlayingFragment :
     }
 
     private fun updatePlayPauseButtonView(isPlaying: Boolean) {
+        requireActivity().supportFragmentManager.popBackStack()
         val bImageResource = if (isPlaying) {
             R.drawable.ic_pause
         } else {
