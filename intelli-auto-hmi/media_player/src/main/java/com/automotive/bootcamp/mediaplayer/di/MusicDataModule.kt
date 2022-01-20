@@ -5,14 +5,14 @@ import com.automotive.bootcamp.mediaplayer.data.LocalMusicRepository
 import com.automotive.bootcamp.mediaplayer.data.local.LocalMedia
 import com.automotive.bootcamp.mediaplayer.data.local.LocalMusicSource
 import com.automotive.bootcamp.mediaplayer.domain.LocalMediaRepository
-import com.automotive.bootcamp.mediaplayer.utils.DefaultMusicPlayer
-import com.automotive.bootcamp.mediaplayer.utils.MusicPlayer
+import com.automotive.bootcamp.mediaplayer.utils.DefaultAudioPlayer
+import com.automotive.bootcamp.mediaplayer.utils.AudioPlayer
 import org.koin.dsl.module
 
 val dataModule = module {
     single { provideMusicRepository(localMusic = get()) }
     single { provideLocalMusicSource(contentResolver = get()) }
-    single { provideDefaultMusicPlayer() }
+    single { provideDefaultAudioPlayer() }
 }
 
 fun provideMusicRepository(localMusic: LocalMedia): LocalMediaRepository =
@@ -21,5 +21,5 @@ fun provideMusicRepository(localMusic: LocalMedia): LocalMediaRepository =
 fun provideLocalMusicSource(contentResolver: ContentResolver): LocalMedia =
     LocalMusicSource(contentResolver)
 
-fun provideDefaultMusicPlayer(): MusicPlayer =
-    DefaultMusicPlayer()
+fun provideDefaultAudioPlayer(): AudioPlayer =
+    DefaultAudioPlayer()

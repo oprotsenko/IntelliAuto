@@ -9,6 +9,6 @@ val domainModule = module {
     }
 
     factory {
-        MediaPlayerCommandRunner(musicPlayer = get())
+        MediaPlayerCommandRunner(audioPlayer = get())
     }
 }

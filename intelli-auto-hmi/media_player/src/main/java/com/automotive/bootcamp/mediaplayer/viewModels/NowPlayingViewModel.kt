@@ -6,25 +6,25 @@ import androidx.lifecycle.ViewModel
 import com.automotive.bootcamp.mediaplayer.domain.models.SongWrapper
 import com.automotive.bootcamp.mediaplayer.domain.useCases.*
 import com.automotive.bootcamp.mediaplayer.enums.RepeatMode
-import com.automotive.bootcamp.mediaplayer.presentation.SongCompletionListener
-import com.automotive.bootcamp.mediaplayer.presentation.SongRunningListener
+import com.automotive.bootcamp.mediaplayer.presentation.AudioCompletionListener
+import com.automotive.bootcamp.mediaplayer.presentation.AudioRunningListener
 
 class NowPlayingViewModel(private val playerCommandRunner: MediaPlayerCommandRunner) : ViewModel(),
-    SongCompletionListener, SongRunningListener {
-    private var albumsListData = mutableListOf<SongWrapper>()
-    private var originalAlbumsListData = mutableListOf<SongWrapper>()
+    AudioCompletionListener, AudioRunningListener {
+    private var audioListData = mutableListOf<SongWrapper>()
+    private var originalAudioListData = mutableListOf<SongWrapper>()
 
     private val _isPlaying by lazy { MutableLiveData<Boolean>() }
     private val _isShuffled by lazy { MutableLiveData<Boolean>() }
     private val _repeatMode by lazy { MutableLiveData<RepeatMode>() }
-    private val _currentSong by lazy { MutableLiveData<SongWrapper>() }
-    private val _currentSongDuration by lazy { MutableLiveData<Int>() }
-    private val _currentSongProgress by lazy { MutableLiveData<Int>() }
+    private val _currentAudio by lazy { MutableLiveData<SongWrapper>() }
+    private val _currentAudioDuration by lazy { MutableLiveData<Int>() }
+    private val _currentAudioProgress by lazy { MutableLiveData<Int>() }
 
     private var position: Int = 0
 
-    val currentSong: LiveData<SongWrapper>
-        get() = _currentSong
+    val currentAudio: LiveData<SongWrapper>
+        get() = _currentAudio
 
     val isPlaying: LiveData<Boolean>
         get() = _isPlaying
@@ -35,74 +35,70 @@ class NowPlayingViewModel(private val playerCommandRunner: MediaPlayerCommandRun
     val repeatMode: LiveData<RepeatMode>
         get() = _repeatMode
 
-    val currentSongDuration: LiveData<Int>
-        get() = _currentSongDuration
+    val currentAudioDuration: LiveData<Int>
+        get() = _currentAudioDuration
 
-    val currentSongProgress: LiveData<Int>
-        get() = _currentSongProgress
+    val currentAudioProgress: LiveData<Int>
+        get() = _currentAudioProgress
 
-    fun init(albumsListData: List<SongWrapper>?, position: Int) {
+    fun init(audioListData: List<SongWrapper>?, position: Int) {
         this.position = position
-        albumsListData?.let {
-            this.albumsListData.clear()
-            this.albumsListData.addAll(it)
+        audioListData?.let {
+            this.audioListData.clear()
+            this.audioListData.addAll(it)
 
-            originalAlbumsListData.clear()
-            originalAlbumsListData.addAll(it)
+            originalAudioListData.clear()
+            originalAudioListData.addAll(it)
 
-            _currentSong.value = it[position]
+            _currentAudio.value = it[position]
         }
 
         _isShuffled.value = false
         _repeatMode.value = RepeatMode.DEFAULT
 
-        playerCommandRunner.setOnSongCompletionListener(this)
-        playerCommandRunner.setOnSongRunningListener(this)
+        playerCommandRunner.setOnAudioCompletionListener(this)
+        playerCommandRunner.setOnAudioRunningListener(this)
     }
 
-    fun playSong() {
-        _currentSong.value?.let {
-            playerCommandRunner.playSong(it.song.songURL)
+    fun playAudio() {
+        _currentAudio.value?.let {
+            playerCommandRunner.playAudio(it.song.songURL)
             _isPlaying.value = true
         }
     }
 
-    fun pauseSong() {
+    fun pauseAudio() {
         if (_isPlaying.value == true) {
-            playerCommandRunner.pauseSong()
+            playerCommandRunner.pauseAudio()
             _isPlaying.value = false
         }
     }
 
-    fun nextSong() {
-        if (++position == albumsListData.size) {
+    fun nextAudio() {
+        if (++position == audioListData.size) {
             position = 0;
         }
 
-        albumsListData.let {
-            val media = it[position]
-            playerCommandRunner.nextSong(media.song.songURL)
-            _currentSong.value = media
-            _isPlaying.value = true
-        }
+        val media = audioListData[position]
+        playerCommandRunner.nextAudio(media.song.songURL)
+        _currentAudio.value = media
+        _isPlaying.value = true
     }
 
-    fun previousSong() {
+    fun previousAudio() {
         if (--position < 0) {
-            albumsListData.let {
+            audioListData.let {
                 position = it.size - 1
             }
         }
 
-        albumsListData.let {
-            val media = it[position]
-            playerCommandRunner.previousSong(media.song.songURL)
-            _currentSong.value = media
-            _isPlaying.value = true
-        }
+        val media = audioListData[position]
+        playerCommandRunner.previousAudio(media.song.songURL)
+        _currentAudio.value = media
+        _isPlaying.value = true
     }
 
-    fun shuffleSongs() {
+    fun shuffleAudio() {
         if (_isShuffled.value == true) {
             setOriginalList()
 
@@ -115,24 +111,15 @@ class NowPlayingViewModel(private val playerCommandRunner: MediaPlayerCommandRun
     }
 
     private fun setOriginalList() {
-        albumsListData = originalAlbumsListData
-        position = albumsListData.indexOf(currentSong.value)
+        audioListData = originalAudioListData
+        position = audioListData.indexOf(currentAudio.value)
     }
 
     private fun setShuffledList() {
-        val albumsListMinusCurrentSong = albumsListData.filter {
-            it != currentSong.value
-        }
-        val shuffledAlbumsList = albumsListMinusCurrentSong.shuffled()
-
         position = 0
-        albumsListData.clear()
-
-        currentSong.value?.let {
-            albumsListData.add(it)
+        currentAudio.value?.let {
+            audioListData = playerCommandRunner.getShuffledAudioList(audioListData, it)
         }
-
-        albumsListData.addAll(shuffledAlbumsList)
     }
 
     fun nextRepeatMode() {
@@ -150,25 +137,29 @@ class NowPlayingViewModel(private val playerCommandRunner: MediaPlayerCommandRun
         }
     }
 
-    override fun onSongCompletion() {
+    fun updateAudioProgress(progress:Int) {
+        playerCommandRunner.updateAudioProgress(progress)
+    }
+
+    override fun onAudioCompletion() {
         when (_repeatMode.value) {
             RepeatMode.DEFAULT -> {
-                if (_currentSong.value != albumsListData.last()) {
-                    nextSong()
+                if (_currentAudio.value != audioListData.last()) {
+                    nextAudio()
                 }
             }
             RepeatMode.REPEAT_ONE -> {
-                playSong()
+                playAudio()
             }
             RepeatMode.REPEAT_PLAYLIST -> {
-                nextSong()
+                nextAudio()
             }
             else -> {}
         }
     }
 
-    override fun onSongRunning(duration: Int, currentProgress: Int) {
-        _currentSongDuration.value = duration
-        _currentSongProgress.value = currentProgress
+    override fun onAudioRunning(duration: Int, currentProgress: Int) {
+        _currentAudioDuration.value = duration
+        _currentAudioProgress.value = currentProgress
     }
 }

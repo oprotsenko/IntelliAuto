@@ -2,6 +2,8 @@ package com.automotive.bootcamp.mediaplayer.presentation
 
 import android.os.Bundle
 import android.view.View
+import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
 import com.automotive.bootcamp.common.base.BaseFragment
 import com.automotive.bootcamp.common.utils.POSITION_BUNDLE
 import com.automotive.bootcamp.mediaplayer.R
@@ -12,7 +14,6 @@ import com.automotive.bootcamp.mediaplayer.viewModels.LocalMusicViewModel
 import com.automotive.bootcamp.mediaplayer.viewModels.NowPlayingViewModel
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.util.concurrent.TimeUnit
 
 class NowPlayingFragment :
     BaseFragment<FragmentNowPlayingBinding>(FragmentNowPlayingBinding::inflate) {
@@ -24,7 +25,7 @@ class NowPlayingFragment :
         super.onViewCreated(view, savedInstanceState)
 
         initView()
-        nowPlayingViewModel.playSong()
+        nowPlayingViewModel.playAudio()
     }
 
     private fun initView() {
@@ -38,39 +39,49 @@ class NowPlayingFragment :
         binding.apply {
             ibNowPlayingPlayPause.setOnClickListener {
                 if (nowPlayingViewModel.isPlaying.value == true) {
-                    nowPlayingViewModel.pauseSong()
+                    nowPlayingViewModel.pauseAudio()
                 } else {
-                    nowPlayingViewModel.playSong()
+                    nowPlayingViewModel.playAudio()
                 }
             }
 
             ibNowPlayingNext.setOnClickListener {
-                nowPlayingViewModel.nextSong()
+                nowPlayingViewModel.nextAudio()
             }
 
             ibNowPlayingPrevious.setOnClickListener {
-                nowPlayingViewModel.previousSong()
+                nowPlayingViewModel.previousAudio()
             }
 
             ibNowPlayingShuffle.setOnClickListener {
-                nowPlayingViewModel.shuffleSongs()
+                nowPlayingViewModel.shuffleAudio()
             }
 
             ibNowPlayingRepeat.setOnClickListener {
                 nowPlayingViewModel.nextRepeatMode()
             }
+
+            sbNowPlayingProgress.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
+                override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                    if (fromUser) {
+                        nowPlayingViewModel.updateAudioProgress(progress)
+                    }
+                }
+                override fun onStartTrackingTouch(seekBar: SeekBar) {}
+                override fun onStopTrackingTouch(seekBar: SeekBar) {}
+            })
         }
     }
 
     override fun setListeners() {
-        nowPlayingViewModel.currentSong.observe(viewLifecycleOwner) {
+        nowPlayingViewModel.currentAudio.observe(viewLifecycleOwner) {
             binding.apply {
-                ivNowPlayingAlbumArt.setImageBitmap(it.song.cover)
+                ivNowPlayingAudioArt.setImageBitmap(it.song.cover)
                 ivNowPlayingBackground.setImageBitmap(it.song.cover)
 //                ivNowPlayingBackground.loadImage(it.cover?: "https://27mi124bz6zg1hqy6n192jkb-wpengine.netdna-ssl.com/wp-content/uploads/2019/10/Our-Top-10-Songs-About-School-768x569.png")
 //                ivNowPlayingAlbumArt.loadImage(it.cover?: "https://27mi124bz6zg1hqy6n192jkb-wpengine.netdna-ssl.com/wp-content/uploads/2019/10/Our-Top-10-Songs-About-School-768x569.png")
                 tvNowPlayingSingerName.text = it.song.artist
-                tvNowPlayingSongTitle.text = it.song.title
+                tvNowPlayingAudioTitle.text = it.song.title
             }
         }
 
@@ -86,14 +97,14 @@ class NowPlayingFragment :
             updateRepeatButtonView(it)
         }
 
-        nowPlayingViewModel.currentSongDuration.observe(viewLifecycleOwner) {
+        nowPlayingViewModel.currentAudioDuration.observe(viewLifecycleOwner) {
             binding.apply {
-                tvNowPlayingSongDuration.text = it.toTimeString()
+                tvNowPlayingAudioDuration.text = it.toTimeString()
                 sbNowPlayingProgress.max = it
             }
         }
 
-        nowPlayingViewModel.currentSongProgress.observe(viewLifecycleOwner) {
+        nowPlayingViewModel.currentAudioProgress.observe(viewLifecycleOwner) {
             binding.apply {
                 sbNowPlayingProgress.progress = it
                 tvNowPlayingProgress.text = it.toTimeString()
