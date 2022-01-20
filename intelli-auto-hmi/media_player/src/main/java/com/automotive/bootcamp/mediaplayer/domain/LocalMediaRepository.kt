@@ -1,7 +1,7 @@
 package com.automotive.bootcamp.mediaplayer.domain
 
-import com.automotive.bootcamp.mediaplayer.domain.models.Song
+import com.automotive.bootcamp.mediaplayer.data.local.model.SongItem
 
 interface LocalMediaRepository {
-    suspend fun getLocalSongs(): List<Song>
+    suspend fun getLocalSongs(): List<SongItem>
 }

@@ -4,13 +4,14 @@ import android.content.ContentResolver
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.provider.MediaStore
+import com.automotive.bootcamp.mediaplayer.data.local.model.SongItem
 import com.automotive.bootcamp.mediaplayer.domain.models.Song
 
 class LocalMusicSource(private val contentResolver: ContentResolver) : LocalMedia {
 
-    override suspend fun getLocalSongs(): List<Song> {
+    override suspend fun getLocalSongs(): List<SongItem> {
         val retriever = MediaMetadataRetriever()
-        val list = mutableListOf<Song>()
+        val list = mutableListOf<SongItem>()
         val collection = MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
         val projection = arrayOf(
             MediaStore.Audio.Media.ALBUM_ID,
@@ -42,7 +43,7 @@ class LocalMusicSource(private val contentResolver: ContentResolver) : LocalMedi
                 val image =
                     if (data != null) BitmapFactory.decodeByteArray(data, 0, data.size)
                     else null
-                list.add(Song(id, image, title, artist, duration, url))
+                list.add(SongItem(id, image, title, artist, duration, url))
             }
         }
         return list
