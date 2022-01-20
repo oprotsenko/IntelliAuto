@@ -13,7 +13,7 @@
         android:padding="@dimen/padding"
 
         tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        tools:listitem="@layout/item_song"
+        tools:listitem="@layout/item_audio"
         tools:itemCount="12"
         tools:orientation="vertical"
         tools:spanCount="3" />

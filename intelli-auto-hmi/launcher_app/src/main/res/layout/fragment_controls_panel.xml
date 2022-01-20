@@ -5,39 +5,38 @@
     android:layout_height="match_parent"
     android:background="?android:attr/colorPrimary">
 
-    <androidx.appcompat.widget.AppCompatImageButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/ibMusic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@android:color/transparent"
-        android:src="@drawable/ic_music"
+        android:drawableTop="@drawable/ic_music_player_clickable"
+        android:text="@string/media_player"
         app:layout_constraintBottom_toTopOf="@+id/ibClimate"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
 
-    <androidx.appcompat.widget.AppCompatImageButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/ibClimate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@android:color/transparent"
-        android:src="@drawable/ic_weather"
+        android:drawableTop="@drawable/ic_climate_controle_clickable"
+        android:text="@string/climate_control"
         app:layout_constraintBottom_toTopOf="@+id/ibSettings"
         app:layout_constraintEnd_toEndOf="@+id/ibMusic"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/ibMusic"
         app:layout_constraintTop_toBottomOf="@+id/ibMusic" />
 
-    <androidx.appcompat.widget.AppCompatImageButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/ibSettings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@android:color/transparent"
-        android:src="@drawable/ic_settings"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:drawableTop="@drawable/ic_settings_clickable"
+        android:text="@string/control_settings"
         app:layout_constraintEnd_toEndOf="@+id/ibClimate"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/ibClimate"
         app:layout_constraintTop_toBottomOf="@+id/ibClimate"
         app:layout_constraintVertical_bias="0.133" />

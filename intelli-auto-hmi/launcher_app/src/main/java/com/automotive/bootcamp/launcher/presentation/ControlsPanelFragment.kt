@@ -16,8 +16,7 @@ class ControlsPanelFragment :
     BaseFragment<FragmentControlsPanelBinding>(FragmentControlsPanelBinding::inflate) {
 
     private val permissions = arrayOf(
-        Manifest.permission.READ_EXTERNAL_STORAGE,
-//        Manifest.permission.MANAGE_EXTERNAL_STORAGE
+        Manifest.permission.READ_EXTERNAL_STORAGE
     )
 
     override fun setListeners() {
@@ -33,6 +32,11 @@ class ControlsPanelFragment :
             }
 
             ibClimate.setOnClickListener {
+                requireActivity().supportFragmentManager.beginTransaction().addToBackStack(null)
+                    .replace(R.id.featureContainer, WelcomeFragment()).commit()
+            }
+
+            ibSettings.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction().addToBackStack(null)
                     .replace(R.id.featureContainer, WelcomeFragment()).commit()
             }
