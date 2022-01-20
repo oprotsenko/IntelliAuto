@@ -17,8 +17,8 @@ val appModule = module {
         NowPlayingViewModel(playerCommandRunner = get())
     }
 
-    single { GetLocalMusic( get()) }
-    single { getContentResolver(get()) }
+    single { GetLocalMusic(repositoryLocal = get()) }
+    single { getContentResolver(context = get()) }
 }
 
 fun getContentResolver(context: Context) : ContentResolver =
