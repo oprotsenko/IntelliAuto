@@ -61,7 +61,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin"
-            android:text="00:00"
+            android:text="0:00"
             app:layout_constraintBottom_toTopOf="@+id/sbNowPlayingProgress"
             app:layout_constraintStart_toStartOf="@+id/sbNowPlayingProgress"
             app:layout_constraintTop_toTopOf="parent" />
@@ -71,7 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/margin"
-            android:text="00:00"
+            android:text="0:00"
             app:layout_constraintBottom_toTopOf="@+id/sbNowPlayingProgress"
             app:layout_constraintEnd_toEndOf="@+id/sbNowPlayingProgress"
             app:layout_constraintTop_toTopOf="parent" />
@@ -84,7 +84,6 @@
             android:layout_marginStart="@dimen/padding"
             android:layout_marginEnd="@dimen/padding"
             android:layout_marginBottom="@dimen/margin"
-            android:progress="12"
             app:layout_constraintBottom_toTopOf="@id/ibNowPlayingPlayPause"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
