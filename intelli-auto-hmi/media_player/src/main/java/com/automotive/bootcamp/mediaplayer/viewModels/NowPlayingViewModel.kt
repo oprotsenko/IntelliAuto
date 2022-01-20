@@ -4,23 +4,24 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.automotive.bootcamp.mediaplayer.domain.models.Song
+import com.automotive.bootcamp.mediaplayer.domain.models.SongWrapper
 import com.automotive.bootcamp.mediaplayer.domain.useCases.*
 
 class NowPlayingViewModel(private val playerCommandRunner: MediaPlayerCommandRunner) : ViewModel() {
-    private var albumsListData = mutableListOf<Song>()
+    private var albumsListData = mutableListOf<SongWrapper>()
 
     private val _isPlaying: MutableLiveData<Boolean> = MutableLiveData()
-    private val _currentSong: MutableLiveData<Song> = MutableLiveData()
+    private val _currentSong: MutableLiveData<SongWrapper> = MutableLiveData()
 
     private var position: Int = 0
 
     val isPlaying: LiveData<Boolean>
         get() = _isPlaying
 
-    val currentSong: LiveData<Song>
+    val currentSong: LiveData<SongWrapper>
         get() = _currentSong
 
-    fun setAlbumsListData(albumsListData: List<Song>?) {
+    fun setAlbumsListData(albumsListData: List<SongWrapper>?) {
         albumsListData?.let {
             this.albumsListData.clear()
             this.albumsListData.addAll(it)
@@ -35,7 +36,7 @@ class NowPlayingViewModel(private val playerCommandRunner: MediaPlayerCommandRun
 
     fun playSong() {
         _currentSong.value?.let {
-            playerCommandRunner.playSong(it.songURL)
+            playerCommandRunner.playSong(it.song.songURL)
             _isPlaying.value = true
         }
     }
@@ -54,7 +55,7 @@ class NowPlayingViewModel(private val playerCommandRunner: MediaPlayerCommandRun
 
         albumsListData.let {
             val media = it[position]
-            playerCommandRunner.nextSong(media.songURL)
+            playerCommandRunner.nextSong(media.song.songURL)
             _currentSong.value = media
             _isPlaying.value = true
         }
@@ -69,7 +70,7 @@ class NowPlayingViewModel(private val playerCommandRunner: MediaPlayerCommandRun
 
         albumsListData.let {
             val media = it[position]
-            playerCommandRunner.previousSong(media.songURL)
+            playerCommandRunner.previousSong(media.song.songURL)
             _currentSong.value = media
             _isPlaying.value = true
         }
