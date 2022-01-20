@@ -1,14 +1,13 @@
 package com.automotive.bootcamp.mediaplayer.presentation
 
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.View
-import android.view.WindowManager
 import com.automotive.bootcamp.common.base.BaseFragment
+import com.automotive.bootcamp.common.utils.POSITION_BUNDLE
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.FragmentNowPlayingBinding
 import com.automotive.bootcamp.mediaplayer.viewModels.NowPlayingViewModel
-import com.automotive.bootcamp.mediaplayer.viewModels.SongsListViewModel
+import com.automotive.bootcamp.mediaplayer.viewModels.LocalMusicViewModel
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -16,7 +15,7 @@ class NowPlayingFragment :
     BaseFragment<FragmentNowPlayingBinding>(FragmentNowPlayingBinding::inflate) {
 
     private val nowPlayingViewModel: NowPlayingViewModel by viewModel()
-    private val songsListViewModel: SongsListViewModel by sharedViewModel()
+    private val localMusicViewModel: LocalMusicViewModel by sharedViewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -26,8 +25,8 @@ class NowPlayingFragment :
     }
 
     private fun initView() {
-        nowPlayingViewModel.setAlbumsListData(songsListViewModel.albumsListData.value)
-        nowPlayingViewModel.setPosition(songsListViewModel.position)
+        nowPlayingViewModel.setAlbumsListData(localMusicViewModel.localMusicData.value)
+        arguments?.getInt(POSITION_BUNDLE)?.let { nowPlayingViewModel.setPosition(it) }
 
         binding.apply {
             ibNowPlayingPlayPause.setOnClickListener {
@@ -81,5 +80,13 @@ class NowPlayingFragment :
         }
 
         binding.ibNowPlayingPlayPause.setImageResource(bImageResource)
+    }
+
+    companion object{
+        fun newInstance(position: Int) =
+            NowPlayingFragment().apply {
+                arguments = Bundle()
+                arguments?.putInt(POSITION_BUNDLE, position)
+            }
     }
 }

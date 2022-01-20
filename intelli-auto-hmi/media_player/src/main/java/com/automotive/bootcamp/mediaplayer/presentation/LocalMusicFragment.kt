@@ -7,15 +7,14 @@ import com.automotive.bootcamp.common.utils.AutoFitGridLayoutManager
 import com.automotive.bootcamp.common.utils.GRID_RECYCLE_COLUMN_WIDTH
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.FragmentSongsListBinding
-import com.automotive.bootcamp.mediaplayer.viewModels.SongsListViewModel
-import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import com.automotive.bootcamp.mediaplayer.viewModels.LocalMusicViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SongsListFragment :
+class LocalMusicFragment :
     BaseFragment<FragmentSongsListBinding>(FragmentSongsListBinding::inflate),
     MediaItemClickListener {
 
-    private val sharedViewModel by sharedViewModel<SongsListViewModel>()
+    private val viewModel: LocalMusicViewModel by viewModel()
     private val songsAdapter: SongsRecyclerViewAdapter by lazy {
         SongsRecyclerViewAdapter(
             onMediaItemClickListener = this
@@ -28,16 +27,15 @@ class SongsListFragment :
     }
 
     override fun setObservers() {
-        sharedViewModel.albumsListData.observe(viewLifecycleOwner) { it ->
+        viewModel.localMusicData.observe(viewLifecycleOwner) {
             songsAdapter.submitList(it)
         }
     }
 
     override fun onMediaClickListener(position: Int) {
-        sharedViewModel.select(position)
-
-        this.requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.fullScreenContainer, NowPlayingFragment()).addToBackStack(null)
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.fullScreenContainer, NowPlayingFragment.newInstance(position))
+            .addToBackStack(null)
             .commit()
     }
 

@@ -10,3 +10,9 @@ data class Song(
     val duration: String?,
     val songURL: String
 )
+
+data class SongWrapper(
+    val song: Song,
+    var isFavourite: Boolean = false,
+    var isRecent: Boolean = false
+)

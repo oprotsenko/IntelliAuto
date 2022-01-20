@@ -4,13 +4,13 @@ import android.content.ContentResolver
 import android.content.Context
 import com.automotive.bootcamp.mediaplayer.domain.useCases.GetLocalMusic
 import com.automotive.bootcamp.mediaplayer.viewModels.NowPlayingViewModel
-import com.automotive.bootcamp.mediaplayer.viewModels.SongsListViewModel
+import com.automotive.bootcamp.mediaplayer.viewModels.LocalMusicViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
     viewModel {
-        SongsListViewModel(getLocalMusic = get())
+        LocalMusicViewModel(getLocalMusic = get())
     }
 
     viewModel {
