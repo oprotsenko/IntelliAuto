@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="@dimen/padding">
@@ -17,29 +17,38 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_album" />
 
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/ibPopUpMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="0dp"
+        android:paddingTop="@dimen/padding"
+        android:paddingEnd="0dp"
+        android:src="@drawable/ic_pop_up_menu"
+        app:layout_constraintEnd_toEndOf="@+id/ivAlbumArt"
+        app:layout_constraintTop_toTopOf="@+id/ivAlbumArt" />
+
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvSongTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="No tears left to cry"
-        android:textSize="17sp"
-        android:gravity="center"
+        android:layout_marginTop="@dimen/padding"
+        android:textSize="@dimen/text_size_middle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivAlbumArt" />
+        app:layout_constraintTop_toBottomOf="@+id/ivAlbumArt"
+        tools:text="No tears left to cry" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvSingerName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/padding"
         android:layout_toEndOf="@+id/tvSongTitle"
-        android:text="Ariana Grande"
-        android:textSize="17sp"
-        android:gravity="center"
+        android:textSize="@dimen/text_size_middle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvSongTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/tvSongTitle"
+        tools:text="Ariana Grande" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

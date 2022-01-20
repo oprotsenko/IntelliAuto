@@ -13,6 +13,7 @@
         <item name="android:statusBarColor">?android:attr/colorPrimary</item>
         <!-- Customize your theme here. -->
         <item name="android:textViewStyle">@style/TextStyle</item>
-        <item name="android:buttonStyle">@style/TextStyle</item>
+        <item name="android:buttonStyle">@style/ButtonStyle</item>
+        <item name="imageButtonStyle">@style/ImageButtonStyle</item>
     </style>
 </resources>

@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">IntelliAuto</string>
     <string name="welcome">Welcome to IntelliAuto</string>
+    <string name="media_player">Media Player</string>
+    <string name="climate_control">Climate Control</string>
+    <string name="control_settings">Settings</string>
 </resources>
