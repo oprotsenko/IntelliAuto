@@ -23,7 +23,7 @@ class LocalMusicViewModel(private val getLocalMusic: GetLocalMusic) : CoroutineV
                         title = songItem.title,
                         artist = songItem.artist,
                         duration = songItem.duration,
-                        songURL = songItem.songURL
+                        songURL = songItem.url
                     )
                 )
             }

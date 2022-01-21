@@ -1,14 +1,17 @@
 package com.automotive.bootcamp.mediaplayer.utils
 
+import android.content.Context
 import android.media.MediaPlayer
+import android.net.Uri
 import com.automotive.bootcamp.mediaplayer.presentation.AudioCompletionListener
 import android.os.Handler
 import android.os.Looper
 import com.automotive.bootcamp.mediaplayer.extensions.currentSeconds
 import com.automotive.bootcamp.mediaplayer.extensions.seconds
 import com.automotive.bootcamp.mediaplayer.presentation.AudioRunningListener
+import org.koin.core.component.KoinComponent
 
-class DefaultAudioPlayer : AudioPlayer {
+class DefaultAudioPlayer(private val context: Context) : AudioPlayer {
     private val player: MediaPlayer by lazy { MediaPlayer() }
     private lateinit var audioCompletionListener: AudioCompletionListener
     private lateinit var audioRunningListener: AudioRunningListener
@@ -48,7 +51,7 @@ class DefaultAudioPlayer : AudioPlayer {
                 seekTo(length)
             } else {
                 reset()
-                setDataSource(songURL)
+                setDataSource(context, Uri.parse(songURL))
                 prepare()
             }
             start()
