@@ -20,17 +20,18 @@
         android:id="@+id/tvPlaybackControlsSongTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="title"
+        android:textSize="@dimen/text_size_middle"
         app:layout_constraintBottom_toTopOf="@+id/tvPlaybackControlsDuration"
         app:layout_constraintStart_toEndOf="@+id/imagePlaybackControlsAlbum"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="title" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvPlaybackControlsDuration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="00:00"
+        tools:text="00:00"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imagePlaybackControlsAlbum"
         app:layout_constraintTop_toBottomOf="@+id/tvPlaybackControlsSongTitle" />
@@ -39,9 +40,8 @@
         android:id="@+id/ibPlaybackControlsPrevious"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@android:color/transparent"
         android:padding="@dimen/padding"
-        android:src="@drawable/ic_previous"
+        android:src="@drawable/ic_previous_clickable"
         app:layout_constraintBottom_toBottomOf="@+id/ibPlaybackControlsPlayPause"
         app:layout_constraintEnd_toStartOf="@+id/ibPlaybackControlsPlayPause"
         app:layout_constraintHorizontal_bias="1"
@@ -52,7 +52,6 @@
         android:id="@+id/ibPlaybackControlsPlayPause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@android:color/transparent"
         android:padding="@dimen/padding"
         android:src="@drawable/ic_play"
         app:layout_constraintBottom_toBottomOf="@+id/ibPlaybackControlsNext"
@@ -63,9 +62,8 @@
         android:id="@+id/ibPlaybackControlsNext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@android:color/transparent"
         android:padding="@dimen/padding"
-        android:src="@drawable/ic_next"
+        android:src="@drawable/ic_next_clickable"
         app:layout_constraintBottom_toBottomOf="@+id/imagePlaybackControlsAlbum"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/imagePlaybackControlsAlbum" />

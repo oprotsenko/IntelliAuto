@@ -8,19 +8,18 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.automotive.bootcamp.mediaplayer.R
-import com.automotive.bootcamp.mediaplayer.databinding.ItemSongBinding
-import com.automotive.bootcamp.mediaplayer.domain.models.Song
+import com.automotive.bootcamp.mediaplayer.databinding.ItemAudioBinding
 import com.automotive.bootcamp.mediaplayer.domain.models.SongWrapper
 
 class SongsRecyclerViewAdapter(private val onMediaItemClickListener: MediaItemClickListener) :
     ListAdapter<SongWrapper, SongsRecyclerViewAdapter.SongViewHolder>(SongDiffCallBack()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongViewHolder {
         val view: View = LayoutInflater.from(parent.context).inflate(
-            R.layout.item_song,
+            R.layout.item_audio,
             parent,
             false
         )
-        return SongViewHolder(ItemSongBinding.bind(view))
+        return SongViewHolder(ItemAudioBinding.bind(view))
     }
 
     override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
@@ -32,7 +31,7 @@ class SongsRecyclerViewAdapter(private val onMediaItemClickListener: MediaItemCl
         }
     }
 
-    class SongViewHolder(private val binding: ItemSongBinding) :
+    class SongViewHolder(private val binding: ItemAudioBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         val root = binding.root

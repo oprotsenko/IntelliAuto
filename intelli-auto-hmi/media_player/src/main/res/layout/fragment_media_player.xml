@@ -17,36 +17,76 @@
             android:id="@+id/bLocalMusic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableTop="@drawable/ic_local_music"
+            android:drawableTop="@drawable/ic_local_music_clickable"
             android:text="@string/local_music"
-            app:layout_constraintBottom_toBottomOf="@+id/bGoogleMusic"
-            app:layout_constraintEnd_toStartOf="@+id/bGoogleMusic"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/bGoogleMusic" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/bGoogleMusic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableTop="@drawable/ic_google_music"
-            android:text="@string/google_music"
-            app:layout_constraintBottom_toBottomOf="@+id/bOnlineMusic"
-            app:layout_constraintEnd_toStartOf="@+id/bOnlineMusic"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/bLocalMusic"
-            app:layout_constraintTop_toTopOf="@+id/bOnlineMusic" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:textColor="#fff" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/bOnlineMusic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableTop="@drawable/ic_online_music"
+            android:drawableTop="@drawable/ic_online_music_clickable"
             android:text="@string/online_music"
+            app:layout_constraintBottom_toBottomOf="@id/bLocalMusic"
+            app:layout_constraintStart_toEndOf="@+id/bLocalMusic"
+            app:layout_constraintTop_toTopOf="@id/bLocalMusic"
+            tools:textColor="#fff" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/bRecentMusic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/ic_recent_playlist_clickable"
+            android:text="@string/recent_music"
+            app:layout_constraintBottom_toBottomOf="@id/bOnlineMusic"
+            app:layout_constraintStart_toEndOf="@+id/bOnlineMusic"
+            app:layout_constraintTop_toTopOf="@id/bOnlineMusic"
+            tools:textColor="#fff" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/bPlaylists"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/ic_playlists_clickable"
+            android:text="@string/playlists"
+            app:layout_constraintBottom_toBottomOf="@+id/bRecentMusic"
+            app:layout_constraintStart_toEndOf="@+id/bRecentMusic"
+            app:layout_constraintTop_toTopOf="@+id/bRecentMusic"
+            tools:textColor="#fff" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/bFavourite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/ic_favourite_clickable"
+            android:text="@string/favourite_music"
+            app:layout_constraintBottom_toBottomOf="@+id/bPlaylists"
+            app:layout_constraintStart_toEndOf="@+id/bPlaylists"
+            app:layout_constraintTop_toTopOf="@+id/bPlaylists"
+            tools:textColor="#fff" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/bSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/ic_search_clickable"
+            android:textSize="0sp"
+            app:layout_constraintBottom_toBottomOf="@+id/bSettings"
+            app:layout_constraintEnd_toEndOf="@+id/bSettings"
+            app:layout_constraintEnd_toStartOf="@+id/bSettings"
+            app:layout_constraintTop_toTopOf="@+id/bSettings" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/bSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/ic_player_settings_clickable"
+            android:textSize="0sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/bGoogleMusic"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -56,5 +96,5 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="6"
-        tools:layout="@layout/fragment_songs_list"/>
+        tools:layout="@layout/fragment_audios_list"/>
 </androidx.appcompat.widget.LinearLayoutCompat>

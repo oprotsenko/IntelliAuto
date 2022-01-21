@@ -1,37 +1,42 @@
 package com.automotive.bootcamp.mediaplayer.di
 
-import android.content.ContentResolver
 import android.content.Context
-import com.automotive.bootcamp.mediaplayer.data.LocalMusicRepository
-import com.automotive.bootcamp.mediaplayer.data.cache.CacheAudioRepository
-import com.automotive.bootcamp.mediaplayer.data.cache.sources.CacheAudioSource
-import com.automotive.bootcamp.mediaplayer.data.cache.sources.RoomAudioSource
-import com.automotive.bootcamp.mediaplayer.data.local.LocalMedia
-import com.automotive.bootcamp.mediaplayer.data.local.LocalMusicSource
+import android.media.MediaMetadataRetriever
+import com.automotive.bootcamp.mediaplayer.data.LocalAudioRepository
+import com.automotive.bootcamp.mediaplayer.data.localRepository.LocalMedia
+import com.automotive.bootcamp.mediaplayer.data.localRepository.resources.ResourcesAudioSource
 import com.automotive.bootcamp.mediaplayer.domain.LocalMediaRepository
-import com.automotive.bootcamp.mediaplayer.utils.DefaultAudioPlayer
 import com.automotive.bootcamp.mediaplayer.utils.AudioPlayer
+import com.automotive.bootcamp.mediaplayer.utils.DefaultAudioPlayer
 import org.koin.dsl.module
 
 val dataModule = module {
     single { provideMusicRepository(localMusic = get()) }
-    single { provideLocalMusicSource(contentResolver = get()) }
-    single { provideCacheAudioRepository(cacheAudioSource = get()) }
-    single { provideRoomAudioSource(context = get()) }
-    single { provideDefaultAudioPlayer() }
+    single { provideLocalMusicSource(get(), get()) }
+    single { provideDefaultAudioPlayer(get()) }
+    single { MediaMetadataRetriever() }
+    single { ResourcesAudioSource(get(), get()) }
 }
 
 fun provideMusicRepository(localMusic: LocalMedia): LocalMediaRepository =
-    LocalMusicRepository(localMusic)
+    LocalAudioRepository(localMusic)
 
-fun provideLocalMusicSource(contentResolver: ContentResolver): LocalMedia =
-    LocalMusicSource(contentResolver)
+/**
+To retrieve audio from external storage
+ */
+//fun provideLocalMusicSource(
+//    contentResolver: ContentResolver,
+//    retriever: MediaMetadataRetriever
+//): LocalMedia =
+//    LocalAudioSource(contentResolver, retriever)
 
-fun provideCacheAudioRepository(cacheAudioSource: CacheAudioSource): CacheAudioRepository =
-    CacheAudioRepository(cacheAudioSource)
+/**
+To retrieve audio from raw folder
+ */
+fun provideLocalMusicSource(
+    retriever: MediaMetadataRetriever, context: Context
+): LocalMedia =
+    ResourcesAudioSource(retriever, context)
 
-fun provideRoomAudioSource(context: Context): CacheAudioSource =
-    RoomAudioSource(context)
-
-fun provideDefaultAudioPlayer(): AudioPlayer =
-    DefaultAudioPlayer()
+fun provideDefaultAudioPlayer(context: Context): AudioPlayer =
+    DefaultAudioPlayer(context)
