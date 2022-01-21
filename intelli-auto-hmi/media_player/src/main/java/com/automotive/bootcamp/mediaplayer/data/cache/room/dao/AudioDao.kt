@@ -1,4 +1,4 @@
-package com.automotive.bootcamp.mediaplayer.data.cache.room
+package com.automotive.bootcamp.mediaplayer.data.cache.room.dao
 
 import androidx.room.*
 import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.AudioEntity
@@ -10,6 +10,9 @@ import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.relations.Pl
 interface AudioDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAudio(audio: AudioEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAudios(audios: List<AudioEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPlaylist(playlist: PlaylistEntity)
@@ -25,7 +28,13 @@ interface AudioDao {
 
     @Transaction
     @Query("SELECT * FROM playlists WHERE pid = :pid")
-    suspend fun getAudiosByPlaylistId(pid: Int): List<PlaylistWithAudios>
+    suspend fun getPlaylistWithAudiosById(pid: Int): List<PlaylistWithAudios>
 
+    @Transaction
+    @Query("SELECT * FROM playlists WHERE type = :type")
+    suspend fun getPlaylistsWithAudiosByType(type: String): List<PlaylistWithAudios>
 
+    @Transaction
+    @Query("SELECT * FROM playlists")
+    suspend fun getAllPlaylistsWithAudios(): List<PlaylistWithAudios>
 }
