@@ -21,12 +21,20 @@
         android:id="@+id/ibPopUpMenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingStart="0dp"
-        android:paddingTop="@dimen/padding"
-        android:paddingEnd="0dp"
+        android:layout_marginTop="@dimen/art_image_icons_margin"
         android:src="@drawable/ic_pop_up_menu"
         app:layout_constraintEnd_toEndOf="@+id/ivAlbumArt"
         app:layout_constraintTop_toTopOf="@+id/ivAlbumArt" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ivFavourite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/art_image_icons_margin"
+        android:src="@drawable/ic_is_favorite"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/ivAlbumArt"
+        app:layout_constraintEnd_toEndOf="@+id/ivAlbumArt" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvSongTitle"

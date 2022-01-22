@@ -3,6 +3,11 @@
     <string name="local_music">Local</string>
     <string name="online_music">Online</string>
     <string name="recent_music">Recent</string>
-    <string name="playlists">Playlists</string>
     <string name="favourite_music">Favourite</string>
+    <string name="playlists">Playlists</string>
+    <string name="pop_up_menu_play">Play</string>
+    <string name="pop_up_menu_add_to_playlist">Add to playlist</string>
+    <string name="pop_up_menu_remove_recent">Remove from Recent</string>
+    <string name="pop_up_menu_add_remove_favourite">Add to/Remove from Favourite</string>
+    <string name="pop_up_menu_playlists">playlists</string>
 </resources>

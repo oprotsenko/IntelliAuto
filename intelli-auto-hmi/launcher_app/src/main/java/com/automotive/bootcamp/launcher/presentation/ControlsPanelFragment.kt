@@ -24,7 +24,7 @@ class ControlsPanelFragment :
             ibMusic.setOnClickListener {
 //                checkPermission()
                 if (hasPermissions()) {
-                    requireActivity().supportFragmentManager.beginTransaction().addToBackStack(null)
+                    parentFragmentManager.beginTransaction().addToBackStack(null)
                         .replace(R.id.featureContainer, MediaPlayerFragment()).commit()
                 } else {
                     requestStoragePermissions();
@@ -32,12 +32,12 @@ class ControlsPanelFragment :
             }
 
             ibClimate.setOnClickListener {
-                requireActivity().supportFragmentManager.beginTransaction().addToBackStack(null)
+                parentFragmentManager.beginTransaction().addToBackStack(null)
                     .replace(R.id.featureContainer, WelcomeFragment()).commit()
             }
 
             ibSettings.setOnClickListener {
-                requireActivity().supportFragmentManager.beginTransaction().addToBackStack(null)
+                parentFragmentManager.beginTransaction().addToBackStack(null)
                     .replace(R.id.featureContainer, WelcomeFragment()).commit()
             }
         }

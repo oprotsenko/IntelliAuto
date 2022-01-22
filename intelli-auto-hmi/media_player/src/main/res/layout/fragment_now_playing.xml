@@ -18,36 +18,60 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/ivNowPlayingAudioArt"
-        android:layout_width="@dimen/media_item_art"
-        android:layout_height="@dimen/media_item_art"
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/ibNowPlayingBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin"
         android:layout_marginTop="@dimen/margin"
-        android:src="@drawable/ic_album"
+        android:src="@drawable/ic_arrow_back_clickable"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tvNowPlayingAudioTitle"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/audioDetailsLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/padding"
-        android:layout_marginTop="@dimen/padding"
-        android:text="Song Title"
-        app:layout_constraintStart_toEndOf="@+id/ivNowPlayingAudioArt"
-        app:layout_constraintTop_toTopOf="@+id/ivNowPlayingAudioArt" />
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/ivNowPlayingBackground"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tvNowPlayingSingerName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/padding"
-        android:text="Singer Name"
-        app:layout_constraintStart_toStartOf="@+id/tvNowPlayingAudioTitle"
-        app:layout_constraintTop_toBottomOf="@+id/tvNowPlayingAudioTitle" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivNowPlayingAudioArt"
+            android:layout_width="@dimen/media_item_art"
+            android:layout_height="@dimen/media_item_art"
+            android:src="@drawable/ic_album"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvNowPlayingAudioTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding"
+            app:layout_constraintBottom_toTopOf="@+id/tvNowPlayingSingerName"
+            app:layout_constraintStart_toEndOf="@+id/ivNowPlayingAudioArt"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="Song Title" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvNowPlayingSingerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding"
+            android:layout_marginTop="@dimen/padding"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ivNowPlayingAudioArt"
+            app:layout_constraintTop_toBottomOf="@+id/tvNowPlayingAudioTitle"
+            tools:text="Singer Name" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/padding"
