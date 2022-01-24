@@ -14,7 +14,7 @@ class LocalAudioSource(
     private val retriever: MediaMetadataRetriever
 ) : LocalMedia {
 
-    override suspend fun getLocalSongs(): List<AudioItem> {
+    override suspend fun retrieveLocalAudio(): List<AudioItem> {
         val list = mutableListOf<AudioItem>()
         val collection = MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
         val projection = arrayOf(

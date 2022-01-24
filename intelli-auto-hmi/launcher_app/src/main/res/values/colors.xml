@@ -7,4 +7,5 @@
     <color name="blue_gray">#37474f</color>
     <color name="blue_gray_light">#62727b</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="black_translucent">#95000000</color>
 </resources>

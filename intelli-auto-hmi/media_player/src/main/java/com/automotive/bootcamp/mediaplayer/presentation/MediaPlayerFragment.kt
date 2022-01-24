@@ -5,6 +5,7 @@ import com.automotive.bootcamp.mediaplayer.databinding.FragmentMediaPlayerBindin
 
 class MediaPlayerFragment :
     BaseFragment<FragmentMediaPlayerBinding>(FragmentMediaPlayerBinding::inflate) {
+
     override fun setListeners() {
         binding.apply {
             bLocalMusic.setOnClickListener {

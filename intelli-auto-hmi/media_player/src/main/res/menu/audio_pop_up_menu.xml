@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/audioPlay"
+        android:title="@string/pop_up_menu_play"/>
+    <item
+        android:id="@+id/audioAddToPlaylist"
+        android:title="@string/pop_up_menu_add_to_playlist">
+        <menu>
+            <item
+                android:id="@+id/audioPlaylists"
+                android:title="@string/playlists"/>
+        </menu>
+    </item>
+    <item
+        android:id="@+id/audioRemoveRecent"
+        android:title="@string/pop_up_menu_remove_recent"/>
+    <item
+        android:id="@+id/audioAddRemoveFavourite"
+        android:title="@string/pop_up_menu_add_remove_favourite"/>
+</menu>

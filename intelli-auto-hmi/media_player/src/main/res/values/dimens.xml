@@ -3,7 +3,9 @@
     <dimen name="media_item_art">150dp</dimen>
     <dimen name="folder_item_art">65dp</dimen>
     <dimen name="padding">8dp</dimen>
+    <dimen name="art_image_icons_margin">4dp</dimen>
     <dimen name="placeholder_margin">10dp</dimen>
     <dimen name="margin">16dp</dimen>
     <dimen name="text_size_middle">17sp</dimen>
+    <dimen name="corner_radius">5dp</dimen>
 </resources>

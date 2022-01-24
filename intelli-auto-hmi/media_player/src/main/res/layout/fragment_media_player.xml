@@ -7,9 +7,9 @@
     android:orientation="vertical">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/controlServicePanel"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:background="?attr/colorOnSecondary"
         tools:background="#000">
 
@@ -20,6 +20,8 @@
             android:drawableTop="@drawable/ic_local_music_clickable"
             android:text="@string/local_music"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/bOnlineMusic"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:textColor="#fff" />
@@ -94,7 +96,6 @@
         android:id="@+id/launchMediaPlayer"
         android:name="com.automotive.bootcamp.mediaplayer.presentation.LocalMusicFragment"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="6"
-        tools:layout="@layout/fragment_audios_list"/>
+        android:layout_height="match_parent"
+        tools:layout="@layout/fragment_audios_list" />
 </androidx.appcompat.widget.LinearLayoutCompat>

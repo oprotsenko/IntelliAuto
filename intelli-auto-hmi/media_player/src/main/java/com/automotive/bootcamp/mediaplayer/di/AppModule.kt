@@ -2,24 +2,29 @@ package com.automotive.bootcamp.mediaplayer.di
 
 import android.content.ContentResolver
 import android.content.Context
-import com.automotive.bootcamp.mediaplayer.domain.useCases.GetLocalMusic
-import com.automotive.bootcamp.mediaplayer.viewModels.NowPlayingViewModel
+import android.media.MediaMetadataRetriever
+import com.automotive.bootcamp.mediaplayer.utils.AudioPlayer
+import com.automotive.bootcamp.mediaplayer.utils.DefaultAudioPlayer
+import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.NowPlayingViewModel
 import com.automotive.bootcamp.mediaplayer.viewModels.LocalMusicViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
     viewModel {
-        LocalMusicViewModel(getLocalMusic = get())
+        LocalMusicViewModel(getLocalMusic = get(), get(), get())
     }
 
     viewModel {
         NowPlayingViewModel(playerCommandRunner = get())
     }
 
-    single { GetLocalMusic(repositoryLocal = get(), repositoryCache = get()) }
+    single { provideDefaultAudioPlayer(get()) }
+    single { MediaMetadataRetriever() }
     single { getContentResolver(context = get()) }
 }
 
-fun getContentResolver(context: Context) : ContentResolver =
+fun provideDefaultAudioPlayer(context: Context): AudioPlayer =
+    DefaultAudioPlayer(context)
+fun getContentResolver(context: Context): ContentResolver =
     context.contentResolver

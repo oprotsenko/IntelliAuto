@@ -1,8 +1,8 @@
 package com.automotive.bootcamp.mediaplayer.domain.useCases
 
-import com.automotive.bootcamp.mediaplayer.domain.models.SongWrapper
-import com.automotive.bootcamp.mediaplayer.presentation.AudioCompletionListener
-import com.automotive.bootcamp.mediaplayer.presentation.AudioRunningListener
+import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
+import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.AudioCompletionListener
+import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.AudioRunningListener
 import com.automotive.bootcamp.mediaplayer.utils.AudioPlayer
 
 class MediaPlayerCommandRunner(private val audioPlayer: AudioPlayer) {
@@ -19,9 +19,9 @@ class MediaPlayerCommandRunner(private val audioPlayer: AudioPlayer) {
     fun updateAudioProgress(progress: Int) = audioPlayer.updateAudioProgress(progress)
 
     fun getShuffledAudioList(
-        audioListData: MutableList<SongWrapper>,
-        currentAudio: SongWrapper
-    ): MutableList<SongWrapper> {
+        audioListData: MutableList<AudioWrapper>,
+        currentAudio: AudioWrapper
+    ): MutableList<AudioWrapper> {
         val audioListMinusCurrentAudio = audioListData.filter {
             it != currentAudio
         }

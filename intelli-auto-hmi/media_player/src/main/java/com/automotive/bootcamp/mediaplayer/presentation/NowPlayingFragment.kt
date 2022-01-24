@@ -4,14 +4,18 @@ import android.os.Bundle
 import android.view.View
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
+import android.widget.WrapperListAdapter
 import com.automotive.bootcamp.common.base.BaseFragment
+import com.automotive.bootcamp.common.utils.PLAYLIST_BUNDLE
 import com.automotive.bootcamp.common.utils.POSITION_BUNDLE
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.FragmentNowPlayingBinding
-import com.automotive.bootcamp.mediaplayer.enums.RepeatMode
-import com.automotive.bootcamp.mediaplayer.extensions.toTimeString
+import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
+import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
+import com.automotive.bootcamp.mediaplayer.utils.enums.RepeatMode
+import com.automotive.bootcamp.mediaplayer.utils.extensions.timeToString
 import com.automotive.bootcamp.mediaplayer.viewModels.LocalMusicViewModel
-import com.automotive.bootcamp.mediaplayer.viewModels.NowPlayingViewModel
+import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.NowPlayingViewModel
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -19,24 +23,26 @@ class NowPlayingFragment :
     BaseFragment<FragmentNowPlayingBinding>(FragmentNowPlayingBinding::inflate) {
 
     private val nowPlayingViewModel: NowPlayingViewModel by viewModel()
-    private val localMusicViewModel: LocalMusicViewModel by sharedViewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        initView()
-        nowPlayingViewModel.playAudio()
+        val playlist: PlaylistWrapper? = arguments?.getParcelable(PLAYLIST_BUNDLE)
+        val position = arguments?.getInt(POSITION_BUNDLE)
+        if (playlist != null && position != null) {
+            nowPlayingViewModel.init(
+                playlist, position
+            )
+            nowPlayingViewModel.playAudio()
+        }
     }
 
-    private fun initView() {
-        arguments?.getInt(POSITION_BUNDLE)?.let {
-            nowPlayingViewModel.init(
-                localMusicViewModel.localMusicData.value,
-                it
-            )
-        }
-
+    override fun setListeners() {
         binding.apply {
+            ibNowPlayingBack.setOnClickListener {
+                if (parentFragmentManager.backStackEntryCount > 0) {
+                    parentFragmentManager.popBackStack()
+                }
+            }
             ibNowPlayingPlayPause.setOnClickListener {
                 if (nowPlayingViewModel.isPlaying.value == true) {
                     nowPlayingViewModel.pauseAudio()
@@ -67,21 +73,20 @@ class NowPlayingFragment :
                         nowPlayingViewModel.updateAudioProgress(progress)
                     }
                 }
+
                 override fun onStartTrackingTouch(seekBar: SeekBar) {}
                 override fun onStopTrackingTouch(seekBar: SeekBar) {}
             })
         }
     }
 
-    override fun setListeners() {
+    override fun setObservers() {
         nowPlayingViewModel.currentAudio.observe(viewLifecycleOwner) {
             binding.apply {
-                ivNowPlayingAudioArt.setImageBitmap(it.song.cover)
-                ivNowPlayingBackground.setImageBitmap(it.song.cover)
-//                ivNowPlayingBackground.loadImage(it.cover?: "https://27mi124bz6zg1hqy6n192jkb-wpengine.netdna-ssl.com/wp-content/uploads/2019/10/Our-Top-10-Songs-About-School-768x569.png")
-//                ivNowPlayingAlbumArt.loadImage(it.cover?: "https://27mi124bz6zg1hqy6n192jkb-wpengine.netdna-ssl.com/wp-content/uploads/2019/10/Our-Top-10-Songs-About-School-768x569.png")
-                tvNowPlayingSingerName.text = it.song.artist
-                tvNowPlayingAudioTitle.text = it.song.title
+                ivNowPlayingAudioArt.setImageBitmap(it.audio.cover)
+                ivNowPlayingBackground.setImageBitmap(it.audio.cover)
+                tvNowPlayingSingerName.text = it.audio.artist
+                tvNowPlayingAudioTitle.text = it.audio.title
             }
         }
 
@@ -99,7 +104,7 @@ class NowPlayingFragment :
 
         nowPlayingViewModel.currentAudioDuration.observe(viewLifecycleOwner) {
             binding.apply {
-                tvNowPlayingAudioDuration.text = it.toTimeString()
+                tvNowPlayingAudioDuration.text = it.timeToString()
                 sbNowPlayingProgress.max = it
             }
         }
@@ -107,7 +112,7 @@ class NowPlayingFragment :
         nowPlayingViewModel.currentAudioProgress.observe(viewLifecycleOwner) {
             binding.apply {
                 sbNowPlayingProgress.progress = it
-                tvNowPlayingProgress.text = it.toTimeString()
+                tvNowPlayingProgress.text = it.timeToString()
             }
         }
     }
@@ -145,9 +150,10 @@ class NowPlayingFragment :
     }
 
     companion object {
-        fun newInstance(position: Int) =
+        fun newInstance(media: PlaylistWrapper, position: Int) =
             NowPlayingFragment().apply {
                 arguments = Bundle()
+                arguments?.putParcelable(PLAYLIST_BUNDLE, media)
                 arguments?.putInt(POSITION_BUNDLE, position)
             }
     }
