@@ -1,9 +1,9 @@
-package com.automotive.bootcamp.mediaplayer.data.cache
+package com.automotive.bootcamp.mediaplayer.data.storage
 
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.AudioEntity
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.PlaylistEntity
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.relations.AudioPlaylistCrossRef
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.relations.PlaylistWithAudios
+import com.automotive.bootcamp.mediaplayer.data.storage.room.entities.AudioEntity
+import com.automotive.bootcamp.mediaplayer.data.storage.room.entities.PlaylistEntity
+import com.automotive.bootcamp.mediaplayer.data.storage.room.entities.relations.AudioPlaylistCrossRef
+import com.automotive.bootcamp.mediaplayer.data.storage.room.entities.relations.PlaylistWithAudios
 
 interface CacheAudioSource {
     suspend fun insertAudio(audio: AudioEntity)

@@ -1,11 +1,11 @@
 package com.automotive.bootcamp.mediaplayer.data
 
-import com.automotive.bootcamp.mediaplayer.data.cache.CacheAudioSource
-import com.automotive.bootcamp.mediaplayer.data.cache.StorageMedia
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.AudioEntity
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.PlaylistEntity
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.relations.AudioPlaylistCrossRef
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.relations.PlaylistWithAudios
+import com.automotive.bootcamp.mediaplayer.data.storage.CacheAudioSource
+import com.automotive.bootcamp.mediaplayer.data.storage.StorageMedia
+import com.automotive.bootcamp.mediaplayer.data.storage.room.entities.AudioEntity
+import com.automotive.bootcamp.mediaplayer.data.storage.room.entities.PlaylistEntity
+import com.automotive.bootcamp.mediaplayer.data.storage.room.entities.relations.AudioPlaylistCrossRef
+import com.automotive.bootcamp.mediaplayer.data.storage.room.entities.relations.PlaylistWithAudios
 
 class StorageAudioRepository(private val cacheAudioSource: CacheAudioSource) : StorageMedia {
     override suspend fun insertAudio(audio: AudioEntity) {

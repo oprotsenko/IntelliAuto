@@ -1,4 +1,4 @@
-package com.automotive.bootcamp.mediaplayer.data.cache.room.entities
+package com.automotive.bootcamp.mediaplayer.data.storage.room.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

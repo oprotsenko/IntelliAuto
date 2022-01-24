@@ -1,13 +1,12 @@
-package com.automotive.bootcamp.mediaplayer.data.localRepository.local
+package com.automotive.bootcamp.mediaplayer.data.local.device
 
 import android.content.ContentResolver
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.provider.MediaStore
-import android.util.Log
 
-import com.automotive.bootcamp.mediaplayer.data.localRepository.LocalMedia
-import com.automotive.bootcamp.mediaplayer.data.localRepository.models.AudioItem
+import com.automotive.bootcamp.mediaplayer.data.local.LocalMedia
+import com.automotive.bootcamp.mediaplayer.data.local.models.AudioItem
 
 class LocalAudioSource(
     private val contentResolver: ContentResolver,

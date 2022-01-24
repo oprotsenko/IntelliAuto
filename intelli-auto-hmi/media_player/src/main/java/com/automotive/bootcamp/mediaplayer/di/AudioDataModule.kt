@@ -4,11 +4,11 @@ import android.content.Context
 import android.media.MediaMetadataRetriever
 import com.automotive.bootcamp.mediaplayer.data.StorageAudioRepository
 import com.automotive.bootcamp.mediaplayer.data.LocalAudioRepository
-import com.automotive.bootcamp.mediaplayer.data.cache.CacheAudioSource
-import com.automotive.bootcamp.mediaplayer.data.cache.StorageMedia
-import com.automotive.bootcamp.mediaplayer.data.cache.room.RoomAudioSource
-import com.automotive.bootcamp.mediaplayer.data.localRepository.LocalMedia
-import com.automotive.bootcamp.mediaplayer.data.localRepository.resources.ResourcesAudioSource
+import com.automotive.bootcamp.mediaplayer.data.storage.CacheAudioSource
+import com.automotive.bootcamp.mediaplayer.data.storage.StorageMedia
+import com.automotive.bootcamp.mediaplayer.data.storage.room.RoomAudioSource
+import com.automotive.bootcamp.mediaplayer.data.local.LocalMedia
+import com.automotive.bootcamp.mediaplayer.data.local.resources.ResourcesAudioSource
 import com.automotive.bootcamp.mediaplayer.domain.LocalMediaRepository
 import org.koin.dsl.module
 

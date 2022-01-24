@@ -1,11 +1,11 @@
-package com.automotive.bootcamp.mediaplayer.data.cache.room
+package com.automotive.bootcamp.mediaplayer.data.storage.room
 
 import android.content.Context
-import com.automotive.bootcamp.mediaplayer.data.cache.CacheAudioSource
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.AudioEntity
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.PlaylistEntity
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.relations.AudioPlaylistCrossRef
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.relations.PlaylistWithAudios
+import com.automotive.bootcamp.mediaplayer.data.storage.CacheAudioSource
+import com.automotive.bootcamp.mediaplayer.data.storage.room.entities.AudioEntity
+import com.automotive.bootcamp.mediaplayer.data.storage.room.entities.PlaylistEntity
+import com.automotive.bootcamp.mediaplayer.data.storage.room.entities.relations.AudioPlaylistCrossRef
+import com.automotive.bootcamp.mediaplayer.data.storage.room.entities.relations.PlaylistWithAudios
 
 class RoomAudioSource(context: Context): CacheAudioSource {
     private val dao = RoomAudioDatabase.getInstance(context).audioDao

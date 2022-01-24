@@ -1,4 +1,4 @@
-package com.automotive.bootcamp.mediaplayer.data.localRepository.models
+package com.automotive.bootcamp.mediaplayer.data.local.models
 
 import android.graphics.Bitmap
 import com.automotive.bootcamp.mediaplayer.domain.models.Audio

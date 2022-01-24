@@ -1,13 +1,16 @@
 package com.automotive.bootcamp.mediaplayer.domain.useCases
 
 import com.automotive.bootcamp.mediaplayer.data.StorageAudioRepository
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.AudioEntity
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.PlaylistEntity
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.relations.AudioPlaylistCrossRef
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.relations.PlaylistWithAudios
+import com.automotive.bootcamp.mediaplayer.data.storage.room.entities.AudioEntity
+import com.automotive.bootcamp.mediaplayer.data.storage.room.entities.PlaylistEntity
+import com.automotive.bootcamp.mediaplayer.data.storage.room.entities.relations.AudioPlaylistCrossRef
+import com.automotive.bootcamp.mediaplayer.data.storage.room.entities.relations.PlaylistWithAudios
 import com.automotive.bootcamp.mediaplayer.domain.LocalMediaRepository
 
-class GetLocalMusic(private val repositoryLocal: LocalMediaRepository, private val repositoryStorage: StorageAudioRepository) {
+class GetLocalMusic(
+    private val repositoryLocal: LocalMediaRepository,
+    private val repositoryStorage: StorageAudioRepository
+) {
     suspend fun getLocalSongs() = repositoryLocal.retrieveLocalAudio()
 
     suspend fun insertAudio(audio: AudioEntity) {

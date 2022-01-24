@@ -1,10 +1,10 @@
-package com.automotive.bootcamp.mediaplayer.data.cache.room.dao
+package com.automotive.bootcamp.mediaplayer.data.storage.room.dao
 
 import androidx.room.*
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.AudioEntity
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.PlaylistEntity
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.relations.AudioPlaylistCrossRef
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.relations.PlaylistWithAudios
+import com.automotive.bootcamp.mediaplayer.data.storage.room.entities.AudioEntity
+import com.automotive.bootcamp.mediaplayer.data.storage.room.entities.PlaylistEntity
+import com.automotive.bootcamp.mediaplayer.data.storage.room.entities.relations.AudioPlaylistCrossRef
+import com.automotive.bootcamp.mediaplayer.data.storage.room.entities.relations.PlaylistWithAudios
 
 @Dao
 interface AudioDao {

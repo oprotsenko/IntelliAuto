@@ -1,7 +1,7 @@
-package com.automotive.bootcamp.mediaplayer.domain
+package com.automotive.bootcamp.mediaplayer.data.local
 
 import com.automotive.bootcamp.mediaplayer.data.local.models.AudioItem
 
-interface LocalMediaRepository {
+interface LocalMedia {
     suspend fun retrieveLocalAudio(): List<AudioItem>
 }

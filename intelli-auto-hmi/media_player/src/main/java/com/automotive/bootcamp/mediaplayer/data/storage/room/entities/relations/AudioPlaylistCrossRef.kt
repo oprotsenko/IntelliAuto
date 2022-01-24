@@ -1,9 +1,9 @@
-package com.automotive.bootcamp.mediaplayer.data.cache.room.entities.relations
+package com.automotive.bootcamp.mediaplayer.data.storage.room.entities.relations
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.CASCADE
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.PlaylistEntity
+import com.automotive.bootcamp.mediaplayer.data.storage.room.entities.PlaylistEntity
 
 @Entity(
     tableName = "audio_playlist_cross_ref",

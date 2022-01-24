@@ -1,4 +1,4 @@
-package com.automotive.bootcamp.mediaplayer.data.cache.room
+package com.automotive.bootcamp.mediaplayer.data.storage.room
 
 import android.content.Context
 import androidx.room.Database
@@ -6,10 +6,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.automotive.bootcamp.common.utils.DATABASE_NAME
 import com.automotive.bootcamp.common.utils.DATABASE_VERSION
-import com.automotive.bootcamp.mediaplayer.data.cache.room.dao.AudioDao
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.AudioEntity
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.PlaylistEntity
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.relations.AudioPlaylistCrossRef
+import com.automotive.bootcamp.mediaplayer.data.storage.room.dao.AudioDao
+import com.automotive.bootcamp.mediaplayer.data.storage.room.entities.AudioEntity
+import com.automotive.bootcamp.mediaplayer.data.storage.room.entities.PlaylistEntity
+import com.automotive.bootcamp.mediaplayer.data.storage.room.entities.relations.AudioPlaylistCrossRef
 
 @Database(
     entities = [
