@@ -12,7 +12,7 @@ import org.koin.dsl.module
 
 val appModule = module {
     viewModel {
-        LocalMusicViewModel(getLocalMusic = get(), get(), get())
+        LocalMusicViewModel(get(), get(), get())
     }
 
     viewModel {
