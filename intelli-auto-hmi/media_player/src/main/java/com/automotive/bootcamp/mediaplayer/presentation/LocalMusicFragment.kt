@@ -36,10 +36,7 @@ class LocalMusicFragment :
     }
 
     override fun onMediaClick(position: Int) {
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.fullScreenContainer, NowPlayingFragment.newInstance(position))
-            .addToBackStack(null)
-            .commit()
+        playAudio(position)
     }
 
     override fun onItemClick(view: View, position: Int) {
@@ -54,13 +51,7 @@ class LocalMusicFragment :
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.audioPlay -> {
-                        requireActivity().supportFragmentManager.beginTransaction()
-                            .replace(
-                                R.id.fullScreenContainer,
-                                NowPlayingFragment.newInstance(position)
-                            )
-                            .addToBackStack(null)
-                            .commit()
+                        playAudio(position)
                         return@setOnMenuItemClickListener true
                     }
                     R.id.audioAddToPlaylist -> {
@@ -80,6 +71,19 @@ class LocalMusicFragment :
                 }
             }
             show()
+        }
+    }
+
+    private fun playAudio(position: Int) {
+        val playlist = viewModel.getAudioList()
+        if (playlist != null) {
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(
+                    R.id.fullScreenContainer,
+                    NowPlayingFragment.newInstance(playlist, position)
+                )
+                .addToBackStack(null)
+                .commit()
         }
     }
 

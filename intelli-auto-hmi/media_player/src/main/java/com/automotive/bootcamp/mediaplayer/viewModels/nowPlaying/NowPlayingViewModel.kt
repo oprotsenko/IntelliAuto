@@ -3,9 +3,12 @@ package com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.automotive.bootcamp.mediaplayer.domain.models.Audio
+import com.automotive.bootcamp.mediaplayer.domain.models.wrapAudio
 import com.automotive.bootcamp.mediaplayer.domain.useCases.*
 import com.automotive.bootcamp.mediaplayer.utils.enums.RepeatMode
 import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
+import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
 
 class NowPlayingViewModel(private val playerCommandRunner: MediaPlayerCommandRunner) : ViewModel(),
     AudioCompletionListener, AudioRunningListener {
@@ -39,17 +42,18 @@ class NowPlayingViewModel(private val playerCommandRunner: MediaPlayerCommandRun
     val currentAudioProgress: LiveData<Int>
         get() = _currentAudioProgress
 
-    fun init(audioListData: List<AudioWrapper>?, position: Int) {
+    fun init(playlist: PlaylistWrapper, position: Int) {
         this.position = position
-        audioListData?.let {
-            this.audioListData.clear()
-            this.audioListData.addAll(it)
-
-            originalAudioListData.clear()
-            originalAudioListData.addAll(it)
-
-            _currentAudio.value = it[position]
+        val audioList = playlist.playlist.list.map { audio ->
+            audio.wrapAudio()
         }
+        audioListData.clear()
+        audioListData.addAll(audioList)
+
+        originalAudioListData.clear()
+        originalAudioListData.addAll(audioList)
+
+        _currentAudio.value = audioListData[position]
 
         _isShuffled.value = false
         _repeatMode.value = RepeatMode.DEFAULT
@@ -135,7 +139,7 @@ class NowPlayingViewModel(private val playerCommandRunner: MediaPlayerCommandRun
         }
     }
 
-    fun updateAudioProgress(progress:Int) {
+    fun updateAudioProgress(progress: Int) {
         playerCommandRunner.updateAudioProgress(progress)
     }
 

@@ -4,7 +4,7 @@ import com.automotive.bootcamp.mediaplayer.domain.useCases.*
 import org.koin.dsl.module
 
 val domainModule = module {
-    factory { GetLocalMusic(get()) }
+    factory { RetrieveLocalMusic(get()) }
     factory { MediaPlayerCommandRunner(audioPlayer = get()) }
 
     single { AddRemoveFavourite() }

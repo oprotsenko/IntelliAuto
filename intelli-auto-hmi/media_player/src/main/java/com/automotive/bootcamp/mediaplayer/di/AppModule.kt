@@ -3,9 +3,6 @@ package com.automotive.bootcamp.mediaplayer.di
 import android.content.ContentResolver
 import android.content.Context
 import android.media.MediaMetadataRetriever
-import com.automotive.bootcamp.mediaplayer.domain.useCases.AddRemoveFavourite
-import com.automotive.bootcamp.mediaplayer.domain.useCases.AddRemoveRecent
-import com.automotive.bootcamp.mediaplayer.domain.useCases.GetLocalMusic
 import com.automotive.bootcamp.mediaplayer.utils.AudioPlayer
 import com.automotive.bootcamp.mediaplayer.utils.DefaultAudioPlayer
 import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.NowPlayingViewModel

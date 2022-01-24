@@ -3,15 +3,20 @@ package com.automotive.bootcamp.mediaplayer.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.automotive.bootcamp.common.base.CoroutineViewModel
-import com.automotive.bootcamp.mediaplayer.domain.models.Audio
+import com.automotive.bootcamp.mediaplayer.data.localRepository.models.mapToAudio
+import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
+import com.automotive.bootcamp.mediaplayer.domain.models.wrapAudio
+import com.automotive.bootcamp.mediaplayer.domain.models.wrapPlaylist
 import com.automotive.bootcamp.mediaplayer.domain.useCases.AddRemoveFavourite
 import com.automotive.bootcamp.mediaplayer.domain.useCases.AddRemoveRecent
-import com.automotive.bootcamp.mediaplayer.domain.useCases.GetLocalMusic
+import com.automotive.bootcamp.mediaplayer.domain.useCases.RetrieveLocalMusic
 import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
+import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
+import com.automotive.bootcamp.mediaplayer.presentation.models.unwrap
 import kotlinx.coroutines.launch
 
 class LocalMusicViewModel(
-    private val getLocalMusic: GetLocalMusic,
+    private val retrieveLocalMusic: RetrieveLocalMusic,
     private val addRemoveFavourite: AddRemoveFavourite,
     private val addRemoveRecent: AddRemoveRecent
 ) : CoroutineViewModel() {
@@ -20,18 +25,9 @@ class LocalMusicViewModel(
 
     init {
         viewModelScope.launch {
-            val songs = getLocalMusic.getLocalSongs()
-            localMusicData.value = songs.map { songItem ->
-                AudioWrapper(
-                    audio = Audio(
-                        id = songItem.id,
-                        cover = songItem.cover,
-                        title = songItem.title,
-                        artist = songItem.artist,
-                        duration = songItem.duration,
-                        songURL = songItem.url
-                    )
-                )
+            val audioList = retrieveLocalMusic.retrieveLocalMusic()
+            localMusicData.value = audioList.map { audio ->
+                audio.mapToAudio().wrapAudio()
             }
         }
     }
@@ -44,5 +40,14 @@ class LocalMusicViewModel(
     fun setIsRecent(position: Int) {
         localMusicData.value =
             addRemoveRecent.addRemoveRecent(localMusicData.value, position)
+    }
+
+    fun getAudioList(): PlaylistWrapper? {
+        val list = localMusicData.value?.let {
+            it.map { wrapper ->
+                wrapper.unwrap()
+            }
+        }
+        return list?.let { Playlist("id", it).wrapPlaylist() }
     }
 }

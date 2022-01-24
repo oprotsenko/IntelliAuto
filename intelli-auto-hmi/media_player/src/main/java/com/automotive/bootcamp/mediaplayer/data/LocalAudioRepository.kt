@@ -7,7 +7,7 @@ import com.automotive.bootcamp.mediaplayer.domain.LocalMediaRepository
 class LocalAudioRepository(private val localMedia: LocalMedia):
     LocalMediaRepository {
 
-    override suspend fun getLocalSongs(): List<AudioItem> {
-       return localMedia.getLocalSongs()
+    override suspend fun retrieveLocalAudio(): List<AudioItem> {
+       return localMedia.retrieveLocalAudio()
     }
 }

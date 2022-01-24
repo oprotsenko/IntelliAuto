@@ -4,10 +4,14 @@ import android.os.Bundle
 import android.view.View
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
+import android.widget.WrapperListAdapter
 import com.automotive.bootcamp.common.base.BaseFragment
+import com.automotive.bootcamp.common.utils.PLAYLIST_BUNDLE
 import com.automotive.bootcamp.common.utils.POSITION_BUNDLE
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.FragmentNowPlayingBinding
+import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
+import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
 import com.automotive.bootcamp.mediaplayer.utils.enums.RepeatMode
 import com.automotive.bootcamp.mediaplayer.utils.extensions.timeToString
 import com.automotive.bootcamp.mediaplayer.viewModels.LocalMusicViewModel
@@ -19,17 +23,17 @@ class NowPlayingFragment :
     BaseFragment<FragmentNowPlayingBinding>(FragmentNowPlayingBinding::inflate) {
 
     private val nowPlayingViewModel: NowPlayingViewModel by viewModel()
-    private val localMusicViewModel: LocalMusicViewModel by sharedViewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        arguments?.getInt(POSITION_BUNDLE)?.let {
+        val playlist: PlaylistWrapper? = arguments?.getParcelable(PLAYLIST_BUNDLE)
+        val position = arguments?.getInt(POSITION_BUNDLE)
+        if (playlist != null && position != null) {
             nowPlayingViewModel.init(
-                localMusicViewModel.localMusicData.value,
-                it
+                playlist, position
             )
+            nowPlayingViewModel.playAudio()
         }
-        nowPlayingViewModel.playAudio()
     }
 
     override fun setListeners() {
@@ -69,6 +73,7 @@ class NowPlayingFragment :
                         nowPlayingViewModel.updateAudioProgress(progress)
                     }
                 }
+
                 override fun onStartTrackingTouch(seekBar: SeekBar) {}
                 override fun onStopTrackingTouch(seekBar: SeekBar) {}
             })
@@ -145,9 +150,10 @@ class NowPlayingFragment :
     }
 
     companion object {
-        fun newInstance(position: Int) =
+        fun newInstance(media: PlaylistWrapper, position: Int) =
             NowPlayingFragment().apply {
                 arguments = Bundle()
+                arguments?.putParcelable(PLAYLIST_BUNDLE, media)
                 arguments?.putInt(POSITION_BUNDLE, position)
             }
     }

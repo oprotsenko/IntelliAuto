@@ -29,7 +29,7 @@ class ResourcesAudioSource(
         R.raw.bob_moses_love_brand_new
     )
 
-    override suspend fun getLocalSongs(): List<AudioItem> {
+    override suspend fun retrieveLocalAudio(): List<AudioItem> {
         val list = mutableListOf<AudioItem>()
         media.forEach { res ->
             val audioPath = Uri.parse("android.resource://" + context.packageName + "/" + res)
