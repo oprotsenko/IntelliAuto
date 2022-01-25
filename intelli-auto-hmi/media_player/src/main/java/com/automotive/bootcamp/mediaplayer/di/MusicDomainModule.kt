@@ -8,8 +8,9 @@ val domainModule = module {
         GetLocalMusic(get(), get())
     }
     factory { RetrieveLocalMusic(get()) }
-    factory { MediaPlayerCommandRunner(audioPlayer = get()) }
+    factory { AudioPlaybackControl(get()) }
 
-    single { AddRemoveFavourite() }
-    single { AddRemoveRecent() }
+    single { AddRemoveFavourite(get(), get()) }
+    single { AddRemoveRecent(get(), get()) }
+    single { RetrieveRecentAudio(get()) }
 }

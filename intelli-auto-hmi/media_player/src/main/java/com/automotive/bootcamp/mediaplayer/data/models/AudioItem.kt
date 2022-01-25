@@ -3,7 +3,7 @@ package com.automotive.bootcamp.mediaplayer.data.models
 import android.graphics.Bitmap
 
 data class AudioItem(
-    val id: Long,
+    val id: Long = 0,
     val cover: Bitmap?,
     val title: String?,
     val artist: String?,

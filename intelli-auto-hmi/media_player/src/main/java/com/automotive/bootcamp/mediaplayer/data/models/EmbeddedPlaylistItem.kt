@@ -1,7 +1,6 @@
 package com.automotive.bootcamp.mediaplayer.data.models
 
-data class PlaylistItem(
-    val id: Long = 0,
+data class EmbeddedPlaylistItem(
+    val id: Long,
     val name: String,
-    val list: List<AudioItem>?
 )

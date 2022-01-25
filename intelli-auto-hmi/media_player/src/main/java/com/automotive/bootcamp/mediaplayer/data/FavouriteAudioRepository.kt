@@ -1,36 +1,50 @@
 package com.automotive.bootcamp.mediaplayer.data
 
-import com.automotive.bootcamp.common.utils.FAVOURITE_PLAYLIST_ID
+import com.automotive.bootcamp.common.utils.FAVOURITE_PLAYLIST_NAME
+import com.automotive.bootcamp.common.utils.RECENT_PLAYLIST_NAME
 import com.automotive.bootcamp.mediaplayer.data.cache.CacheAudioSource
-import com.automotive.bootcamp.mediaplayer.data.models.AudioItem
 import com.automotive.bootcamp.mediaplayer.data.models.AudioPlaylistItemCrossRef
+import com.automotive.bootcamp.mediaplayer.data.models.EmbeddedPlaylistItem
 import com.automotive.bootcamp.mediaplayer.data.models.PlaylistItem
+import com.automotive.bootcamp.mediaplayer.domain.extensions.mapToSpecialPlaylistItem
+import com.automotive.bootcamp.mediaplayer.domain.models.EmbeddedPlaylist
 
 class FavouriteAudioRepository(private val cacheAudioSource: CacheAudioSource) {
-//    suspend fun createPlaylist() {
-//        if (!cacheAudioSource.playlistExists(FAVOURITE_PLAYLIST_ID)) {
-//            val recentPlaylist = PlaylistItem(FAVOURITE_PLAYLIST_ID, FAVOURITE_PLAYLIST_NAME, null)
-//
-//            cacheAudioSource.insertPlaylist(recentPlaylist)
-//        }
-//    }
-
     suspend fun addAudio(aid: Long) {
-        val crossRef = AudioPlaylistItemCrossRef(aid, FAVOURITE_PLAYLIST_ID)
-        cacheAudioSource.insertAudioPlaylistCrossRef(crossRef)
+        val pid = cacheAudioSource.getEmbeddedPlaylist(FAVOURITE_PLAYLIST_NAME)?.id
+
+        pid?.let {
+            val crossRef = AudioPlaylistItemCrossRef(aid, it)
+            cacheAudioSource.insertAudioPlaylistCrossRef(crossRef)
+        }
     }
 
     suspend fun removeAudio(aid: Long) {
-        val crossRef = AudioPlaylistItemCrossRef(aid, FAVOURITE_PLAYLIST_ID)
+        val pid = cacheAudioSource.getEmbeddedPlaylist(FAVOURITE_PLAYLIST_NAME)?.id
 
-        cacheAudioSource.deleteAudioFromPlaylist(crossRef)
+        pid?.let {
+            val crossRef = AudioPlaylistItemCrossRef(aid, it)
+            cacheAudioSource.deleteAudioFromPlaylist(crossRef)
+        }
     }
 
     suspend fun getPlaylist(): PlaylistItem? {
-        return cacheAudioSource.getPlaylist(FAVOURITE_PLAYLIST_ID)
+        val pid = cacheAudioSource.getEmbeddedPlaylist(FAVOURITE_PLAYLIST_NAME)?.id
+
+        pid?.let {
+            return cacheAudioSource.getPlaylist(it)
+        }
+
+        return null
     }
 
-    suspend fun playlistExists(): Boolean {
-        return cacheAudioSource.playlistExists(FAVOURITE_PLAYLIST_ID)
+    suspend fun addEmbeddedPlaylist(pid: Long) {
+        val embeddedPlaylistItem = EmbeddedPlaylistItem(pid, FAVOURITE_PLAYLIST_NAME)
+
+        cacheAudioSource.insertEmbeddedPlaylist(embeddedPlaylistItem)
+    }
+
+    suspend fun getEmbeddedPlaylist(): EmbeddedPlaylistItem? {
+        return cacheAudioSource.getEmbeddedPlaylist(FAVOURITE_PLAYLIST_NAME)
     }
 }

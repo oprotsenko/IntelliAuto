@@ -5,7 +5,7 @@ import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.AudioCompletion
 import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.AudioRunningListener
 import com.automotive.bootcamp.mediaplayer.utils.AudioPlayer
 
-class MediaPlayerCommandRunner(private val audioPlayer: AudioPlayer) {
+class AudioPlaybackControl(private val audioPlayer: AudioPlayer) {
     fun setOnAudioCompletionListener(audioCompletionListener: AudioCompletionListener) =
         audioPlayer.setOnAudioCompletionListener(audioCompletionListener)
 
