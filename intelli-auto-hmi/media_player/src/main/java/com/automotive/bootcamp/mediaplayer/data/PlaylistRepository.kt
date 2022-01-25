@@ -21,7 +21,7 @@ class PlaylistRepository(private val cacheAudioSource: CacheAudioSource) {
         cacheAudioSource.deleteAudioFromPlaylist(crossRef)
     }
 
-    suspend fun getPlaylistById(pid: Long): PlaylistItem? {
+    suspend fun getPlaylist(pid: Long): PlaylistItem? {
         return cacheAudioSource.getPlaylist(pid)
     }
 

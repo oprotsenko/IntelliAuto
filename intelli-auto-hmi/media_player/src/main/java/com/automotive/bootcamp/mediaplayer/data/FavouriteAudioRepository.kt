@@ -15,10 +15,8 @@ class FavouriteAudioRepository(private val cacheAudioSource: CacheAudioSource) {
 //        }
 //    }
 
-    suspend fun addAudio(audio: AudioItem) {
-        cacheAudioSource.insertAudio(audio)
-
-        val crossRef = AudioPlaylistItemCrossRef(audio.id, FAVOURITE_PLAYLIST_ID)
+    suspend fun addAudio(aid: Long) {
+        val crossRef = AudioPlaylistItemCrossRef(aid, FAVOURITE_PLAYLIST_ID)
         cacheAudioSource.insertAudioPlaylistCrossRef(crossRef)
     }
 
@@ -32,7 +30,7 @@ class FavouriteAudioRepository(private val cacheAudioSource: CacheAudioSource) {
         return cacheAudioSource.getPlaylist(FAVOURITE_PLAYLIST_ID)
     }
 
-    suspend fun exists(): Boolean {
+    suspend fun playlistExists(): Boolean {
         return cacheAudioSource.playlistExists(FAVOURITE_PLAYLIST_ID)
     }
 }

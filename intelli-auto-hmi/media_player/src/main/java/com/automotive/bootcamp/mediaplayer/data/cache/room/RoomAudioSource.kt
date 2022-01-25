@@ -31,14 +31,14 @@ class RoomAudioSource(context: Context) : CacheAudioSource {
         return dao.insertPlaylist(playlistEntity)
     }
 
+    override suspend fun deletePlaylist(pid: Long) {
+        dao.deletePlaylist(pid)
+    }
+
     override suspend fun insertAudioPlaylistCrossRef(crossRef: AudioPlaylistItemCrossRef) {
         val audioPlaylistCrossRefEntity = crossRef.mapToEntity()
 
         dao.insertAudioPlaylistCrossRef(audioPlaylistCrossRefEntity)
-    }
-
-    override suspend fun deletePlaylist(pid: Long) {
-        dao.deletePlaylist(pid)
     }
 
     override suspend fun deleteAudioFromPlaylist(crossRef: AudioPlaylistItemCrossRef) {

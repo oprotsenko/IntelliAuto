@@ -15,16 +15,13 @@ class RecentAudioRepository(private val cacheAudioSource: CacheAudioSource) {
 //        }
 //    }
 
-    suspend fun addAudio(audio: AudioItem) {
-        cacheAudioSource.insertAudio(audio)
-
-        val crossRef = AudioPlaylistItemCrossRef(audio.id, RECENT_PLAYLIST_ID)
+    suspend fun addAudio(aid: Long) {
+        val crossRef = AudioPlaylistItemCrossRef(aid, RECENT_PLAYLIST_ID)
         cacheAudioSource.insertAudioPlaylistCrossRef(crossRef)
     }
 
     suspend fun removeAudio(aid: Long) {
         val crossRef = AudioPlaylistItemCrossRef(aid, RECENT_PLAYLIST_ID)
-
         cacheAudioSource.deleteAudioFromPlaylist(crossRef)
     }
 
@@ -32,7 +29,7 @@ class RecentAudioRepository(private val cacheAudioSource: CacheAudioSource) {
         return cacheAudioSource.getPlaylist(RECENT_PLAYLIST_ID)
     }
 
-    suspend fun exists(): Boolean {
+    suspend fun playlistExists(): Boolean {
         return cacheAudioSource.playlistExists(RECENT_PLAYLIST_ID)
     }
 }

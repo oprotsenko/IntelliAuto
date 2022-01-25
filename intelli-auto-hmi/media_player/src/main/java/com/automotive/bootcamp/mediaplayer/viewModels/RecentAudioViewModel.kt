@@ -3,6 +3,8 @@ package com.automotive.bootcamp.mediaplayer.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.automotive.bootcamp.common.base.CoroutineViewModel
+import com.automotive.bootcamp.common.utils.RECENT_PLAYLIST_ID
+import com.automotive.bootcamp.common.utils.RECENT_PLAYLIST_NAME
 import com.automotive.bootcamp.mediaplayer.data.extensions.mapToAudio
 import com.automotive.bootcamp.mediaplayer.domain.extensions.wrapAudio
 import com.automotive.bootcamp.mediaplayer.domain.extensions.wrapPlaylist
@@ -50,6 +52,6 @@ class RecentAudioViewModel(
                 wrapper.unwrap()
             }
         }
-        return list?.let { Playlist(1, "name", it).wrapPlaylist() }
+        return list?.let { Playlist(RECENT_PLAYLIST_ID, RECENT_PLAYLIST_NAME, it).wrapPlaylist() }
     }
 }

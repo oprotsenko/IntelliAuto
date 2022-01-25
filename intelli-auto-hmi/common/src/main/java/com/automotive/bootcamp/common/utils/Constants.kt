@@ -10,3 +10,4 @@ const val FAVOURITE_PLAYLIST_ID = 1L
 const val FAVOURITE_PLAYLIST_NAME = "favourite"
 const val RECENT_PLAYLIST_ID = 2L
 const val RECENT_PLAYLIST_NAME = "recent"
+const val RECENT_PLAYLIST_CAPACITY = 20
