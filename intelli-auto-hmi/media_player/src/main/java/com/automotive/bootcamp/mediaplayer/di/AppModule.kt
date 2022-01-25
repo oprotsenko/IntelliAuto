@@ -19,7 +19,7 @@ val appModule = module {
     viewModel { FavouriteMusicViewModel(get(), get(), get(), get(), get()) }
     viewModel { OnlineMusicViewModel(get(), get(), get()) }
     viewModel { PlaylistsViewModel(get(), get()) }
-    viewModel { NowPlayingViewModel(playerCommandRunner = get()) }
+    viewModel { NowPlayingViewModel(get()) }
     viewModel { RecentAudioViewModel(get(), get(), get()) }
 
     single { provideDefaultAudioPlayer(get()) }
