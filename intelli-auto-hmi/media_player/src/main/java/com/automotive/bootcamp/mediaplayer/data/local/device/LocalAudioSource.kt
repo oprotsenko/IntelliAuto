@@ -6,7 +6,7 @@ import android.media.MediaMetadataRetriever
 import android.provider.MediaStore
 
 import com.automotive.bootcamp.mediaplayer.data.local.LocalMedia
-import com.automotive.bootcamp.mediaplayer.data.local.models.AudioItem
+import com.automotive.bootcamp.mediaplayer.data.models.AudioItem
 
 class LocalAudioSource(
     private val contentResolver: ContentResolver,

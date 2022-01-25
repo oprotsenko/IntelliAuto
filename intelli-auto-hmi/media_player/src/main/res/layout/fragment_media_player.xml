@@ -93,7 +93,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/launchMediaPlayer"
+        android:id="@+id/mediaPlayerServiceContainer"
         android:name="com.automotive.bootcamp.mediaplayer.presentation.LocalMusicFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -3,7 +3,6 @@ package com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.automotive.bootcamp.mediaplayer.domain.models.Audio
 import com.automotive.bootcamp.mediaplayer.domain.models.wrapAudio
 import com.automotive.bootcamp.mediaplayer.domain.useCases.*
 import com.automotive.bootcamp.mediaplayer.utils.enums.RepeatMode
@@ -64,7 +63,7 @@ class NowPlayingViewModel(private val playerCommandRunner: MediaPlayerCommandRun
 
     fun playAudio() {
         _currentAudio.value?.let {
-            playerCommandRunner.playAudio(it.audio.songURL)
+            playerCommandRunner.playAudio(it.audio.url)
             _isPlaying.value = true
         }
     }
@@ -82,7 +81,7 @@ class NowPlayingViewModel(private val playerCommandRunner: MediaPlayerCommandRun
         }
 
         val media = audioListData[position]
-        playerCommandRunner.nextAudio(media.audio.songURL)
+        playerCommandRunner.nextAudio(media.audio.url)
         _currentAudio.value = media
         _isPlaying.value = true
     }
@@ -95,7 +94,7 @@ class NowPlayingViewModel(private val playerCommandRunner: MediaPlayerCommandRun
         }
 
         val media = audioListData[position]
-        playerCommandRunner.previousAudio(media.audio.songURL)
+        playerCommandRunner.previousAudio(media.audio.url)
         _currentAudio.value = media
         _isPlaying.value = true
     }

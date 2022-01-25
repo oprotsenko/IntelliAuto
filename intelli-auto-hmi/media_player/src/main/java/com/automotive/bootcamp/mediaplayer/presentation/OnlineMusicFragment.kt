@@ -1,4 +1,4 @@
-package com.automotive.bootcamp.mediaplayer.presentation.models
+package com.automotive.bootcamp.mediaplayer.presentation
 
 import android.os.Bundle
 import android.view.View
@@ -8,18 +8,15 @@ import com.automotive.bootcamp.common.utils.AutoFitGridLayoutManager
 import com.automotive.bootcamp.common.utils.GRID_RECYCLE_COLUMN_WIDTH
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.FragmentAudiosListBinding
-import com.automotive.bootcamp.mediaplayer.presentation.MediaItemClickListener
-import com.automotive.bootcamp.mediaplayer.presentation.NowPlayingFragment
-import com.automotive.bootcamp.mediaplayer.presentation.OnItemClickListener
 import com.automotive.bootcamp.mediaplayer.presentation.adapters.AudioRecyclerViewAdapter
-import com.automotive.bootcamp.mediaplayer.viewModels.FavouriteMusicViewModel
+import com.automotive.bootcamp.mediaplayer.viewModels.OnlineMusicViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class FavouriteMusicFragment :
+class OnlineMusicFragment :
     BaseFragment<FragmentAudiosListBinding>(FragmentAudiosListBinding::inflate),
     MediaItemClickListener, OnItemClickListener {
 
-    private val viewModel: FavouriteMusicViewModel by viewModel()
+    private val viewModel: OnlineMusicViewModel by viewModel()
     private val audioAdapter: AudioRecyclerViewAdapter by lazy {
         AudioRecyclerViewAdapter(
             onMediaItemClickListener = this,
@@ -33,7 +30,7 @@ class FavouriteMusicFragment :
     }
 
     override fun setObservers() {
-        viewModel.favouriteMusicData.observe(viewLifecycleOwner) {
+        viewModel.localMusicData.observe(viewLifecycleOwner) {
             audioAdapter.submitList(it)
         }
     }
@@ -46,7 +43,7 @@ class FavouriteMusicFragment :
         val popupMenu = PopupMenu(requireContext(), view)
         popupMenu.apply {
             inflate(R.menu.audio_popup_menu)
-            if (viewModel.favouriteMusicData.value?.get(position)?.isRecent == false) {
+            if (viewModel.localMusicData.value?.get(position)?.isRecent == false) {
                 menu.findItem(R.id.audioRemoveRecent).apply {
                     isVisible = false
                 }

@@ -6,3 +6,5 @@ const val POSITION_BUNDLE = "position"
 const val DATABASE_NAME = "audio_db"
 const val DATABASE_VERSION = 1
 const val PLAYLIST_BUNDLE = "playlist"
+const val FRAGMENT_RESULT = "fragment result"
+const val PLAYLIST_NAME = "playlist name"

@@ -10,5 +10,8 @@ data class Playlist(
     val list: List<Audio>
 ) : Parcelable
 
-fun Playlist.wrapPlaylist() : PlaylistWrapper =
-    PlaylistWrapper(playlist = this)
+fun Playlist.wrapPlaylist(): PlaylistWrapper =
+    PlaylistWrapper(
+        playlistName = this.id,
+        playlist = this
+    )

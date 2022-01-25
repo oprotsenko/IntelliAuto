@@ -12,7 +12,7 @@ data class Audio(
     val title: String?,
     val artist: String?,
     val duration: String?,
-    val songURL: String
+    val url: String
 ) : Parcelable
 
 fun Audio.wrapAudio() : AudioWrapper =

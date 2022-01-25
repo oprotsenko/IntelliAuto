@@ -1,16 +1,8 @@
 package com.automotive.bootcamp.mediaplayer.viewModels
 
-import android.text.Editable
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.automotive.bootcamp.mediaplayer.data.models.mapToAudio
-import com.automotive.bootcamp.mediaplayer.data.models.mapToEntity
-import com.automotive.bootcamp.mediaplayer.data.storage.StorageMedia
-import com.automotive.bootcamp.mediaplayer.data.storage.room.entities.PlaylistEntity
-import com.automotive.bootcamp.mediaplayer.data.storage.room.entities.relations.AudioPlaylistCrossRef
 import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
-import com.automotive.bootcamp.mediaplayer.domain.models.wrapAudio
 import com.automotive.bootcamp.mediaplayer.domain.models.wrapPlaylist
 import com.automotive.bootcamp.mediaplayer.domain.useCases.AddRemoveFavourite
 import com.automotive.bootcamp.mediaplayer.domain.useCases.AddRemoveRecent
@@ -18,11 +10,9 @@ import com.automotive.bootcamp.mediaplayer.domain.useCases.RetrieveLocalMusic
 import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
 import com.automotive.bootcamp.mediaplayer.presentation.models.unwrap
-import kotlinx.coroutines.launch
 
-class LocalMusicViewModel(
+class OnlineMusicViewModel(
     private val retrieveLocalMusic: RetrieveLocalMusic,
-    private val storageAudioRepository: StorageMedia,
     private val addRemoveFavourite: AddRemoveFavourite,
     private val addRemoveRecent: AddRemoveRecent
 ) : ViewModel() {
@@ -30,21 +20,12 @@ class LocalMusicViewModel(
     val localMusicData by lazy { MutableLiveData<List<AudioWrapper>>() }
 
     init {
-        viewModelScope.launch {
-            val audioList = retrieveLocalMusic.retrieveLocalMusic()
-            localMusicData.value = audioList.map { audio ->
-                audio.mapToAudio().wrapAudio()
-            }
-
-//            storageAudioRepository.insertAudios(audioList.map { audioItem ->
-//                audioItem.mapToEntity()
-//            })
-//            storageAudioRepository.insertPlaylist(PlaylistEntity(
-//                pid = 0,
-//                name = "local",
-//                type = ""
-//            ))
-//            storageAudioRepository.insertAudioPlaylistCrossRef(AudioPlaylistCrossRef(2131689472,1))
+        localMusicData.value = mutableListOf()
+//        viewModelScope.launch {
+//            val audioList = retrieveLocalMusic.retrieveLocalMusic()
+//            localMusicData.value = audioList.map { audio ->
+//                audio.mapToAudio().wrapAudio()
+//            }
 
 //            val audioEntity = AudioEntity(title = "title", artist =  "artist", duration =  "3", songURL =  "songUrl")
 //
@@ -83,7 +64,7 @@ class LocalMusicViewModel(
 //            val result = getLocalMusic.getAllPlaylistsWithAudios()
 //
 //            Log.d("LocalMusicViewModel", result.toString())
-        }
+//        }
     }
 
     fun setIsFavourite(position: Int) {
@@ -103,11 +84,5 @@ class LocalMusicViewModel(
             }
         }
         return list?.let { Playlist("id", it).wrapPlaylist() }
-    }
-
-    fun createPlaylist(playlistName: String) {
-        viewModelScope.launch {
-            storageAudioRepository.insertPlaylist(PlaylistEntity(0, playlistName, ""))
-        }
     }
 }
