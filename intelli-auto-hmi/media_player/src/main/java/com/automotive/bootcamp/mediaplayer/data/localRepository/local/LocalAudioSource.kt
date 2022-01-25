@@ -4,10 +4,9 @@ import android.content.ContentResolver
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.provider.MediaStore
-import android.util.Log
 
 import com.automotive.bootcamp.mediaplayer.data.localRepository.LocalMedia
-import com.automotive.bootcamp.mediaplayer.data.localRepository.models.AudioItem
+import com.automotive.bootcamp.mediaplayer.data.models.AudioItem
 
 class LocalAudioSource(
     private val contentResolver: ContentResolver,

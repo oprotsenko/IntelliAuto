@@ -1,18 +1,17 @@
 package com.automotive.bootcamp.mediaplayer.data.cache
 
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.AudioEntity
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.PlaylistEntity
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.relations.AudioPlaylistCrossRef
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.relations.PlaylistWithAudios
+import com.automotive.bootcamp.mediaplayer.data.models.AudioItem
+import com.automotive.bootcamp.mediaplayer.data.models.AudioPlaylistItemCrossRef
+import com.automotive.bootcamp.mediaplayer.data.models.PlaylistItem
 
 interface CacheAudioSource {
-    suspend fun insertAudio(audio: AudioEntity)
-    suspend fun insertAudios(audios: List<AudioEntity>)
-    suspend fun insertPlaylist(playlist: PlaylistEntity)
-    suspend fun insertAudioPlaylistCrossRef(crossRef: AudioPlaylistCrossRef)
-    suspend fun deletePlaylist(pid: Int)
-    suspend fun deleteAudioFromPlaylist(aid:Int, pid: Int)
-    suspend fun getPlaylistWithAudiosById(pid: Int): List<PlaylistWithAudios>
-    suspend fun getPlaylistsWithAudiosByType(type: String): List<PlaylistWithAudios>
-    suspend fun getAllPlaylistsWithAudios(): List<PlaylistWithAudios>
+    suspend fun insertAudio(audio: AudioItem):Long
+    suspend fun insertAudios(audios: List<AudioItem>):List<Long>
+    suspend fun insertPlaylist(playlist: PlaylistItem):Long
+    suspend fun insertAudioPlaylistCrossRef(crossRef: AudioPlaylistItemCrossRef)
+    suspend fun deletePlaylist(pid: Long)
+    suspend fun deleteAudioFromPlaylist(crossRef: AudioPlaylistItemCrossRef)
+    suspend fun getPlaylist(pid: Long): PlaylistItem?
+    suspend fun getAllPlaylists(): List<PlaylistItem>?
+    suspend fun playlistExists(pid: Long): Boolean
 }

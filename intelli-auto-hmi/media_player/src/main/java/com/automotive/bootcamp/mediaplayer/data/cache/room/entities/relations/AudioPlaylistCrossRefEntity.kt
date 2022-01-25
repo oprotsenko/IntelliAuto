@@ -13,7 +13,7 @@ import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.PlaylistEnti
             parentColumns = ["pid"],
             childColumns = ["pid"],
             onDelete = CASCADE)])
-data class AudioPlaylistCrossRef(
-    val aid:Int,
-    val pid:Int
+data class AudioPlaylistCrossRefEntity(
+    val aid:Long,
+    val pid:Long
 )

@@ -9,41 +9,43 @@ import com.automotive.bootcamp.mediaplayer.domain.extensions.wrapPlaylist
 import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
 import com.automotive.bootcamp.mediaplayer.domain.useCases.AddRemoveFavourite
 import com.automotive.bootcamp.mediaplayer.domain.useCases.AddRemoveRecent
-import com.automotive.bootcamp.mediaplayer.domain.useCases.RetrieveLocalMusic
+import com.automotive.bootcamp.mediaplayer.domain.useCases.RetrieveRecentAudio
 import com.automotive.bootcamp.mediaplayer.presentation.extensions.unwrap
 import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
 import kotlinx.coroutines.launch
 
-class LocalMusicViewModel(
-    private val retrieveLocalMusic: RetrieveLocalMusic,
+class RecentAudioViewModel(
+    private val retrieveRecentAudio: RetrieveRecentAudio,
     private val addRemoveFavourite: AddRemoveFavourite,
     private val addRemoveRecent: AddRemoveRecent
 ) : CoroutineViewModel() {
-
-    val localMusicData by lazy { MutableLiveData<List<AudioWrapper>>() }
+    val recentAudioData by lazy { MutableLiveData<List<AudioWrapper>>() }
 
     init {
         viewModelScope.launch {
-            val audioList = retrieveLocalMusic.retrieveLocalMusic()
-            localMusicData.value = audioList.map { audio ->
-                audio.mapToAudio().wrapAudio()
+            val audioList = retrieveRecentAudio.retrieveRecentAudio()
+
+            if (audioList != null) {
+                recentAudioData.value = audioList.map { audio ->
+                    audio.mapToAudio().wrapAudio()
+                }
             }
         }
     }
 
     fun setIsFavourite(position: Int) {
-        localMusicData.value =
-            addRemoveFavourite.addRemoveFavourite(localMusicData.value, position)
+        recentAudioData.value =
+            addRemoveFavourite.addRemoveFavourite(recentAudioData.value, position)
     }
 
     fun setIsRecent(position: Int) {
-        localMusicData.value =
-            addRemoveRecent.addRemoveRecent(localMusicData.value, position)
+        recentAudioData.value =
+            addRemoveRecent.addRemoveRecent(recentAudioData.value, position)
     }
 
     fun getAudioList(): PlaylistWrapper? {
-        val list = localMusicData.value?.let {
+        val list = recentAudioData.value?.let {
             it.map { wrapper ->
                 wrapper.unwrap()
             }

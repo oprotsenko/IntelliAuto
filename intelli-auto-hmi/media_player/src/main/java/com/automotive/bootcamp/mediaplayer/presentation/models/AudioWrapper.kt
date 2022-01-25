@@ -7,6 +7,3 @@ data class AudioWrapper(
     var isFavourite: Boolean = false,
     var isRecent: Boolean = true
 )
-
-fun AudioWrapper.unwrap() : Audio =
-    this.audio

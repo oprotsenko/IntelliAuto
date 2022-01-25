@@ -26,5 +26,6 @@ val appModule = module {
 
 fun provideDefaultAudioPlayer(context: Context): AudioPlayer =
     DefaultAudioPlayer(context)
+
 fun getContentResolver(context: Context): ContentResolver =
     context.contentResolver

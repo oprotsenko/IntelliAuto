@@ -3,13 +3,10 @@ package com.automotive.bootcamp.mediaplayer.data.localRepository.resources
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
-import android.media.MediaPlayer
 import android.net.Uri
-import android.util.Log
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.data.localRepository.LocalMedia
-import com.automotive.bootcamp.mediaplayer.data.localRepository.models.AudioItem
-import kotlin.system.measureNanoTime
+import com.automotive.bootcamp.mediaplayer.data.models.AudioItem
 
 class ResourcesAudioSource(
     private val retriever: MediaMetadataRetriever,
