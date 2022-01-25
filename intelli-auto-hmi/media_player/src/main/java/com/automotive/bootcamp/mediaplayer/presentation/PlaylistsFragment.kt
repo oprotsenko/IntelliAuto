@@ -1,7 +1,6 @@
 package com.automotive.bootcamp.mediaplayer.presentation
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import com.automotive.bootcamp.common.base.BaseFragment
@@ -9,19 +8,19 @@ import com.automotive.bootcamp.common.utils.AutoFitGridLayoutManager
 import com.automotive.bootcamp.common.utils.GRID_RECYCLE_COLUMN_WIDTH
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.FragmentAudiosListBinding
-import com.automotive.bootcamp.mediaplayer.presentation.adapters.AudioRecyclerViewAdapter
-import com.automotive.bootcamp.mediaplayer.viewModels.RecentAudioViewModel
+import com.automotive.bootcamp.mediaplayer.presentation.adapters.PlaylistRecyclerViewAdapter
+import com.automotive.bootcamp.mediaplayer.viewModels.PlaylistsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class RecentAudioFragment:
+class PlaylistsFragment :
     BaseFragment<FragmentAudiosListBinding>(FragmentAudiosListBinding::inflate),
     MediaItemClickListener, OnItemClickListener {
 
-    private val viewModel: RecentAudioViewModel by viewModel()
-    private val audioAdapter: AudioRecyclerViewAdapter by lazy {
-        AudioRecyclerViewAdapter(
+    private val viewModel: PlaylistsViewModel by viewModel()
+    private val audioAdapter: PlaylistRecyclerViewAdapter by lazy {
+        PlaylistRecyclerViewAdapter(
             onMediaItemClickListener = this,
-            onItemClickListener = this
+            onItemClickListener = this,
         )
     }
 
@@ -31,40 +30,26 @@ class RecentAudioFragment:
     }
 
     override fun setObservers() {
-        viewModel.recentAudioData.observe(viewLifecycleOwner) {
+        viewModel.playlistsData.observe(viewLifecycleOwner) {
             audioAdapter.submitList(it)
         }
     }
 
     override fun onMediaClick(position: Int) {
-        playAudio(position)
+        openPlaylist(position)
     }
 
     override fun onItemClick(view: View, position: Int) {
         val popupMenu = PopupMenu(requireContext(), view)
         popupMenu.apply {
-            inflate(R.menu.audio_popup_menu)
-            if (viewModel.recentAudioData.value?.get(position)?.isRecent == false) {
-                menu.findItem(R.id.audioRemoveRecent).apply {
-                    isVisible = false
-                }
-            }
+            inflate(R.menu.playlist_popup_menu)
             setOnMenuItemClickListener {
                 when (it.itemId) {
-                    R.id.audioPlay -> {
-                        playAudio(position)
-                        return@setOnMenuItemClickListener true
-                    }
-                    R.id.audioAddToPlaylist -> {
+                    R.id.playlistPlay -> {
                         return@setOnMenuItemClickListener false
                     }
-                    R.id.audioRemoveRecent -> {
-                        viewModel.setIsRecent(position)
-                        return@setOnMenuItemClickListener true
-                    }
-                    R.id.audioAddRemoveFavourite -> {
-                        viewModel.setIsFavourite(position)
-                        return@setOnMenuItemClickListener true
+                    R.id.playlistRemovePlaylist -> {
+                        return@setOnMenuItemClickListener false
                     }
                     else -> {
                         return@setOnMenuItemClickListener false
@@ -75,17 +60,8 @@ class RecentAudioFragment:
         }
     }
 
-    private fun playAudio(position: Int) {
-        val playlist = viewModel.getAudioList()
-        if (playlist != null) {
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(
-                    R.id.fullScreenContainer,
-                    NowPlayingFragment.newInstance(playlist, position)
-                )
-                .addToBackStack(null)
-                .commit()
-        }
+    private fun openPlaylist(position: Int) {
+        //todo
     }
 
     private fun initRecyclerView() {

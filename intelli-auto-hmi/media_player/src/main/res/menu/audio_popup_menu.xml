@@ -8,8 +8,8 @@
         android:title="@string/pop_up_menu_add_to_playlist">
         <menu>
             <item
-                android:id="@+id/audioPlaylists"
-                android:title="@string/playlists"/>
+                android:id="@+id/audioCreatePlaylist"
+                android:title="@string/pop_up_menu_create_playlist"/>
         </menu>
     </item>
     <item

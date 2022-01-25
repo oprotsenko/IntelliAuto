@@ -1,11 +1,11 @@
-package com.automotive.bootcamp.mediaplayer.data.localRepository.resources
+package com.automotive.bootcamp.mediaplayer.data.local.resources
 
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import com.automotive.bootcamp.mediaplayer.R
-import com.automotive.bootcamp.mediaplayer.data.localRepository.LocalMedia
+import com.automotive.bootcamp.mediaplayer.data.local.LocalMedia
 import com.automotive.bootcamp.mediaplayer.data.models.AudioItem
 
 class ResourcesAudioSource(
@@ -38,7 +38,7 @@ class ResourcesAudioSource(
             val title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
             val artist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
             val duration = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-            list.add(AudioItem(res.toLong(), image, title,artist, duration, audioPath.toString()))
+            list.add(AudioItem(res.toLong(), image, title, artist, duration, audioPath.toString()))
         }
         return list
     }

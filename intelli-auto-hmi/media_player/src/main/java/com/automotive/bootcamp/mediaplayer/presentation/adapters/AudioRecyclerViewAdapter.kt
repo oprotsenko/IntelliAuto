@@ -16,17 +16,17 @@ class AudioRecyclerViewAdapter(
     private val onMediaItemClickListener: MediaItemClickListener,
     private val onItemClickListener: OnItemClickListener
 ) :
-    ListAdapter<AudioWrapper, AudioRecyclerViewAdapter.SongViewHolder>(SongDiffCallBack()) {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongViewHolder {
+    ListAdapter<AudioWrapper, AudioRecyclerViewAdapter.AudioViewHolder>(AudioDiffCallBack()) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AudioViewHolder {
         val view: View = LayoutInflater.from(parent.context).inflate(
             R.layout.item_audio,
             parent,
             false
         )
-        return SongViewHolder(ItemAudioBinding.bind(view))
+        return AudioViewHolder(ItemAudioBinding.bind(view))
     }
 
-    override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: AudioViewHolder, position: Int) {
         with(holder) {
             bind(getItem(position))
             root.setOnClickListener {
@@ -38,7 +38,7 @@ class AudioRecyclerViewAdapter(
         }
     }
 
-    class SongViewHolder(private val binding: ItemAudioBinding) :
+    class AudioViewHolder(private val binding: ItemAudioBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         val root = binding.root
@@ -56,7 +56,7 @@ class AudioRecyclerViewAdapter(
         }
     }
 
-    class SongDiffCallBack : DiffUtil.ItemCallback<AudioWrapper>() {
+    class AudioDiffCallBack : DiffUtil.ItemCallback<AudioWrapper>() {
         override fun areItemsTheSame(oldItem: AudioWrapper, newItem: AudioWrapper): Boolean =
             oldItem.audio.id == newItem.audio.id
 

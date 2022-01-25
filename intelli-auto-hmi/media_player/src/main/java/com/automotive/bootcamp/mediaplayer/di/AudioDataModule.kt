@@ -5,10 +5,9 @@ import android.media.MediaMetadataRetriever
 import com.automotive.bootcamp.mediaplayer.data.*
 import com.automotive.bootcamp.mediaplayer.data.cache.CacheAudioSource
 import com.automotive.bootcamp.mediaplayer.data.cache.room.RoomAudioSource
-import com.automotive.bootcamp.mediaplayer.data.localRepository.LocalMedia
-import com.automotive.bootcamp.mediaplayer.data.localRepository.resources.ResourcesAudioSource
+import com.automotive.bootcamp.mediaplayer.data.local.LocalMedia
+import com.automotive.bootcamp.mediaplayer.data.local.resources.ResourcesAudioSource
 import com.automotive.bootcamp.mediaplayer.domain.LocalMediaRepository
-import okhttp3.Cache
 import org.koin.dsl.module
 
 val dataModule = module {
@@ -19,7 +18,6 @@ val dataModule = module {
     single { provideRecentAudioRepository(get()) }
     single { provideFavouriteAudioRepository(get()) }
     single { providePlaylistRepository(get()) }
-    single { MediaMetadataRetriever() }
     single { ResourcesAudioSource(get(), get()) }
 }
 

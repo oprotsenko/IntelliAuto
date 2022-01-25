@@ -4,7 +4,7 @@ import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.PlaylistEnti
 import com.automotive.bootcamp.mediaplayer.data.models.PlaylistItem
 import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
 
-fun PlaylistItem.mapToPlaylist() = Playlist (
+fun PlaylistItem.mapToPlaylist() = Playlist(
     id = this.id,
     name = this.name,
     list = this.list?.map {
