@@ -1,15 +1,22 @@
 package com.automotive.bootcamp.mediaplayer.presentation
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
+import android.widget.EditText
+import android.widget.LinearLayout
 import androidx.appcompat.widget.PopupMenu
 import com.automotive.bootcamp.common.base.BaseFragment
 import com.automotive.bootcamp.common.utils.AutoFitGridLayoutManager
+import com.automotive.bootcamp.common.utils.FRAGMENT_RESULT
 import com.automotive.bootcamp.common.utils.GRID_RECYCLE_COLUMN_WIDTH
+import com.automotive.bootcamp.common.utils.PLAYLIST_NAME
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.FragmentAudiosListBinding
 import com.automotive.bootcamp.mediaplayer.presentation.adapters.AudioRecyclerViewAdapter
 import com.automotive.bootcamp.mediaplayer.viewModels.LocalMusicViewModel
+import com.google.android.material.textfield.TextInputLayout
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class LocalMusicFragment :
@@ -33,6 +40,11 @@ class LocalMusicFragment :
         viewModel.localMusicData.observe(viewLifecycleOwner) {
             audioAdapter.submitList(it)
         }
+        parentFragmentManager.setFragmentResultListener(
+            FRAGMENT_RESULT, viewLifecycleOwner, { _, bundle ->
+            val result = bundle.getString(PLAYLIST_NAME)
+            result?.let { viewModel.createPlaylist(result) }
+        })
     }
 
     override fun onMediaClick(position: Int) {
@@ -42,7 +54,7 @@ class LocalMusicFragment :
     override fun onItemClick(view: View, position: Int) {
         val popupMenu = PopupMenu(requireContext(), view)
         popupMenu.apply {
-            inflate(R.menu.audio_pop_up_menu)
+            inflate(R.menu.audio_popup_menu)
             if (viewModel.localMusicData.value?.get(position)?.isRecent == false) {
                 menu.findItem(R.id.audioRemoveRecent).apply {
                     isVisible = false
@@ -55,7 +67,14 @@ class LocalMusicFragment :
                         return@setOnMenuItemClickListener true
                     }
                     R.id.audioAddToPlaylist -> {
-                        return@setOnMenuItemClickListener false
+                        return@setOnMenuItemClickListener true
+                    }
+                    R.id.audioCreatePlaylist -> {
+                        val enterNameDialog = EnterNameDialog()
+                        enterNameDialog.show(
+                            parentFragmentManager, null
+                        )
+                        return@setOnMenuItemClickListener true
                     }
                     R.id.audioRemoveRecent -> {
                         viewModel.setIsRecent(position)

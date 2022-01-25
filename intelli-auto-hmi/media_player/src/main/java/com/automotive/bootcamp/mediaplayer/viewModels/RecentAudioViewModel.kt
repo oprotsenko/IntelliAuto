@@ -37,13 +37,17 @@ class RecentAudioViewModel(
     }
 
     fun setIsFavourite(position: Int) {
-        recentAudioData.value =
-            addRemoveFavourite.addRemoveFavourite(recentAudioData.value, position)
+        viewModelScope.launch {
+            recentAudioData.value =
+                addRemoveFavourite.addRemoveFavourite(recentAudioData.value, position)
+        }
     }
 
     fun setIsRecent(position: Int) {
-        recentAudioData.value =
-            addRemoveRecent.addRemoveRecent(recentAudioData.value, position)
+        viewModelScope.launch {
+            recentAudioData.value =
+                addRemoveRecent.addRemoveRecent(recentAudioData.value, position)
+        }
     }
 
     fun getAudioList(): PlaylistWrapper? {

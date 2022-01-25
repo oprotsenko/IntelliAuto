@@ -1,7 +1,6 @@
 package com.automotive.bootcamp.mediaplayer.presentation
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import com.automotive.bootcamp.common.base.BaseFragment
@@ -10,14 +9,14 @@ import com.automotive.bootcamp.common.utils.GRID_RECYCLE_COLUMN_WIDTH
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.FragmentAudiosListBinding
 import com.automotive.bootcamp.mediaplayer.presentation.adapters.AudioRecyclerViewAdapter
-import com.automotive.bootcamp.mediaplayer.viewModels.RecentAudioViewModel
+import com.automotive.bootcamp.mediaplayer.viewModels.OnlineMusicViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class RecentAudioFragment:
+class OnlineMusicFragment :
     BaseFragment<FragmentAudiosListBinding>(FragmentAudiosListBinding::inflate),
     MediaItemClickListener, OnItemClickListener {
 
-    private val viewModel: RecentAudioViewModel by viewModel()
+    private val viewModel: OnlineMusicViewModel by viewModel()
     private val audioAdapter: AudioRecyclerViewAdapter by lazy {
         AudioRecyclerViewAdapter(
             onMediaItemClickListener = this,
@@ -31,7 +30,7 @@ class RecentAudioFragment:
     }
 
     override fun setObservers() {
-        viewModel.recentAudioData.observe(viewLifecycleOwner) {
+        viewModel.localMusicData.observe(viewLifecycleOwner) {
             audioAdapter.submitList(it)
         }
     }
@@ -44,7 +43,7 @@ class RecentAudioFragment:
         val popupMenu = PopupMenu(requireContext(), view)
         popupMenu.apply {
             inflate(R.menu.audio_popup_menu)
-            if (viewModel.recentAudioData.value?.get(position)?.isRecent == false) {
+            if (viewModel.localMusicData.value?.get(position)?.isRecent == false) {
                 menu.findItem(R.id.audioRemoveRecent).apply {
                     isVisible = false
                 }

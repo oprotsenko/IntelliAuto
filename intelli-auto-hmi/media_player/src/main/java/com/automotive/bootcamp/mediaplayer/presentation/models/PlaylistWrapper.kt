@@ -6,5 +6,6 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class PlaylistWrapper(
+    val playlistName: String,
     val playlist: Playlist
 ) : Parcelable
