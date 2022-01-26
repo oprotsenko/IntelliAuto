@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.automotive.bootcamp.common.extensions.loadImage
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.ItemAudioBinding
 import com.automotive.bootcamp.mediaplayer.presentation.MediaItemClickListener
@@ -46,7 +47,10 @@ class AudioRecyclerViewAdapter(
 
         fun bind(album: AudioWrapper) {
             binding.apply {
-                ivAlbumArt.setImageBitmap(album.audio.cover)
+                album.audio.cover?.let { url ->
+                    ivAlbumArt.loadImage(url)
+                }
+
                 tvSingerName.text = album.audio.artist
                 tvSongTitle.text = album.audio.title
                 ivFavourite.visibility = if (album.isFavourite) View.VISIBLE else View.GONE

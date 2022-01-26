@@ -2,13 +2,22 @@ package com.automotive.bootcamp.mediaplayer.data.local.device
 
 import android.content.ContentResolver
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
+import android.net.Uri
+import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import com.automotive.bootcamp.common.utils.DEFAULT_COVER
+import com.automotive.bootcamp.common.utils.PICTURES_DIRECTORY_NAME
 import com.automotive.bootcamp.mediaplayer.data.local.LocalMedia
 
 import com.automotive.bootcamp.mediaplayer.data.models.AudioItem
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.util.*
 
 class LocalAudioSource(
     private val contentResolver: ContentResolver,
@@ -52,9 +61,31 @@ class LocalAudioSource(
                         val inputStream = context.assets.open("default_cover.jpg")
                         BitmapFactory.decodeStream(inputStream)
                     }
-                list.add(AudioItem(id, image, title, artist, duration, url))
+
+                val imagePath = saveImageToExternalStorage(image)
+
+                list.add(AudioItem(id, imagePath, title, artist, duration, url))
             }
         }
         return list
+    }
+
+    private fun saveImageToExternalStorage(bitmap: Bitmap): String? {
+        val directory = context.getDir(PICTURES_DIRECTORY_NAME, Context.MODE_PRIVATE)
+        if (!directory.exists()) {
+            directory.mkdir()
+        }
+
+        val file = File(directory, "${UUID.randomUUID()}.jpg")
+
+        try {
+            val fos = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
+            fos.close()
+        } catch (e: Exception) {
+            Log.e("LocalAudioSource", e.message, e)
+        }
+
+        return Uri.parse(file.absolutePath).path
     }
 }

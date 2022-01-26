@@ -39,13 +39,9 @@ class RecentAudioRepository(private val cacheAudioSource: CacheAudioSource) {
     suspend fun getPlaylist(): PlaylistItem? {
         val pid = cacheAudioSource.getEmbeddedPlaylist(RECENT_PLAYLIST_NAME)?.id
 
-        Log.d("RecentAudioRepository1", pid.toString())
-
         pid?.let {
             return cacheAudioSource.getPlaylist(it)
         }
-
-        Log.d("RecentAudioRepository2", pid.toString())
 
         return null
     }

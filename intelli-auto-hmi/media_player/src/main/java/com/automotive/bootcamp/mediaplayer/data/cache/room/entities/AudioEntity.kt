@@ -1,6 +1,5 @@
 package com.automotive.bootcamp.mediaplayer.data.cache.room.entities
 
-import android.graphics.Bitmap
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -8,7 +7,7 @@ import androidx.room.PrimaryKey
 data class AudioEntity(
     @PrimaryKey
     val aid: Long,
-    val cover: Bitmap,
+    val cover: String?,
     val title: String?,
     val artist: String?,
     val duration: String?,

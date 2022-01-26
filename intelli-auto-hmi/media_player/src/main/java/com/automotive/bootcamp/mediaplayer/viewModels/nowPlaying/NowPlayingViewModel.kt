@@ -74,11 +74,12 @@ class NowPlayingViewModel(
 
     fun playAudio() {
         _currentAudio.value?.let {
+            audioPlaybackControl.playAudio(it.audio.url)
+            _isPlaying.value = true
+
             viewModelScope.launch {
                 addRecent.execute(it)
             }
-            audioPlaybackControl.playAudio(it.audio.url)
-            _isPlaying.value = true
         }
     }
 
@@ -94,10 +95,14 @@ class NowPlayingViewModel(
             position = 0;
         }
 
-        val media = audioListData[position]
-        audioPlaybackControl.nextAudio(media.audio.url)
-        _currentAudio.value = media
+        val audioWrapped = audioListData[position]
+        audioPlaybackControl.nextAudio(audioWrapped.audio.url)
+        _currentAudio.value = audioWrapped
         _isPlaying.value = true
+
+        viewModelScope.launch {
+            addRecent.execute(audioWrapped)
+        }
     }
 
     fun previousAudio() {
@@ -107,10 +112,14 @@ class NowPlayingViewModel(
             }
         }
 
-        val media = audioListData[position]
-        audioPlaybackControl.previousAudio(media.audio.url)
-        _currentAudio.value = media
+        val audioWrapped = audioListData[position]
+        audioPlaybackControl.previousAudio(audioWrapped.audio.url)
+        _currentAudio.value = audioWrapped
         _isPlaying.value = true
+
+        viewModelScope.launch {
+            addRecent.execute(audioWrapped)
+        }
     }
 
     fun shuffleAudio() {
