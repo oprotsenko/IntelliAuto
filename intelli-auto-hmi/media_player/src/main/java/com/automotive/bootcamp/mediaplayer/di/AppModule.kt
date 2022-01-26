@@ -21,7 +21,7 @@ val appModule = module {
     viewModel { OnlineMusicViewModel(get(), get(), get()) }
     viewModel { RecentAudioViewModel(get(), get(), get()) }
     viewModel { PlaylistsViewModel(get(), get()) }
-    viewModel { NowPlayingViewModel(get()) }
+    viewModel { NowPlayingViewModel(get(), get()) }
 
     single { provideDefaultAudioPlayer(get()) }
     single { MediaMetadataRetriever() }

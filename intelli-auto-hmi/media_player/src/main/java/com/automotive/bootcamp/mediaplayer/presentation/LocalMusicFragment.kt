@@ -75,7 +75,7 @@ class LocalMusicFragment :
                         return@setOnMenuItemClickListener true
                     }
                     R.id.audioRemoveRecent -> {
-                        viewModel.setIsRecent(position)
+                        viewModel.removeFromRecent(position)
                         return@setOnMenuItemClickListener true
                     }
                     R.id.audioAddRemoveFavourite -> {

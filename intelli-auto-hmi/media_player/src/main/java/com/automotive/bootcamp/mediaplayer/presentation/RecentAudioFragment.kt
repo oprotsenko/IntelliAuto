@@ -59,7 +59,7 @@ class RecentAudioFragment:
                         return@setOnMenuItemClickListener false
                     }
                     R.id.audioRemoveRecent -> {
-                        viewModel.setIsRecent(position)
+                        viewModel.removeFromRecent(position)
                         return@setOnMenuItemClickListener true
                     }
                     R.id.audioAddRemoveFavourite -> {

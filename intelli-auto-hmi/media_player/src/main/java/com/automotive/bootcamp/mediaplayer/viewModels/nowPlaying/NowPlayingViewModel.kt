@@ -3,13 +3,18 @@ package com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.automotive.bootcamp.mediaplayer.domain.extensions.wrapAudio
 import com.automotive.bootcamp.mediaplayer.domain.useCases.*
 import com.automotive.bootcamp.mediaplayer.utils.enums.RepeatMode
 import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
+import kotlinx.coroutines.launch
 
-class NowPlayingViewModel(private val audioPlaybackControl: AudioPlaybackControl) : ViewModel(),
+class NowPlayingViewModel(
+    private val audioPlaybackControl: AudioPlaybackControl,
+    private val addRecent: AddRecent
+) : ViewModel(),
     AudioCompletionListener, AudioRunningListener {
     private var audioListData = mutableListOf<AudioWrapper>()
     private var originalAudioListData = mutableListOf<AudioWrapper>()
@@ -69,6 +74,9 @@ class NowPlayingViewModel(private val audioPlaybackControl: AudioPlaybackControl
 
     fun playAudio() {
         _currentAudio.value?.let {
+            viewModelScope.launch {
+                addRecent.execute(it)
+            }
             audioPlaybackControl.playAudio(it.audio.url)
             _isPlaying.value = true
         }

@@ -2,8 +2,9 @@ package com.automotive.bootcamp.mediaplayer.viewModels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.automotive.bootcamp.mediaplayer.domain.useCases.AddRecent
 import com.automotive.bootcamp.mediaplayer.domain.useCases.AddRemoveFavourite
-import com.automotive.bootcamp.mediaplayer.domain.useCases.AddRemoveRecent
+import com.automotive.bootcamp.mediaplayer.domain.useCases.RemoveRecent
 import com.automotive.bootcamp.mediaplayer.domain.useCases.RetrieveLocalMusic
 import com.automotive.bootcamp.mediaplayer.presentation.extensions.unwrap
 import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
@@ -12,7 +13,7 @@ import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
 class OnlineMusicViewModel(
     private val retrieveLocalMusic: RetrieveLocalMusic,
     private val addRemoveFavourite: AddRemoveFavourite,
-    private val addRemoveRecent: AddRemoveRecent
+    private val removeRecent: RemoveRecent
 ) : ViewModel() {
 
     val onlineMusicData by lazy { MutableLiveData<List<AudioWrapper>>() }

@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 class LocalMusicViewModel(
     private val retrieveLocalMusic: RetrieveLocalMusic,
     private val addRemoveFavourite: AddRemoveFavourite,
-    private val addRemoveRecent: AddRemoveRecent,
+    private val removeRecent: RemoveRecent,
     private val addToPlaylist: AddToPlaylist,
     private val createPlaylist: CreatePlaylist,
     private val playlistRepository: PlaylistRepository
@@ -42,10 +42,10 @@ class LocalMusicViewModel(
         }
     }
 
-    fun setIsRecent(position: Int) {
+    fun removeFromRecent(position: Int) {
         viewModelScope.launch {
             localMusicData.value =
-                addRemoveRecent.addRemoveRecent(localMusicData.value, position)
+                removeRecent.execute(localMusicData.value, position)
         }
     }
 

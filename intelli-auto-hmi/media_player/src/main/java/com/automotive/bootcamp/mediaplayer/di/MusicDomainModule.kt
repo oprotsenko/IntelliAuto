@@ -7,7 +7,8 @@ val domainModule = module {
     factory { AudioPlaybackControl(get()) }
 
     single { AddRemoveFavourite(get(), get()) }
-    single { AddRemoveRecent(get(), get()) }
+    single { AddRecent(get(), get()) }
+    single { RemoveRecent(get()) }
     single { AddToPlaylist(get()) }
     single { CreatePlaylist(get()) }
     single { DeletePlaylist(get()) }
