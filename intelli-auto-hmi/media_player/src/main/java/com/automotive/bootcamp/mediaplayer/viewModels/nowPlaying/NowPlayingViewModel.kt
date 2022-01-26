@@ -9,7 +9,7 @@ import com.automotive.bootcamp.mediaplayer.utils.enums.RepeatMode
 import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
 
-class NowPlayingViewModel(private val playerCommandRunner: MediaPlayerCommandRunner) : ViewModel(),
+class NowPlayingViewModel(private val audioPlaybackControl: AudioPlaybackControl) : ViewModel(),
     AudioCompletionListener, AudioRunningListener {
     private var audioListData = mutableListOf<AudioWrapper>()
     private var originalAudioListData = mutableListOf<AudioWrapper>()
@@ -63,20 +63,20 @@ class NowPlayingViewModel(private val playerCommandRunner: MediaPlayerCommandRun
         _isShuffled.value = false
         _repeatMode.value = RepeatMode.DEFAULT
 
-        playerCommandRunner.setOnAudioCompletionListener(this)
-        playerCommandRunner.setOnAudioRunningListener(this)
+        audioPlaybackControl.setOnAudioCompletionListener(this)
+        audioPlaybackControl.setOnAudioRunningListener(this)
     }
 
     fun playAudio() {
         _currentAudio.value?.let {
-            playerCommandRunner.playAudio(it.audio.url)
+            audioPlaybackControl.playAudio(it.audio.url)
             _isPlaying.value = true
         }
     }
 
     fun pauseAudio() {
         if (_isPlaying.value == true) {
-            playerCommandRunner.pauseAudio()
+            audioPlaybackControl.pauseAudio()
             _isPlaying.value = false
         }
     }
@@ -87,7 +87,7 @@ class NowPlayingViewModel(private val playerCommandRunner: MediaPlayerCommandRun
         }
 
         val media = audioListData[position]
-        playerCommandRunner.nextAudio(media.audio.url)
+        audioPlaybackControl.nextAudio(media.audio.url)
         _currentAudio.value = media
         _isPlaying.value = true
     }
@@ -100,7 +100,7 @@ class NowPlayingViewModel(private val playerCommandRunner: MediaPlayerCommandRun
         }
 
         val media = audioListData[position]
-        playerCommandRunner.previousAudio(media.audio.url)
+        audioPlaybackControl.previousAudio(media.audio.url)
         _currentAudio.value = media
         _isPlaying.value = true
     }
@@ -125,7 +125,7 @@ class NowPlayingViewModel(private val playerCommandRunner: MediaPlayerCommandRun
     private fun setShuffledList() {
         position = 0
         currentAudio.value?.let {
-            audioListData = playerCommandRunner.getShuffledAudioList(audioListData, it)
+            audioListData = audioPlaybackControl.getShuffledAudioList(audioListData, it)
         }
     }
 
@@ -145,7 +145,7 @@ class NowPlayingViewModel(private val playerCommandRunner: MediaPlayerCommandRun
     }
 
     fun updateAudioProgress(progress: Int) {
-        playerCommandRunner.updateAudioProgress(progress)
+        audioPlaybackControl.updateAudioProgress(progress)
     }
 
     override fun onAudioCompletion() {

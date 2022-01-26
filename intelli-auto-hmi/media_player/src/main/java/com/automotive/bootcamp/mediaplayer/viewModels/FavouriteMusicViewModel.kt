@@ -3,7 +3,6 @@ package com.automotive.bootcamp.mediaplayer.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.automotive.bootcamp.common.utils.FAVOURITE_PLAYLIST_ID
 import com.automotive.bootcamp.common.utils.FAVOURITE_PLAYLIST_NAME
 import com.automotive.bootcamp.mediaplayer.data.FavouriteAudioRepository
 import com.automotive.bootcamp.mediaplayer.data.extensions.mapToAudio
@@ -49,7 +48,7 @@ class FavouriteMusicViewModel(
     }
 
     fun getAudioList(): PlaylistWrapper {
-        val list = Playlist(FAVOURITE_PLAYLIST_ID, FAVOURITE_PLAYLIST_NAME, favouriteMusicData.value?.let {
+        val list = Playlist(1, FAVOURITE_PLAYLIST_NAME, favouriteMusicData.value?.let {
             it.map { wrapper ->
                 wrapper.unwrap()
             }

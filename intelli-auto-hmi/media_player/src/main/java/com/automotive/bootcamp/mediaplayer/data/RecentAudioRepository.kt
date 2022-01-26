@@ -1,35 +1,47 @@
 package com.automotive.bootcamp.mediaplayer.data
 
-import com.automotive.bootcamp.common.utils.RECENT_PLAYLIST_ID
+import com.automotive.bootcamp.common.utils.RECENT_PLAYLIST_NAME
 import com.automotive.bootcamp.mediaplayer.data.cache.CacheAudioSource
-import com.automotive.bootcamp.mediaplayer.data.models.AudioItem
 import com.automotive.bootcamp.mediaplayer.data.models.AudioPlaylistItemCrossRef
+import com.automotive.bootcamp.mediaplayer.data.models.EmbeddedPlaylistItem
 import com.automotive.bootcamp.mediaplayer.data.models.PlaylistItem
 
 class RecentAudioRepository(private val cacheAudioSource: CacheAudioSource) {
-//    suspend fun createPlaylist() {
-//        if (!cacheAudioSource.playlistExists(RECENT_PLAYLIST_ID)) {
-//            val recentPlaylist = PlaylistItem(RECENT_PLAYLIST_ID, RECENT_PLAYLIST_NAME, null)
-//
-//            cacheAudioSource.insertPlaylist(recentPlaylist)
-//        }
-//    }
-
     suspend fun addAudio(aid: Long) {
-        val crossRef = AudioPlaylistItemCrossRef(aid, RECENT_PLAYLIST_ID)
-        cacheAudioSource.insertAudioPlaylistCrossRef(crossRef)
+        val pid = cacheAudioSource.getEmbeddedPlaylist(RECENT_PLAYLIST_NAME)?.id
+
+        pid?.let {
+            val crossRef = AudioPlaylistItemCrossRef(aid, it)
+            cacheAudioSource.insertAudioPlaylistCrossRef(crossRef)
+        }
     }
 
     suspend fun removeAudio(aid: Long) {
-        val crossRef = AudioPlaylistItemCrossRef(aid, RECENT_PLAYLIST_ID)
-        cacheAudioSource.deleteAudioFromPlaylist(crossRef)
+        val pid = cacheAudioSource.getEmbeddedPlaylist(RECENT_PLAYLIST_NAME)?.id
+
+        pid?.let {
+            val crossRef = AudioPlaylistItemCrossRef(aid, it)
+            cacheAudioSource.deleteAudioFromPlaylist(crossRef)
+        }
     }
 
     suspend fun getPlaylist(): PlaylistItem? {
-        return cacheAudioSource.getPlaylist(RECENT_PLAYLIST_ID)
+        val pid = cacheAudioSource.getEmbeddedPlaylist(RECENT_PLAYLIST_NAME)?.id
+
+        pid?.let {
+            return cacheAudioSource.getPlaylist(it)
+        }
+
+        return null
     }
 
-    suspend fun playlistExists(): Boolean {
-        return cacheAudioSource.playlistExists(RECENT_PLAYLIST_ID)
+    suspend fun addEmbeddedPlaylist(pid: Long) {
+        val embeddedPlaylistItem = EmbeddedPlaylistItem(pid, RECENT_PLAYLIST_NAME)
+
+        cacheAudioSource.insertEmbeddedPlaylist(embeddedPlaylistItem)
+    }
+
+    suspend fun getEmbeddedPlaylist(): EmbeddedPlaylistItem? {
+        return cacheAudioSource.getEmbeddedPlaylist(RECENT_PLAYLIST_NAME)
     }
 }

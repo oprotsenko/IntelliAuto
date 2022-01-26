@@ -3,6 +3,7 @@ package com.automotive.bootcamp.mediaplayer.data.cache.room.dao
 import androidx.room.*
 import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.AudioEntity
 import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.PlaylistEntity
+import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.EmbeddedPlaylistEntity
 import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.relations.AudioPlaylistCrossRefEntity
 import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.relations.PlaylistWithAudios
 
@@ -14,11 +15,21 @@ interface AudioDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAudios(audios: List<AudioEntity>): List<Long>
 
+    @Query("SELECT EXISTS (SELECT 1 FROM playlists WHERE pid = :pid)")
+    suspend fun playlistExists(pid: Long): Boolean
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertEmbeddedPlaylist(playlist: EmbeddedPlaylistEntity)
+
+    @Transaction
+    @Query("SELECT * FROM embedded_playlists WHERE name = :name")
+    suspend fun getEmbeddedPlaylist(name: String): EmbeddedPlaylistEntity?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPlaylist(playlist: PlaylistEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAudioPlaylistCrossRef(crossRefEntity: AudioPlaylistCrossRefEntity)
+    suspend fun insertAudioToPlaylist(crossRefEntity: AudioPlaylistCrossRefEntity)
 
     @Delete
     suspend fun deleteAudioFromPlaylist(crossRefEntity: AudioPlaylistCrossRefEntity)
@@ -26,14 +37,11 @@ interface AudioDao {
     @Query("DELETE FROM playlists WHERE pid = :pid")
     suspend fun deletePlaylist(pid: Long)
 
-    @Query("SELECT EXISTS (SELECT 1 FROM playlists WHERE pid = :pid)")
-    suspend fun playlistExists(pid: Long): Boolean
-
     @Transaction
     @Query("SELECT * FROM playlists WHERE pid = :pid")
-    suspend fun getPlaylistWithAudiosById(pid: Long): List<PlaylistWithAudios>
+    suspend fun getPlaylistWithAudios(pid: Long): PlaylistWithAudios?
 
     @Transaction
     @Query("SELECT * FROM playlists")
-    suspend fun getAllPlaylistsWithAudios(): List<PlaylistWithAudios>
+    suspend fun getAllPlaylistsWithAudios(): List<PlaylistWithAudios>?
 }

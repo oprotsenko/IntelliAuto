@@ -9,6 +9,7 @@ import com.automotive.bootcamp.common.utils.DATABASE_NAME
 import com.automotive.bootcamp.common.utils.DATABASE_VERSION
 import com.automotive.bootcamp.mediaplayer.data.cache.room.dao.AudioDao
 import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.AudioEntity
+import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.EmbeddedPlaylistEntity
 import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.PlaylistEntity
 import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.relations.AudioPlaylistCrossRefEntity
 import com.automotive.bootcamp.mediaplayer.utils.ImageBitmapString
@@ -17,6 +18,7 @@ import com.automotive.bootcamp.mediaplayer.utils.ImageBitmapString
     entities = [
         AudioEntity::class,
         PlaylistEntity::class,
+        EmbeddedPlaylistEntity::class,
         AudioPlaylistCrossRefEntity::class
     ],
     version = DATABASE_VERSION

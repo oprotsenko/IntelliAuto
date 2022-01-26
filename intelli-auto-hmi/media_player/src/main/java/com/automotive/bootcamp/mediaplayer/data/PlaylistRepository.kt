@@ -3,10 +3,16 @@ package com.automotive.bootcamp.mediaplayer.data
 import com.automotive.bootcamp.mediaplayer.data.cache.CacheAudioSource
 import com.automotive.bootcamp.mediaplayer.data.models.AudioPlaylistItemCrossRef
 import com.automotive.bootcamp.mediaplayer.data.models.PlaylistItem
+import com.automotive.bootcamp.mediaplayer.domain.extensions.mapToPlaylistItem
+import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
 
 class PlaylistRepository(private val cacheAudioSource: CacheAudioSource) {
-    suspend fun addPlaylist(playlist: PlaylistItem): Long {
-        return cacheAudioSource.insertPlaylist(playlist)
+    suspend fun playlistExists(pid:Long): Boolean {
+        return cacheAudioSource.playlistExists(pid)
+    }
+
+    suspend fun addPlaylist(playlist: Playlist): Long {
+        return cacheAudioSource.insertPlaylist(playlist.mapToPlaylistItem())
     }
 
     suspend fun removePlaylist(pid: Long) {

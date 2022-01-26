@@ -2,10 +2,12 @@ package com.automotive.bootcamp.mediaplayer.data.cache.room
 
 import android.content.Context
 import com.automotive.bootcamp.mediaplayer.data.cache.CacheAudioSource
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.relations.mapToPlaylistItem
+import com.automotive.bootcamp.mediaplayer.data.cache.room.extensions.mapToEmbeddedPlaylistItem
+import com.automotive.bootcamp.mediaplayer.data.cache.room.extensions.mapToPlaylistItem
 import com.automotive.bootcamp.mediaplayer.data.extensions.mapToEntity
 import com.automotive.bootcamp.mediaplayer.data.models.AudioItem
 import com.automotive.bootcamp.mediaplayer.data.models.AudioPlaylistItemCrossRef
+import com.automotive.bootcamp.mediaplayer.data.models.EmbeddedPlaylistItem
 import com.automotive.bootcamp.mediaplayer.data.models.PlaylistItem
 
 class RoomAudioSource(context: Context) : CacheAudioSource {
@@ -25,6 +27,18 @@ class RoomAudioSource(context: Context) : CacheAudioSource {
         return dao.insertAudios(audioEntities)
     }
 
+    override suspend fun playlistExists(pid: Long): Boolean {
+        return dao.playlistExists(pid)
+    }
+
+    override suspend fun insertEmbeddedPlaylist(playlist: EmbeddedPlaylistItem) {
+        dao.insertEmbeddedPlaylist(playlist.mapToEntity())
+    }
+
+    override suspend fun getEmbeddedPlaylist(name: String): EmbeddedPlaylistItem? {
+        return dao.getEmbeddedPlaylist(name)?.mapToEmbeddedPlaylistItem()
+    }
+
     override suspend fun insertPlaylist(playlist: PlaylistItem):Long {
         val playlistEntity = playlist.mapToEntity()
 
@@ -38,7 +52,7 @@ class RoomAudioSource(context: Context) : CacheAudioSource {
     override suspend fun insertAudioPlaylistCrossRef(crossRef: AudioPlaylistItemCrossRef) {
         val audioPlaylistCrossRefEntity = crossRef.mapToEntity()
 
-        dao.insertAudioPlaylistCrossRef(audioPlaylistCrossRefEntity)
+        dao.insertAudioToPlaylist(audioPlaylistCrossRefEntity)
     }
 
     override suspend fun deleteAudioFromPlaylist(crossRef: AudioPlaylistItemCrossRef) {
@@ -48,28 +62,18 @@ class RoomAudioSource(context: Context) : CacheAudioSource {
     }
 
     override suspend fun getPlaylist(pid: Long): PlaylistItem? {
-        val playlists = dao.getPlaylistWithAudiosById(pid)
-
-        if (playlists.isNotEmpty()) {
-            return playlists.first().mapToPlaylistItem()
-        }
-
-        return null
+        return dao.getPlaylistWithAudios(pid)?.mapToPlaylistItem()
     }
 
     override suspend fun getAllPlaylists(): List<PlaylistItem>? {
         val playlists = dao.getAllPlaylistsWithAudios()
 
-        if (playlists.isNotEmpty()) {
-            return playlists.map {
-                it.mapToPlaylistItem()
+        playlists.let {
+            return it?.map { playlist ->
+                playlist.mapToPlaylistItem()
             }
         }
 
         return null
-    }
-
-    override suspend fun playlistExists(pid: Long): Boolean {
-        return dao.playlistExists(pid)
     }
 }
