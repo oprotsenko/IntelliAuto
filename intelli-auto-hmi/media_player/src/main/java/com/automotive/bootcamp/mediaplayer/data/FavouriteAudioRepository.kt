@@ -10,6 +10,7 @@ import com.automotive.bootcamp.mediaplayer.domain.extensions.mapToSpecialPlaylis
 import com.automotive.bootcamp.mediaplayer.domain.models.EmbeddedPlaylist
 
 class FavouriteAudioRepository(private val cacheAudioSource: CacheAudioSource) {
+
     suspend fun addAudio(aid: Long) {
         val pid = cacheAudioSource.getEmbeddedPlaylist(FAVOURITE_PLAYLIST_NAME)?.id
 
@@ -47,4 +48,7 @@ class FavouriteAudioRepository(private val cacheAudioSource: CacheAudioSource) {
     suspend fun getEmbeddedPlaylist(): EmbeddedPlaylistItem? {
         return cacheAudioSource.getEmbeddedPlaylist(FAVOURITE_PLAYLIST_NAME)
     }
+
+    suspend fun isAudioExist(aid: Long) =
+        cacheAudioSource.isAudioExist(aid)
 }

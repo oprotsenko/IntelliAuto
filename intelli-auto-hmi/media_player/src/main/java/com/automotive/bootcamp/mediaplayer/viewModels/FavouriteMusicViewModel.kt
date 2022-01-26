@@ -35,9 +35,15 @@ class FavouriteMusicViewModel(
 
     fun setIsFavourite(position: Int) {
         viewModelScope.launch {
-            favouriteMusicData.value =
-                addRemoveFavourite.addRemoveFavourite(favouriteMusicData.value, position)
+            val favouriteMusicIds =
+                favouriteMusicData.value?.let { addRemoveFavourite.addRemoveFavourite(it[position].audio.id) }
+            val list = favouriteMusicData.value?.toMutableList()
+            if (favouriteMusicIds?.contains(list?.get(position)?.audio?.id) == true) {
+                list?.set(position, list[position].copy(isFavourite = true))
+            }
+            favouriteMusicData.value = list
         }
+
     }
 
     fun setIsRecent(position: Int) {
