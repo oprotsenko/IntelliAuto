@@ -34,8 +34,17 @@ class RecentAudioViewModel(
 
     fun setIsFavourite(position: Int) {
         viewModelScope.launch {
-            recentAudioData.value =
-                addRemoveFavourite.addRemoveFavourite(recentAudioData.value, position)
+            val list = recentAudioData.value?.toMutableList()
+            list?.let {
+                if (addRemoveFavourite.hasAudio(it[position].audio.id)) {
+                    addRemoveFavourite.removeFavourite(it[position].audio.id)
+                    list[position] = list[position].copy(isFavourite = false)
+                } else {
+                    addRemoveFavourite.addFavourite(it[position].audio.id)
+                    list[position] = list[position].copy(isFavourite = true)
+                }
+            }
+            recentAudioData.value = list
         }
     }
 

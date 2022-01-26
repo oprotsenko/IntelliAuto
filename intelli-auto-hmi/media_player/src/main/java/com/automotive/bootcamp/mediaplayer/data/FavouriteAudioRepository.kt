@@ -7,6 +7,7 @@ import com.automotive.bootcamp.mediaplayer.data.models.EmbeddedPlaylistItem
 import com.automotive.bootcamp.mediaplayer.data.models.PlaylistItem
 
 class FavouriteAudioRepository(private val cacheAudioSource: CacheAudioSource) {
+
     suspend fun addAudio(aid: Long) {
         val pid = cacheAudioSource.getEmbeddedPlaylist(FAVOURITE_PLAYLIST_NAME)?.id
 

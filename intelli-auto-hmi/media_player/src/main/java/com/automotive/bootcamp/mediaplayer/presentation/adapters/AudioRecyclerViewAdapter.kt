@@ -46,9 +46,7 @@ class AudioRecyclerViewAdapter(
 
         fun bind(album: AudioWrapper) {
             binding.apply {
-                if (album.audio.cover != null) {
-                    ivAlbumArt.setImageBitmap(album.audio.cover)
-                }
+                ivAlbumArt.setImageBitmap(album.audio.cover)
                 tvSingerName.text = album.audio.artist
                 tvSongTitle.text = album.audio.title
                 ivFavourite.visibility = if (album.isFavourite) View.VISIBLE else View.GONE

@@ -16,6 +16,7 @@ fun AudioItem.mapToAudio() : Audio =
 
 fun AudioItem.mapToEntity() : AudioEntity =
     AudioEntity(
+        aid = this.id,
         cover = this.cover,
         title = this.title,
         artist = this.artist,

@@ -15,7 +15,7 @@ import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
 import kotlinx.coroutines.launch
 
 class FavouriteMusicViewModel(
-    private val retrieveFavouriteAudioRepository: FavouriteAudioRepository,
+    private val favouriteAudioRepository: FavouriteAudioRepository,
     private val addRemoveFavourite: AddRemoveFavourite,
     private val removeRecent: RemoveRecent,
     private val addToPlaylist: AddToPlaylist,
@@ -26,7 +26,7 @@ class FavouriteMusicViewModel(
 
     init {
         viewModelScope.launch {
-            val audioList = retrieveFavouriteAudioRepository.getPlaylist()?.list
+            val audioList = favouriteAudioRepository.getPlaylist()?.list
             favouriteMusicData.value = audioList?.map { playlistItem ->
                 playlistItem.mapToAudio().wrapAudio()
             }
@@ -35,8 +35,17 @@ class FavouriteMusicViewModel(
 
     fun setIsFavourite(position: Int) {
         viewModelScope.launch {
-            favouriteMusicData.value =
-                addRemoveFavourite.addRemoveFavourite(favouriteMusicData.value, position)
+            val list = favouriteMusicData.value?.toMutableList()
+            list?.let {
+                if (addRemoveFavourite.hasAudio(it[position].audio.id)) {
+                    addRemoveFavourite.removeFavourite(it[position].audio.id)
+                    list[position] = list[position].copy(isFavourite = false)
+                } else {
+                    addRemoveFavourite.addFavourite(it[position].audio.id)
+                    list[position] = list[position].copy(isFavourite = true)
+                }
+            }
+            favouriteMusicData.value = list
         }
     }
 

@@ -77,7 +77,8 @@ class RoomAudioSource(context: Context) : CacheAudioSource {
                 playlist.mapToPlaylistItem()
             }
         }
-
-        return null
     }
+
+    override suspend fun isAudioExists(aid: Long, pid: Long): Boolean =
+        dao.playlistHasAudio(pid, aid)
 }

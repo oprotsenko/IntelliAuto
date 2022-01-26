@@ -49,13 +49,12 @@ class PlaylistRecyclerViewAdapter(
 
         fun bind(playlist: PlaylistWrapper) {
             binding.apply {
-                var i = 0
-                while (i < 4) {
-                    if (!playlist.playlist.list.isNullOrEmpty() && playlist.playlist.list[i].cover != null) {
-                        ivFirstPlaceholder.setImageBitmap(playlist.playlist.list[i].cover)
-                    }
-                    i++
-                }
+//                for (i in 4) {
+//                    if (!playlist.playlist.list.isNullOrEmpty()) {
+//                        ivFirstPlaceholder.setImageBitmap(playlist.playlist.list[i].cover)
+//                    }
+//                    i++
+//                }
                 tvSongTitle.text = playlist.playlistName
             }
         }
