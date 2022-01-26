@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 data class AudioEntity(
     @PrimaryKey(autoGenerate = true)
     val aid: Long = 0,
-    val cover: Bitmap?,
+    val cover: Bitmap,
     val title: String?,
     val artist: String?,
     val duration: String?,

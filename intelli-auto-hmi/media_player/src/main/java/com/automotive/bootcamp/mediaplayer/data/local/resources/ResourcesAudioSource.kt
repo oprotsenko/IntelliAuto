@@ -4,9 +4,11 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
+import com.automotive.bootcamp.common.utils.DEFAULT_COVER
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.data.local.LocalMedia
 import com.automotive.bootcamp.mediaplayer.data.models.AudioItem
+import java.io.InputStream
 
 class ResourcesAudioSource(
     private val retriever: MediaMetadataRetriever,
@@ -34,7 +36,10 @@ class ResourcesAudioSource(
             val data = retriever.embeddedPicture
             val image =
                 if (data != null) BitmapFactory.decodeByteArray(data, 0, data.size)
-                else null
+                else {
+                    val inputStream = context.assets.open("default_cover.jpg")
+                    BitmapFactory.decodeStream(inputStream)
+                }
             val title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
             val artist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
             val duration = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)

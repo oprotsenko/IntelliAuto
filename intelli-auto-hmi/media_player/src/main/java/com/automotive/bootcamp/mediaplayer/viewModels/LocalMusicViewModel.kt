@@ -3,8 +3,7 @@ package com.automotive.bootcamp.mediaplayer.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.automotive.bootcamp.common.base.CoroutineViewModel
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.PlaylistEntity
+import com.automotive.bootcamp.mediaplayer.data.PlaylistRepository
 import com.automotive.bootcamp.mediaplayer.data.extensions.mapToAudio
 import com.automotive.bootcamp.mediaplayer.domain.extensions.wrapAudio
 import com.automotive.bootcamp.mediaplayer.domain.extensions.wrapPlaylist
@@ -14,7 +13,6 @@ import com.automotive.bootcamp.mediaplayer.presentation.extensions.unwrap
 import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
 
 class LocalMusicViewModel(
     private val retrieveLocalMusic: RetrieveLocalMusic,
@@ -22,9 +20,11 @@ class LocalMusicViewModel(
     private val addRemoveRecent: AddRemoveRecent,
     private val addToPlaylist: AddToPlaylist,
     private val createPlaylist: CreatePlaylist,
+    private val playlistRepository: PlaylistRepository
 ) : ViewModel() {
 
     val localMusicData by lazy { MutableLiveData<List<AudioWrapper>>() }
+//    val playlists by
 
     init {
         viewModelScope.launch {
@@ -60,7 +60,21 @@ class LocalMusicViewModel(
 
     fun createPlaylist(playlistName: String) {
         viewModelScope.launch {
-//            createPlaylist.createPlaylist(playlistName)
+            createPlaylist.createPlaylist(playlistName)
+        }
+    }
+
+    fun addToPlaylist(pid: Long, position: Int) {
+        viewModelScope.launch {
+            localMusicData.value?.let {
+                addToPlaylist.addToPlaylist(it[position].audio.id, pid)
+            }
+        }
+    }
+
+    fun getAllPlaylists() {
+        viewModelScope.launch {
+            playlistRepository.getAllPlaylists()
         }
     }
 }

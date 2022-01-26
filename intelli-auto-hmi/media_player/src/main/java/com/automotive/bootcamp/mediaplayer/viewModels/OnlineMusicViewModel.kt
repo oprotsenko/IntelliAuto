@@ -2,7 +2,6 @@ package com.automotive.bootcamp.mediaplayer.viewModels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
 import com.automotive.bootcamp.mediaplayer.domain.useCases.AddRemoveFavourite
 import com.automotive.bootcamp.mediaplayer.domain.useCases.AddRemoveRecent
 import com.automotive.bootcamp.mediaplayer.domain.useCases.RetrieveLocalMusic
@@ -16,10 +15,10 @@ class OnlineMusicViewModel(
     private val addRemoveRecent: AddRemoveRecent
 ) : ViewModel() {
 
-    val localMusicData by lazy { MutableLiveData<List<AudioWrapper>>() }
+    val onlineMusicData by lazy { MutableLiveData<List<AudioWrapper>>() }
 
     init {
-        localMusicData.value = mutableListOf()
+        onlineMusicData.value = mutableListOf()
 //        viewModelScope.launch {
 //            val audioList = retrieveLocalMusic.retrieveLocalMusic()
 //            localMusicData.value = audioList.map { audio ->
@@ -38,7 +37,7 @@ class OnlineMusicViewModel(
     }
 
     fun getAudioList(): PlaylistWrapper? {
-        val list = localMusicData.value?.let {
+        val list = onlineMusicData.value?.let {
             it.map { wrapper ->
                 wrapper.unwrap()
             }

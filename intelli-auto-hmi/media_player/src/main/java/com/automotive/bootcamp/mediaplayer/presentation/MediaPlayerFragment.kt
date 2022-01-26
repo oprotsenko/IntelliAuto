@@ -3,7 +3,6 @@ package com.automotive.bootcamp.mediaplayer.presentation
 import com.automotive.bootcamp.common.base.BaseFragment
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.FragmentMediaPlayerBinding
-import com.automotive.bootcamp.mediaplayer.presentation.models.FavouriteMusicFragment
 
 class MediaPlayerFragment :
     BaseFragment<FragmentMediaPlayerBinding>(FragmentMediaPlayerBinding::inflate) {
@@ -39,4 +38,4 @@ class MediaPlayerFragment :
             }
         }
     }
-    }
+}

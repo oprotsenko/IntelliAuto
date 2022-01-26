@@ -6,8 +6,8 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Audio(
-    val id: Long = 0,
-    val cover: Bitmap?,
+    val id: Long,
+    val cover: Bitmap,
     val title: String?,
     val artist: String?,
     val duration: String?,

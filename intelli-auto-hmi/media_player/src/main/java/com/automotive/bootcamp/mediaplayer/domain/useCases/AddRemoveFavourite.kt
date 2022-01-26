@@ -17,15 +17,12 @@ class AddRemoveFavourite(
         val list = audio?.toMutableList()
         if (list?.get(position)?.isFavourite == true) {
             favouriteAudioRepository.removeAudio(list[position].audio.id)
-//            list[position] = list[position].copy(isFavourite = false)
         } else {
-            list?.get(position)?.audio?.id?.let { favouriteAudioRepository.addAudio(it) }
-//            list?.set(position, list[position].copy(isFavourite = true))
+            list?.let { favouriteAudioRepository.addAudio(list[position].audio.id) }
         }
-        val newList = favouriteAudioRepository.getPlaylist()?.mapToPlaylist()?.list?.map {
+        return favouriteAudioRepository.getPlaylist()?.mapToPlaylist()?.list?.map {
             it.wrapAudio()
         }
-        return newList
     }
 
     suspend fun add(audios: List<AudioWrapper>?, position: Int) {
