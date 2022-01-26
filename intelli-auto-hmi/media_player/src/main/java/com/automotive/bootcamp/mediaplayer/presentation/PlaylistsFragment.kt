@@ -30,13 +30,22 @@ class PlaylistsFragment :
     }
 
     override fun setObservers() {
-        viewModel.playlistsData.observe(viewLifecycleOwner) {
-            audioAdapter.submitList(it)
+        viewModel.apply {
+            playlistsData.observe(viewLifecycleOwner) {
+                audioAdapter.submitList(it)
+            }
+
+            selectedPlaylist.observe(viewLifecycleOwner) {
+                requireActivity().supportFragmentManager.beginTransaction().replace(
+                    R.id.mediaPlayerServiceContainer,
+                    CustomPlaylistFragment.newInstance(it)
+                ).commit()
+            }
         }
     }
 
     override fun onMediaClick(position: Int) {
-        openPlaylist(position)
+        viewModel.openPlaylist(position)
     }
 
     override fun onItemClick(view: View, position: Int) {
@@ -58,10 +67,6 @@ class PlaylistsFragment :
             }
             show()
         }
-    }
-
-    private fun openPlaylist(position: Int) {
-        //todo
     }
 
     private fun initRecyclerView() {

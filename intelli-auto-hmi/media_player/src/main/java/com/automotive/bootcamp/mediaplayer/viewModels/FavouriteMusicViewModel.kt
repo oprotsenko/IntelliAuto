@@ -37,7 +37,7 @@ class FavouriteMusicViewModel(
         viewModelScope.launch {
             val list = favouriteMusicData.value?.toMutableList()
             list?.let {
-                if (addRemoveFavourite.hasAudio(it[position].audio.id)) {
+                if (addRemoveFavourite.hasAudio(it[position].audio.id) == true) {
                     addRemoveFavourite.removeFavourite(it[position].audio.id)
                     list[position] = list[position].copy(isFavourite = false)
                 } else {

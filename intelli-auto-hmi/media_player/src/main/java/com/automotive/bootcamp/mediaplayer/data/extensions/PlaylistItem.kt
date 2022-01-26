@@ -14,4 +14,5 @@ fun PlaylistItem.mapToPlaylist() = Playlist(
 fun PlaylistItem.mapToEntity(): PlaylistEntity =
     PlaylistEntity(
         name = this.name,
+        pid = this.id
     )

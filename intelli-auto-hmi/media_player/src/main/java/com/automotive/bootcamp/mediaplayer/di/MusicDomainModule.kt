@@ -14,5 +14,5 @@ val domainModule = module {
     single { RetrieveFavouriteMusic(get()) }
     single { RetrieveLocalMusic(get(), get()) }
     single { RetrieveRecentAudio(get()) }
-    single { RetrievePlaylists(get()) }
+    single { RetrievePlaylistAudio(get()) }
 }

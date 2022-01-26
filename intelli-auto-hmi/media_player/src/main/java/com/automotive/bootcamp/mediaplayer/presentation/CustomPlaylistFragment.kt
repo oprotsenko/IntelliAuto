@@ -4,21 +4,20 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import com.automotive.bootcamp.common.base.BaseFragment
-import com.automotive.bootcamp.common.utils.AutoFitGridLayoutManager
-import com.automotive.bootcamp.common.utils.FRAGMENT_RESULT_KEY
-import com.automotive.bootcamp.common.utils.GRID_RECYCLE_COLUMN_WIDTH
-import com.automotive.bootcamp.common.utils.PLAYLIST_NAME_KEY
+import com.automotive.bootcamp.common.utils.*
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.FragmentAudiosListBinding
 import com.automotive.bootcamp.mediaplayer.presentation.adapters.AudioRecyclerViewAdapter
-import com.automotive.bootcamp.mediaplayer.viewModels.LocalMusicViewModel
+import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
+import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
+import com.automotive.bootcamp.mediaplayer.viewModels.CustomPlaylistViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class LocalMusicFragment :
+class CustomPlaylistFragment :
     BaseFragment<FragmentAudiosListBinding>(FragmentAudiosListBinding::inflate),
     MediaItemClickListener, OnItemClickListener {
 
-    private val viewModel: LocalMusicViewModel by viewModel()
+    private val viewModel: CustomPlaylistViewModel by viewModel()
     private val audioAdapter: AudioRecyclerViewAdapter by lazy {
         AudioRecyclerViewAdapter(
             onMediaItemClickListener = this,
@@ -28,22 +27,13 @@ class LocalMusicFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.init(arguments?.getParcelable(CUSTOM_PLAYLIST_BUNDLE_KEY))
         initRecyclerView()
     }
 
     override fun setObservers() {
-        viewModel.apply {
-            localMusicData.observe(viewLifecycleOwner) {
-                audioAdapter.submitList(it)
-            }
-            parentFragmentManager.setFragmentResultListener(
-                FRAGMENT_RESULT_KEY, viewLifecycleOwner, { _, bundle ->
-                    val playlistName = bundle.getString(PLAYLIST_NAME_KEY)
-                    playlistName?.let { viewModel.apply {
-                        createPlaylist(playlistName, dynamicPlaylistAddAudioPosition) }
-                    }
-                })
-
+        viewModel.customMusicData.observe(viewLifecycleOwner) {
+            audioAdapter.submitList(it)
         }
     }
 
@@ -55,7 +45,7 @@ class LocalMusicFragment :
         val popupMenu = PopupMenu(requireContext(), view)
         popupMenu.apply {
             inflate(R.menu.audio_popup_menu)
-            if (viewModel.localMusicData.value?.get(position)?.isRecent == false) {
+            if (viewModel.customMusicData.value?.get(position)?.isRecent == false) {
                 menu.findItem(R.id.audioRemoveRecent).apply {
                     isVisible = false
                 }
@@ -67,30 +57,7 @@ class LocalMusicFragment :
                         return@setOnMenuItemClickListener true
                     }
                     R.id.audioAddToPlaylist -> {
-                        viewModel.playlistsData?.let { playlists ->
-                            for (i in playlists.indices) {
-                                menu.findItem(R.id.audioAddToPlaylist).subMenu.add(
-                                    R.id.audioAddToPlaylist,
-                                    playlists[i].playlist.id.toInt(),
-                                    i,
-                                    playlists[i].playlistName
-                                ).setOnMenuItemClickListener submenu@{
-                                    viewModel.addToPlaylist(playlists[i].playlist.id, position)
-                                    return@submenu true
-                                }
-                                show()
-                            }
-                        }
-                        return@setOnMenuItemClickListener true
-                    }
-                    R.id.audioCreatePlaylist -> {
-                        viewModel.dynamicPlaylistAddAudioPosition = position
-                        val enterNameDialog = EnterNameDialog()
-                        enterNameDialog.show(
-                            parentFragmentManager, null
-                        )
-                        viewModel.getAllPlaylists()
-                        return@setOnMenuItemClickListener true
+                        return@setOnMenuItemClickListener false
                     }
                     R.id.audioRemoveRecent -> {
                         viewModel.setIsRecent(position)
@@ -110,8 +77,7 @@ class LocalMusicFragment :
     }
 
     private fun playAudio(position: Int) {
-        val playlist = viewModel.getAudioList()
-        if (playlist != null) {
+        viewModel.getAudioList()?.let { playlist ->
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(
                     R.id.fullScreenContainer,
@@ -128,5 +94,13 @@ class LocalMusicFragment :
             adapter = audioAdapter
             itemAnimator?.changeDuration = 0
         }
+    }
+
+    companion object {
+        fun newInstance(media: PlaylistWrapper) =
+            CustomPlaylistFragment().apply {
+                arguments = Bundle()
+                arguments?.putParcelable(CUSTOM_PLAYLIST_BUNDLE_KEY, media)
+            }
     }
 }

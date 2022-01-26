@@ -19,5 +19,4 @@ interface CacheAudioSource {
     suspend fun deleteAudioFromPlaylist(crossRef: AudioPlaylistItemCrossRef)
     suspend fun getPlaylist(pid: Long): PlaylistItem?
     suspend fun getAllPlaylists(): List<PlaylistItem>?
-    suspend fun isAudioExists(aid: Long, pid: Long): Boolean
 }

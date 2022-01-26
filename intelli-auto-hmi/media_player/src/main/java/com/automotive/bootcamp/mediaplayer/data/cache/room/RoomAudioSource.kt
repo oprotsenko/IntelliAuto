@@ -32,7 +32,7 @@ class RoomAudioSource(context: Context) : CacheAudioSource {
     }
 
     override suspend fun playlistHasAudio(pid: Long, aid: Long): Boolean {
-        return dao.playlistHasAudio(pid, aid)
+        return dao.playlistHasAudio(pid, aid) > 0
     }
 
     override suspend fun insertEmbeddedPlaylist(playlist: EmbeddedPlaylistItem) {
@@ -78,7 +78,4 @@ class RoomAudioSource(context: Context) : CacheAudioSource {
             }
         }
     }
-
-    override suspend fun isAudioExists(aid: Long, pid: Long): Boolean =
-        dao.playlistHasAudio(pid, aid)
 }

@@ -19,7 +19,7 @@ interface AudioDao {
     suspend fun playlistExists(pid: Long): Boolean
 
     @Query("SELECT EXISTS(SELECT 1 FROM audio_playlist_cross_ref WHERE pid = :pid AND aid = :aid)")
-    suspend fun playlistHasAudio(pid: Long, aid: Long): Boolean
+    suspend fun playlistHasAudio(pid: Long, aid: Long): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertEmbeddedPlaylist(playlist: EmbeddedPlaylistEntity)

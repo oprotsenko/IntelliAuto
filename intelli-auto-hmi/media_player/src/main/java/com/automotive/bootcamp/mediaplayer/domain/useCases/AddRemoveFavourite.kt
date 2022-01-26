@@ -19,7 +19,7 @@ class AddRemoveFavourite(
         favouriteAudioRepository.addAudio(aid)
     }
 
-    suspend fun hasAudio(aid: Long) =
+    suspend fun hasAudio(aid: Long) : Boolean =
         favouriteAudioRepository.hasAudio(aid)
 
     private suspend fun setFavouritePlaylist() {
