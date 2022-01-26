@@ -30,7 +30,7 @@ class OnlineMusicFragment :
     }
 
     override fun setObservers() {
-        viewModel.localMusicData.observe(viewLifecycleOwner) {
+        viewModel.onlineMusicData.observe(viewLifecycleOwner) {
             audioAdapter.submitList(it)
         }
     }
@@ -43,7 +43,7 @@ class OnlineMusicFragment :
         val popupMenu = PopupMenu(requireContext(), view)
         popupMenu.apply {
             inflate(R.menu.audio_popup_menu)
-            if (viewModel.localMusicData.value?.get(position)?.isRecent == false) {
+            if (viewModel.onlineMusicData.value?.get(position)?.isRecent == false) {
                 menu.findItem(R.id.audioRemoveRecent).apply {
                     isVisible = false
                 }

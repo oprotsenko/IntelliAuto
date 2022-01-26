@@ -7,9 +7,8 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.setFragmentResult
-import com.automotive.bootcamp.common.utils.FRAGMENT_RESULT
-import com.automotive.bootcamp.common.utils.PLAYLIST_NAME
+import com.automotive.bootcamp.common.utils.FRAGMENT_RESULT_KEY
+import com.automotive.bootcamp.common.utils.PLAYLIST_NAME_KEY
 import com.automotive.bootcamp.mediaplayer.databinding.DialogPlaylistNameBinding
 
 class EnterNameDialog : DialogFragment() {
@@ -28,10 +27,13 @@ class EnterNameDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
+            bDialogBack.setOnClickListener {
+                dismiss()
+            }
             bCreate.setOnClickListener {
-                parentFragment?.setFragmentResult(
-                    FRAGMENT_RESULT,
-                    bundleOf(PLAYLIST_NAME to etPlaylistName.text)
+                parentFragmentManager.setFragmentResult(
+                    FRAGMENT_RESULT_KEY,
+                    bundleOf(PLAYLIST_NAME_KEY to etPlaylistName.text.toString())
                 )
                 dialog?.dismiss()
             }

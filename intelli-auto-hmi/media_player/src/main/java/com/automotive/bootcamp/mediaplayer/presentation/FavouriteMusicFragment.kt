@@ -1,4 +1,4 @@
-package com.automotive.bootcamp.mediaplayer.presentation.models
+package com.automotive.bootcamp.mediaplayer.presentation
 
 import android.os.Bundle
 import android.view.View
@@ -8,9 +8,6 @@ import com.automotive.bootcamp.common.utils.AutoFitGridLayoutManager
 import com.automotive.bootcamp.common.utils.GRID_RECYCLE_COLUMN_WIDTH
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.FragmentAudiosListBinding
-import com.automotive.bootcamp.mediaplayer.presentation.MediaItemClickListener
-import com.automotive.bootcamp.mediaplayer.presentation.NowPlayingFragment
-import com.automotive.bootcamp.mediaplayer.presentation.OnItemClickListener
 import com.automotive.bootcamp.mediaplayer.presentation.adapters.AudioRecyclerViewAdapter
 import com.automotive.bootcamp.mediaplayer.viewModels.FavouriteMusicViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel

@@ -1,16 +1,19 @@
 package com.automotive.bootcamp.mediaplayer.data.local.device
 
 import android.content.ContentResolver
+import android.content.Context
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.provider.MediaStore
+import com.automotive.bootcamp.common.utils.DEFAULT_COVER
 import com.automotive.bootcamp.mediaplayer.data.local.LocalMedia
 
 import com.automotive.bootcamp.mediaplayer.data.models.AudioItem
 
 class LocalAudioSource(
     private val contentResolver: ContentResolver,
-    private val retriever: MediaMetadataRetriever
+    private val retriever: MediaMetadataRetriever,
+    private val context: Context
 ) : LocalMedia {
 
     override suspend fun retrieveLocalAudio(): List<AudioItem> {
@@ -45,7 +48,10 @@ class LocalAudioSource(
                 val data = retriever.embeddedPicture
                 val image =
                     if (data != null) BitmapFactory.decodeByteArray(data, 0, data.size)
-                    else null
+                    else {
+                        val inputStream = context.assets.open("default_cover.jpg")
+                        BitmapFactory.decodeStream(inputStream)
+                    }
                 list.add(AudioItem(id, image, title, artist, duration, url))
             }
         }

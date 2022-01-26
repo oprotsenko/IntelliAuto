@@ -1,22 +1,17 @@
 package com.automotive.bootcamp.mediaplayer.presentation
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.LinearLayout
 import androidx.appcompat.widget.PopupMenu
 import com.automotive.bootcamp.common.base.BaseFragment
 import com.automotive.bootcamp.common.utils.AutoFitGridLayoutManager
-import com.automotive.bootcamp.common.utils.FRAGMENT_RESULT
+import com.automotive.bootcamp.common.utils.FRAGMENT_RESULT_KEY
 import com.automotive.bootcamp.common.utils.GRID_RECYCLE_COLUMN_WIDTH
-import com.automotive.bootcamp.common.utils.PLAYLIST_NAME
+import com.automotive.bootcamp.common.utils.PLAYLIST_NAME_KEY
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.FragmentAudiosListBinding
 import com.automotive.bootcamp.mediaplayer.presentation.adapters.AudioRecyclerViewAdapter
 import com.automotive.bootcamp.mediaplayer.viewModels.LocalMusicViewModel
-import com.google.android.material.textfield.TextInputLayout
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class LocalMusicFragment :
@@ -37,14 +32,17 @@ class LocalMusicFragment :
     }
 
     override fun setObservers() {
-        viewModel.localMusicData.observe(viewLifecycleOwner) {
-            audioAdapter.submitList(it)
+        viewModel.apply {
+            localMusicData.observe(viewLifecycleOwner) {
+                audioAdapter.submitList(it)
+            }
+            parentFragmentManager.setFragmentResultListener(
+                FRAGMENT_RESULT_KEY, viewLifecycleOwner, { _, bundle ->
+                    val result = bundle.getString(PLAYLIST_NAME_KEY)
+                    result?.let { viewModel.createPlaylist(result) }
+                })
+
         }
-        parentFragmentManager.setFragmentResultListener(
-            FRAGMENT_RESULT, viewLifecycleOwner, { _, bundle ->
-            val result = bundle.getString(PLAYLIST_NAME)
-            result?.let { viewModel.createPlaylist(result) }
-        })
     }
 
     override fun onMediaClick(position: Int) {

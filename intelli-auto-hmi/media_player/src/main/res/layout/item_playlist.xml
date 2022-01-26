@@ -24,8 +24,8 @@
         android:paddingTop="@dimen/padding"
         android:paddingEnd="0dp"
         android:src="@drawable/ic_pop_up_menu"
-        app:layout_constraintEnd_toEndOf="@+id/ivAlbumArt"
-        app:layout_constraintTop_toTopOf="@+id/ivAlbumArt" />
+        app:layout_constraintEnd_toEndOf="@+id/ivSecondPlaceholder"
+        app:layout_constraintTop_toTopOf="@+id/ivSecondPlaceholder" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/ivFirstPlaceholder"
@@ -67,11 +67,10 @@
         android:id="@+id/tvSongTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/padding"
         android:textSize="@dimen/text_size_middle"
+        app:layout_constraintBottom_toBottomOf="@+id/ivAlbumArt"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivAlbumArt"
         tools:text="Favourite" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

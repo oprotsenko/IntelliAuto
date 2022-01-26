@@ -10,10 +10,8 @@ class AddRemoveRecent(private val recentAudioRepository: RecentAudioRepository) 
         val list = audio?.toMutableList()
         if (list?.get(position)?.isRecent == true) {
             recentAudioRepository.removeAudio(list[position].audio.id)
-//            list[position] = list[position].copy(isRecent = false)
         } else {
             list?.let { recentAudioRepository.addAudio(list[position].audio.id) }
-//            list?.set(position, list[position].copy(isRecent = true))
         }
         return recentAudioRepository.getPlaylist()?.mapToPlaylist()?.list?.map {
             it.wrapAudio()
