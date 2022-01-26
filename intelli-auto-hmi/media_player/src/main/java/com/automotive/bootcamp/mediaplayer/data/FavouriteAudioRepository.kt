@@ -1,13 +1,10 @@
 package com.automotive.bootcamp.mediaplayer.data
 
 import com.automotive.bootcamp.common.utils.FAVOURITE_PLAYLIST_NAME
-import com.automotive.bootcamp.common.utils.RECENT_PLAYLIST_NAME
 import com.automotive.bootcamp.mediaplayer.data.cache.CacheAudioSource
 import com.automotive.bootcamp.mediaplayer.data.models.AudioPlaylistItemCrossRef
 import com.automotive.bootcamp.mediaplayer.data.models.EmbeddedPlaylistItem
 import com.automotive.bootcamp.mediaplayer.data.models.PlaylistItem
-import com.automotive.bootcamp.mediaplayer.domain.extensions.mapToSpecialPlaylistItem
-import com.automotive.bootcamp.mediaplayer.domain.models.EmbeddedPlaylist
 
 class FavouriteAudioRepository(private val cacheAudioSource: CacheAudioSource) {
     suspend fun addAudio(aid: Long) {
@@ -26,6 +23,16 @@ class FavouriteAudioRepository(private val cacheAudioSource: CacheAudioSource) {
             val crossRef = AudioPlaylistItemCrossRef(aid, it)
             cacheAudioSource.deleteAudioFromPlaylist(crossRef)
         }
+    }
+
+    suspend fun hasAudio(aid: Long): Boolean {
+        val pid = cacheAudioSource.getEmbeddedPlaylist(FAVOURITE_PLAYLIST_NAME)?.id
+
+        pid?.let {
+            cacheAudioSource.playlistHasAudio(pid, aid)
+        }
+
+        return false
     }
 
     suspend fun getPlaylist(): PlaylistItem? {

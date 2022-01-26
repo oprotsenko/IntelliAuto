@@ -9,6 +9,7 @@ interface CacheAudioSource {
     suspend fun insertAudio(audio: AudioItem):Long
     suspend fun insertAudios(audios: List<AudioItem>):List<Long>
     suspend fun playlistExists(pid: Long): Boolean
+    suspend fun playlistHasAudio(pid:Long, aid:Long): Boolean
     suspend fun insertEmbeddedPlaylist(playlist: EmbeddedPlaylistItem)
     suspend fun getEmbeddedPlaylist(name: String): EmbeddedPlaylistItem?
     suspend fun insertPlaylist(playlist: PlaylistItem):Long

@@ -11,6 +11,10 @@ class PlaylistRepository(private val cacheAudioSource: CacheAudioSource) {
         return cacheAudioSource.playlistExists(pid)
     }
 
+    suspend fun playlistHasAudio(pid: Long, aid: Long): Boolean {
+        return cacheAudioSource.playlistHasAudio(pid, aid)
+    }
+
     suspend fun addPlaylist(playlist: Playlist): Long {
         return cacheAudioSource.insertPlaylist(playlist.mapToPlaylistItem())
     }
