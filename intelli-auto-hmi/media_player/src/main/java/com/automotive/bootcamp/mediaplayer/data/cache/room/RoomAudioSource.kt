@@ -31,6 +31,10 @@ class RoomAudioSource(context: Context) : CacheAudioSource {
         return dao.playlistExists(pid)
     }
 
+    override suspend fun playlistHasAudio(pid: Long, aid: Long): Boolean {
+        return dao.playlistHasAudio(pid, aid)
+    }
+
     override suspend fun insertEmbeddedPlaylist(playlist: EmbeddedPlaylistItem) {
         dao.insertEmbeddedPlaylist(playlist.mapToEntity())
     }
@@ -39,7 +43,7 @@ class RoomAudioSource(context: Context) : CacheAudioSource {
         return dao.getEmbeddedPlaylist(name)?.mapToEmbeddedPlaylistItem()
     }
 
-    override suspend fun insertPlaylist(playlist: PlaylistItem):Long {
+    override suspend fun insertPlaylist(playlist: PlaylistItem): Long {
         val playlistEntity = playlist.mapToEntity()
 
         return dao.insertPlaylist(playlistEntity)
@@ -73,7 +77,8 @@ class RoomAudioSource(context: Context) : CacheAudioSource {
                 playlist.mapToPlaylistItem()
             }
         }
-
-        return null
     }
+
+    override suspend fun isAudioExists(aid: Long, pid: Long): Boolean =
+        dao.playlistHasAudio(pid, aid)
 }

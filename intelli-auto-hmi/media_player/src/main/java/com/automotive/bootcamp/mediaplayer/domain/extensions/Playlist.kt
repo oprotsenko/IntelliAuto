@@ -4,7 +4,7 @@ import com.automotive.bootcamp.mediaplayer.data.models.PlaylistItem
 import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
 
-fun Playlist.wrapPlaylist(): PlaylistWrapper =
+fun Playlist.mapToPlaylistWrapper(): PlaylistWrapper =
     PlaylistWrapper(playlist = this, playlistName = this.name)
 
 fun Playlist.mapToPlaylistItem(): PlaylistItem =

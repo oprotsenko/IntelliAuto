@@ -65,6 +65,20 @@ class LocalMusicFragment :
                         return@setOnMenuItemClickListener true
                     }
                     R.id.audioAddToPlaylist -> {
+                        viewModel.playlistsData?.let { playlists ->
+                            for (i in playlists.indices) {
+                                menu.findItem(R.id.audioAddToPlaylist).subMenu.add(
+                                    R.id.audioAddToPlaylist,
+                                    playlists[i].playlist.id.toInt(),
+                                    i,
+                                    playlists[i].playlistName
+                                ).setOnMenuItemClickListener submenu@{
+                                    viewModel.addToPlaylist(playlists[i].playlist.id, position)
+                                    return@submenu true
+                                }
+                                show()
+                            }
+                        }
                         return@setOnMenuItemClickListener true
                     }
                     R.id.audioCreatePlaylist -> {
@@ -72,6 +86,7 @@ class LocalMusicFragment :
                         enterNameDialog.show(
                             parentFragmentManager, null
                         )
+                        viewModel.getAllPlaylists()
                         return@setOnMenuItemClickListener true
                     }
                     R.id.audioRemoveRecent -> {

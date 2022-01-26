@@ -6,8 +6,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "audios")
 data class AudioEntity(
-    @PrimaryKey(autoGenerate = true)
-    val aid: Long = 0,
+    @PrimaryKey
+    val aid: Long,
     val cover: Bitmap,
     val title: String?,
     val artist: String?,

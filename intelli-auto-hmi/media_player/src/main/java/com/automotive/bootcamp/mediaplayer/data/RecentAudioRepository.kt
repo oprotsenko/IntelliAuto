@@ -25,6 +25,16 @@ class RecentAudioRepository(private val cacheAudioSource: CacheAudioSource) {
         }
     }
 
+    suspend fun hasAudio(aid: Long): Boolean {
+        val pid = cacheAudioSource.getEmbeddedPlaylist(RECENT_PLAYLIST_NAME)?.id
+
+        pid?.let {
+            cacheAudioSource.playlistHasAudio(pid, aid)
+        }
+
+        return false
+    }
+
     suspend fun getPlaylist(): PlaylistItem? {
         val pid = cacheAudioSource.getEmbeddedPlaylist(RECENT_PLAYLIST_NAME)?.id
 

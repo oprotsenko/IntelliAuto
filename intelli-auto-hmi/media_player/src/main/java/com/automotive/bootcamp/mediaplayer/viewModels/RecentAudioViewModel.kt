@@ -3,11 +3,8 @@ package com.automotive.bootcamp.mediaplayer.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.automotive.bootcamp.common.base.CoroutineViewModel
-import com.automotive.bootcamp.common.utils.RECENT_PLAYLIST_NAME
 import com.automotive.bootcamp.mediaplayer.data.extensions.mapToAudio
 import com.automotive.bootcamp.mediaplayer.domain.extensions.wrapAudio
-import com.automotive.bootcamp.mediaplayer.domain.extensions.wrapPlaylist
-import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
 import com.automotive.bootcamp.mediaplayer.domain.useCases.AddRemoveFavourite
 import com.automotive.bootcamp.mediaplayer.domain.useCases.AddRemoveRecent
 import com.automotive.bootcamp.mediaplayer.domain.useCases.RetrieveRecentAudio
@@ -37,8 +34,17 @@ class RecentAudioViewModel(
 
     fun setIsFavourite(position: Int) {
         viewModelScope.launch {
-            recentAudioData.value =
-                addRemoveFavourite.addRemoveFavourite(recentAudioData.value, position)
+            val list = recentAudioData.value?.toMutableList()
+            list?.let {
+                if (addRemoveFavourite.hasAudio(it[position].audio.id)) {
+                    addRemoveFavourite.removeFavourite(it[position].audio.id)
+                    list[position] = list[position].copy(isFavourite = false)
+                } else {
+                    addRemoveFavourite.addFavourite(it[position].audio.id)
+                    list[position] = list[position].copy(isFavourite = true)
+                }
+            }
+            recentAudioData.value = list
         }
     }
 
