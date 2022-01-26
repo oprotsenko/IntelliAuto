@@ -6,7 +6,7 @@ import com.automotive.bootcamp.common.base.CoroutineViewModel
 import com.automotive.bootcamp.mediaplayer.data.extensions.mapToAudio
 import com.automotive.bootcamp.mediaplayer.domain.extensions.wrapAudio
 import com.automotive.bootcamp.mediaplayer.domain.useCases.AddRemoveFavourite
-import com.automotive.bootcamp.mediaplayer.domain.useCases.AddRemoveRecent
+import com.automotive.bootcamp.mediaplayer.domain.useCases.RemoveRecent
 import com.automotive.bootcamp.mediaplayer.domain.useCases.RetrieveRecentAudio
 import com.automotive.bootcamp.mediaplayer.presentation.extensions.unwrap
 import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 class RecentAudioViewModel(
     private val retrieveRecentAudio: RetrieveRecentAudio,
     private val addRemoveFavourite: AddRemoveFavourite,
-    private val addRemoveRecent: AddRemoveRecent
+    private val removeRecent: RemoveRecent
 ) : CoroutineViewModel() {
     val recentAudioData by lazy { MutableLiveData<List<AudioWrapper>>() }
 
@@ -48,10 +48,10 @@ class RecentAudioViewModel(
         }
     }
 
-    fun setIsRecent(position: Int) {
+    fun removeFromRecent(position: Int) {
         viewModelScope.launch {
             recentAudioData.value =
-                addRemoveRecent.addRemoveRecent(recentAudioData.value, position)
+                removeRecent.execute(recentAudioData.value, position)
         }
     }
 

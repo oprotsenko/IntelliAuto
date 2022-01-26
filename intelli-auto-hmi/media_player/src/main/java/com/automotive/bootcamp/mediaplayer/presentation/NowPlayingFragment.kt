@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import com.automotive.bootcamp.common.base.BaseFragment
+import com.automotive.bootcamp.common.extensions.loadImage
 import com.automotive.bootcamp.common.utils.PLAYLIST_BUNDLE_KEY
 import com.automotive.bootcamp.common.utils.POSITION_BUNDLE_KEY
 import com.automotive.bootcamp.mediaplayer.R
@@ -79,8 +80,11 @@ class NowPlayingFragment :
     override fun setObservers() {
         nowPlayingViewModel.currentAudio.observe(viewLifecycleOwner) {
             binding.apply {
-                ivNowPlayingAudioArt.setImageBitmap(it.audio.cover)
-                ivNowPlayingBackground.setImageBitmap(it.audio.cover)
+                it.audio.cover?.let{ url ->
+                    ivNowPlayingAudioArt.loadImage(url)
+                    ivNowPlayingBackground.loadImage(url)
+                }
+
                 tvNowPlayingSingerName.text = it.audio.artist
                 tvNowPlayingAudioTitle.text = it.audio.title
             }

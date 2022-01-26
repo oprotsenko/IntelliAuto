@@ -1,14 +1,17 @@
 package com.automotive.bootcamp.mediaplayer.data.local.resources
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
-import com.automotive.bootcamp.common.utils.DEFAULT_COVER
+import android.util.Log
+import com.automotive.bootcamp.common.utils.PICTURES_DIRECTORY_NAME
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.data.local.LocalMedia
 import com.automotive.bootcamp.mediaplayer.data.models.AudioItem
-import java.io.InputStream
+import java.io.*
+import java.util.*
 
 class ResourcesAudioSource(
     private val retriever: MediaMetadataRetriever,
@@ -43,8 +46,39 @@ class ResourcesAudioSource(
             val title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
             val artist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
             val duration = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-            list.add(AudioItem(res.toLong(), image, title, artist, duration, audioPath.toString()))
+
+            val imagePath = saveImageToExternalStorage(image)
+
+            list.add(
+                AudioItem(
+                    res.toLong(),
+                    imagePath,
+                    title,
+                    artist,
+                    duration,
+                    audioPath.toString()
+                )
+            )
         }
         return list
+    }
+
+    private fun saveImageToExternalStorage(bitmap: Bitmap): String? {
+        val directory = context.getDir(PICTURES_DIRECTORY_NAME, Context.MODE_PRIVATE)
+        if (!directory.exists()) {
+            directory.mkdir()
+        }
+
+        val file = File(directory, "${UUID.randomUUID()}.jpg")
+
+        try {
+            val fos = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
+            fos.close()
+        } catch (e: Exception) {
+            Log.e("ResourcesAudioSource", e.message, e)
+        }
+
+        return Uri.parse(file.absolutePath).path
     }
 }

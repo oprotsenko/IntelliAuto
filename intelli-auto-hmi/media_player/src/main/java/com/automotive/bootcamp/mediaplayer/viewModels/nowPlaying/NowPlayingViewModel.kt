@@ -3,13 +3,18 @@ package com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.automotive.bootcamp.mediaplayer.domain.extensions.wrapAudio
 import com.automotive.bootcamp.mediaplayer.domain.useCases.*
 import com.automotive.bootcamp.mediaplayer.utils.enums.RepeatMode
 import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
+import kotlinx.coroutines.launch
 
-class NowPlayingViewModel(private val audioPlaybackControl: AudioPlaybackControl) : ViewModel(),
+class NowPlayingViewModel(
+    private val audioPlaybackControl: AudioPlaybackControl,
+    private val addRecent: AddRecent
+) : ViewModel(),
     AudioCompletionListener, AudioRunningListener {
     private var audioListData = mutableListOf<AudioWrapper>()
     private var originalAudioListData = mutableListOf<AudioWrapper>()
@@ -71,6 +76,10 @@ class NowPlayingViewModel(private val audioPlaybackControl: AudioPlaybackControl
         _currentAudio.value?.let {
             audioPlaybackControl.playAudio(it.audio.url)
             _isPlaying.value = true
+
+            viewModelScope.launch {
+                addRecent.execute(it)
+            }
         }
     }
 
@@ -86,10 +95,14 @@ class NowPlayingViewModel(private val audioPlaybackControl: AudioPlaybackControl
             position = 0;
         }
 
-        val media = audioListData[position]
-        audioPlaybackControl.nextAudio(media.audio.url)
-        _currentAudio.value = media
+        val audioWrapped = audioListData[position]
+        audioPlaybackControl.nextAudio(audioWrapped.audio.url)
+        _currentAudio.value = audioWrapped
         _isPlaying.value = true
+
+        viewModelScope.launch {
+            addRecent.execute(audioWrapped)
+        }
     }
 
     fun previousAudio() {
@@ -99,10 +112,14 @@ class NowPlayingViewModel(private val audioPlaybackControl: AudioPlaybackControl
             }
         }
 
-        val media = audioListData[position]
-        audioPlaybackControl.previousAudio(media.audio.url)
-        _currentAudio.value = media
+        val audioWrapped = audioListData[position]
+        audioPlaybackControl.previousAudio(audioWrapped.audio.url)
+        _currentAudio.value = audioWrapped
         _isPlaying.value = true
+
+        viewModelScope.launch {
+            addRecent.execute(audioWrapped)
+        }
     }
 
     fun shuffleAudio() {

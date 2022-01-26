@@ -11,6 +11,7 @@ import com.automotive.bootcamp.mediaplayer.viewModels.LocalMusicViewModel
 import com.automotive.bootcamp.mediaplayer.viewModels.RecentAudioViewModel
 import com.automotive.bootcamp.mediaplayer.viewModels.OnlineMusicViewModel
 import com.automotive.bootcamp.mediaplayer.viewModels.PlaylistsViewModel
+import com.automotive.bootcamp.mediaplayer.viewModels.FavouriteMusicViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 

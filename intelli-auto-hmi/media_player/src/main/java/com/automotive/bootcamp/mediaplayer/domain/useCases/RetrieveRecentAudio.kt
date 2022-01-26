@@ -7,8 +7,6 @@ class RetrieveRecentAudio(
     private val recentAudioRepository: RecentAudioRepository
 ) {
     suspend fun retrieveRecentAudio(): List<AudioItem>? {
-        val recentPlaylist = recentAudioRepository.getEmbeddedPlaylist()
-
         return recentAudioRepository.getPlaylist()?.list
     }
 }
