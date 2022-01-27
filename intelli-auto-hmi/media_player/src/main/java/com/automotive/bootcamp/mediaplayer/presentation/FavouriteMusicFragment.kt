@@ -118,7 +118,7 @@ class FavouriteMusicFragment :
     private fun playAudio(position: Int) {
         val playlist = viewModel.getAudioList()
         if (playlist != null) {
-            parentFragmentManager.beginTransaction()
+            requireActivity().supportFragmentManager.beginTransaction()
                 .replace(
                     R.id.fullScreenContainer,
                     NowPlayingFragment.newInstance(playlist, position)
