@@ -28,12 +28,9 @@ class FavouriteAudioRepository(private val cacheAudioSource: CacheAudioSource) {
 
     suspend fun hasAudio(aid: Long): Boolean {
         val pid = cacheAudioSource.getEmbeddedPlaylist(FAVOURITE_PLAYLIST_NAME)?.id
-
-        pid?.let {
+        return if (pid != null) {
             cacheAudioSource.playlistHasAudio(pid, aid)
-        }
-
-        return false
+        } else false
     }
 
     suspend fun getPlaylist(): PlaylistItem? {

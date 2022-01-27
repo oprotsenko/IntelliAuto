@@ -11,5 +11,9 @@
     <string name="pop_up_menu_add_remove_favourite">Add to/Remove from Favourite</string>
     <string name="pop_up_menu_create_playlist">Create playlist</string>
     <string name="pop_up_menu_remove_playlist">Remove playlist</string>
+    <string name="pop_up_menu_remove_from_current_playlist">Remove from current playlist</string>
     <string name="custom_playlist_name">Enter the playlist name</string>
+    <string name="add_custom_playlist">Add playlist</string>
+    <string name="undo">Undo</string>
+    <string name="playlist_name">Playlist name</string>
 </resources>

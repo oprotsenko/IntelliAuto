@@ -4,20 +4,16 @@ import android.os.Bundle
 import android.view.View
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
-import android.widget.WrapperListAdapter
 import com.automotive.bootcamp.common.base.BaseFragment
 import com.automotive.bootcamp.common.extensions.loadImage
-import com.automotive.bootcamp.common.utils.PLAYLIST_BUNDLE
-import com.automotive.bootcamp.common.utils.POSITION_BUNDLE
+import com.automotive.bootcamp.common.utils.PLAYLIST_BUNDLE_KEY
+import com.automotive.bootcamp.common.utils.POSITION_BUNDLE_KEY
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.FragmentNowPlayingBinding
-import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
 import com.automotive.bootcamp.mediaplayer.utils.enums.RepeatMode
 import com.automotive.bootcamp.mediaplayer.utils.extensions.timeToString
-import com.automotive.bootcamp.mediaplayer.viewModels.LocalMusicViewModel
 import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.NowPlayingViewModel
-import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class NowPlayingFragment :
@@ -27,8 +23,8 @@ class NowPlayingFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val playlist: PlaylistWrapper? = arguments?.getParcelable(PLAYLIST_BUNDLE)
-        val position = arguments?.getInt(POSITION_BUNDLE)
+        val playlist: PlaylistWrapper? = arguments?.getParcelable(PLAYLIST_BUNDLE_KEY)
+        val position = arguments?.getInt(POSITION_BUNDLE_KEY)
         if (playlist != null && position != null) {
             nowPlayingViewModel.init(
                 playlist, position
@@ -44,6 +40,7 @@ class NowPlayingFragment :
                     parentFragmentManager.popBackStack()
                 }
             }
+
             ibNowPlayingPlayPause.setOnClickListener {
                 if (nowPlayingViewModel.isPlaying.value == true) {
                     nowPlayingViewModel.pauseAudio()
@@ -121,6 +118,11 @@ class NowPlayingFragment :
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        arguments = null
+    }
+
     private fun updatePlayPauseButtonView(isPlaying: Boolean) {
         val bImageResource = if (isPlaying) {
             R.drawable.ic_pause
@@ -157,8 +159,8 @@ class NowPlayingFragment :
         fun newInstance(media: PlaylistWrapper, position: Int) =
             NowPlayingFragment().apply {
                 arguments = Bundle()
-                arguments?.putParcelable(PLAYLIST_BUNDLE, media)
-                arguments?.putInt(POSITION_BUNDLE, position)
+                arguments?.putParcelable(PLAYLIST_BUNDLE_KEY, media)
+                arguments?.putInt(POSITION_BUNDLE_KEY, position)
             }
     }
 }

@@ -24,13 +24,14 @@ abstract class BaseFragment<T : ViewBinding>(
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        initRecyclerView()
+        initView()
         setListeners()
         setObservers()
     }
 
-    open fun setListeners() {
-    }
-
-    open fun setObservers() {
-    }
+    open fun initRecyclerView(){}
+    open fun initView(){}
+    open fun setListeners() {}
+    open fun setObservers() {}
 }

@@ -13,30 +13,35 @@ class MediaPlayerFragment :
             bLocalMusic.setOnClickListener {
                 Log.d("MediaPlayerFragment", "local")
 
-                requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.mediaPlayerServiceContainer, LocalMusicFragment()).commit()
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.mediaPlayerServiceContainer, LocalMusicFragment())
+                    .addToBackStack(null).commit()
             }
             bOnlineMusic.setOnClickListener {
                 Log.d("MediaPlayerFragment", "online")
 
-                requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.mediaPlayerServiceContainer, OnlineMusicFragment()).commit()
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.mediaPlayerServiceContainer, OnlineMusicFragment())
+                    .addToBackStack(null).commit()
             }
             bRecentMusic.setOnClickListener {
                 Log.d("MediaPlayerFragment", "Recent")
 
-                requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.mediaPlayerServiceContainer, RecentAudioFragment()).commit()
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.mediaPlayerServiceContainer, RecentAudioFragment())
+                    .addToBackStack(null).commit()
             }
             bPlaylists.setOnClickListener {
                 Log.d("MediaPlayerFragment", "Playlists")
 
-                requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.mediaPlayerServiceContainer, PlaylistsFragment()).commit()
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.mediaPlayerServiceContainer, PlaylistsFragment())
+                    .addToBackStack(null).commit()
             }
             bFavourite.setOnClickListener {
-                requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.mediaPlayerServiceContainer, FavouriteMusicFragment()).commit()
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.mediaPlayerServiceContainer, FavouriteMusicFragment())
+                    .addToBackStack(null).commit()
             }
             bSearch.setOnClickListener {
 

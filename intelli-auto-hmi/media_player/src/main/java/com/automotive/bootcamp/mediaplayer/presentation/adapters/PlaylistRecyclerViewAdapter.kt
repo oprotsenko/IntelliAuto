@@ -20,31 +20,28 @@ class PlaylistRecyclerViewAdapter(
     ) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistViewHolder {
-        return PlaylistViewHolder(
-            ItemPlaylistBinding.bind(
-                LayoutInflater.from(parent.context).inflate(
-                    R.layout.item_playlist, parent, false
-                )
-            )
-        )
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.item_playlist, parent, false)
+        return PlaylistViewHolder(ItemPlaylistBinding.bind(view))
     }
 
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
         with(holder) {
-            bind(getItem(position))
-            root.setOnClickListener {
-                onMediaItemClickListener.onMediaClick(position)
-            }
-            popupMenu.setOnClickListener {
-                onItemClickListener.onItemClick(popupMenu, position)
+            bind(getItem(bindingAdapterPosition))
+            binding.apply {
+                root.setOnClickListener {
+                    onMediaItemClickListener.onMediaClick(bindingAdapterPosition)
+                }
+                popupMenu.setOnClickListener {
+                    onItemClickListener.onItemClick(popupMenu, bindingAdapterPosition)
+                }
             }
         }
     }
 
-    class PlaylistViewHolder(private val binding: ItemPlaylistBinding) :
+    class PlaylistViewHolder(val binding: ItemPlaylistBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        val root = binding.root
         val popupMenu = binding.ibPopUpMenu
 
         fun bind(playlist: PlaylistWrapper) {
