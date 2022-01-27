@@ -24,8 +24,10 @@ class CustomPlaylistViewModel(
     val customMusicData by lazy { MutableLiveData<List<AudioWrapper>>() }
     var playlists: List<PlaylistWrapper>? = null
     var dynamicallyAddAudioPosition: Int = 0
+    var pid: Long? = null
 
     private suspend fun retrieveMusic(playlist: PlaylistWrapper?) {
+        pid = playlist?.playlist?.id
         val list = playlist?.playlist?.list?.map {
             it.wrapAudio()
         }
@@ -40,6 +42,17 @@ class CustomPlaylistViewModel(
         viewModelScope.launch {
             retrieveMusic(playlist)
             getAllPlaylists()
+        }
+    }
+
+    fun removeFromCurrentPlaylist(position: Int) {
+        viewModelScope.launch {
+            customMusicData.value?.let {
+                pid?.let { pid ->
+                    managePlaylists.removeFromPlaylist(it[position].audio.id, pid)
+                    customMusicData.value = managePlaylists.getPlaylist(pid)
+                }
+            }
         }
     }
 

@@ -70,6 +70,7 @@ class CustomPlaylistFragment :
                     isVisible = false
                 }
             }
+            menu.findItem(R.id.audioRemoveCurrent).isVisible = true
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.audioPlay -> {
@@ -108,6 +109,10 @@ class CustomPlaylistFragment :
                     }
                     R.id.audioAddRemoveFavourite -> {
                         viewModel.setIsFavourite(position)
+                        return@setOnMenuItemClickListener true
+                    }
+                    R.id.audioRemoveCurrent -> {
+                        viewModel.removeFromCurrentPlaylist(position)
                         return@setOnMenuItemClickListener true
                     }
                     else -> {
