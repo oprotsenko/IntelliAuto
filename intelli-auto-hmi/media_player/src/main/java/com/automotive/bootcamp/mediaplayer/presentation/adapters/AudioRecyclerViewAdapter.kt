@@ -29,20 +29,19 @@ class AudioRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: AudioViewHolder, position: Int) {
         with(holder) {
-            bind(getItem(position))
-            root.setOnClickListener {
-                onMediaItemClickListener.onMediaClick(position)
+            bind(getItem(bindingAdapterPosition))
+            binding.root.setOnClickListener {
+                onMediaItemClickListener.onMediaClick(bindingAdapterPosition)
             }
             popupMenu.setOnClickListener {
-                onItemClickListener.onItemClick(popupMenu, position)
+                onItemClickListener.onItemClick(popupMenu, bindingAdapterPosition)
             }
         }
     }
 
-    class AudioViewHolder(private val binding: ItemAudioBinding) :
+    class AudioViewHolder(val binding: ItemAudioBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        val root = binding.root
         val popupMenu = binding.ibPopUpMenu
 
         fun bind(album: AudioWrapper) {
@@ -50,7 +49,6 @@ class AudioRecyclerViewAdapter(
                 album.audio.cover?.let { url ->
                     ivAlbumArt.loadImage(url)
                 }
-
                 tvSingerName.text = album.audio.artist
                 tvSongTitle.text = album.audio.title
                 ivFavourite.visibility = if (album.isFavourite) View.VISIBLE else View.GONE

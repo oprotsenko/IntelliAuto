@@ -33,6 +33,10 @@ class RecentAudioFragment :
         }
     }
 
+    override fun initView() {
+        binding.tvSelectedPlaylistName.text = resources.getString(R.string.recent_music)
+    }
+
     override fun setObservers() {
         viewModel.apply {
             recentMusicData.observe(viewLifecycleOwner) {

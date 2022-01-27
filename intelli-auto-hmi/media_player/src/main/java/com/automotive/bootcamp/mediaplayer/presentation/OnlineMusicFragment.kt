@@ -33,6 +33,10 @@ class OnlineMusicFragment :
         }
     }
 
+    override fun initView() {
+        binding.tvSelectedPlaylistName.text = resources.getString(R.string.online_music)
+    }
+
     override fun setObservers() {
         viewModel.apply {
             onlineMusicData.observe(viewLifecycleOwner) {

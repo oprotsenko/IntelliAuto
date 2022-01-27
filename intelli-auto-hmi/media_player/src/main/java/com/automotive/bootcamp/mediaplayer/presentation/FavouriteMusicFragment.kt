@@ -33,6 +33,10 @@ class FavouriteMusicFragment :
         }
     }
 
+    override fun initView() {
+        binding.tvSelectedPlaylistName.text = resources.getString(R.string.favourite_music)
+    }
+
     override fun setObservers() {
         viewModel.apply {
             favouriteMusicData.observe(viewLifecycleOwner) {

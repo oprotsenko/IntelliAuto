@@ -46,9 +46,7 @@
         <item name="hintTextColor">?attr/colorOnPrimary</item>
         <item name="placeholderTextColor">?attr/colorPrimary</item>
         <item name="android:textColorHint">?attr/colorPrimary</item>
-        <item name="android:textSize">@dimen/text_size_middle</item>
         <item name="boxStrokeColor">?attr/colorPrimary</item>
-        <item name="android:textAlignment">viewStart</item>
         <item name="android:background">@android:color/transparent</item>
     </style>
 </resources>

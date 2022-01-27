@@ -34,8 +34,9 @@ class CustomPlaylistFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.init(arguments?.getParcelable(CUSTOM_PLAYLIST_BUNDLE_KEY))
-        initRecyclerView()
+        val playlistWrapper = arguments?.getParcelable<PlaylistWrapper>(CUSTOM_PLAYLIST_BUNDLE_KEY)
+        viewModel.init(playlistWrapper)
+        binding.tvSelectedPlaylistName.text = playlistWrapper?.playlist?.name.toString()
     }
 
     override fun setObservers() {
@@ -121,7 +122,7 @@ class CustomPlaylistFragment :
     private fun playAudio(position: Int) {
         val playlist = viewModel.getAudioList()
         if (playlist != null) {
-            parentFragmentManager.beginTransaction()
+            requireActivity().supportFragmentManager.beginTransaction()
                 .replace(
                     R.id.fullScreenContainer,
                     NowPlayingFragment.newInstance(playlist, position)

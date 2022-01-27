@@ -118,6 +118,11 @@ class NowPlayingFragment :
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        arguments = null
+    }
+
     private fun updatePlayPauseButtonView(isPlaying: Boolean) {
         val bImageResource = if (isPlaying) {
             R.drawable.ic_pause

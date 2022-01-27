@@ -25,13 +25,6 @@ class CustomPlaylistViewModel(
     var playlists: List<PlaylistWrapper>? = null
     var dynamicallyAddAudioPosition: Int = 0
 
-    fun init(playlist: PlaylistWrapper?) {
-        viewModelScope.launch {
-            retrieveMusic(playlist)
-            getAllPlaylists()
-        }
-    }
-
     private suspend fun retrieveMusic(playlist: PlaylistWrapper?) {
         val list = playlist?.playlist?.list?.map {
             it.wrapAudio()
@@ -41,6 +34,13 @@ class CustomPlaylistViewModel(
             it.isRecent = manageRecent.hasAudio(it.audio.id)
         }
         customMusicData.value = list
+    }
+
+    fun init(playlist: PlaylistWrapper?) {
+        viewModelScope.launch {
+            retrieveMusic(playlist)
+            getAllPlaylists()
+        }
     }
 
     fun setIsFavourite(position: Int) {
@@ -76,7 +76,7 @@ class CustomPlaylistViewModel(
                 wrapper.unwrap()
             }
         }
-        return list?.let { Playlist(1, "name", it).mapToPlaylistWrapper() }
+        return list?.let { Playlist(name = "name", list = it).mapToPlaylistWrapper() }
     }
 
     fun createPlaylist(playlistName: String, position: Int) {

@@ -17,7 +17,8 @@ class PlaylistsViewModel(
 ) : ViewModel() {
 
     val playlistsData by lazy { MutableLiveData<List<PlaylistWrapper>>() }
-    val selectedPlaylist by lazy { SingleLiveEvent<PlaylistWrapper>() }
+    val selectedPlaylist by lazy { MutableLiveData<PlaylistWrapper>() }
+    val createPlaylistView by lazy { MutableLiveData<Boolean>() }
 
 
     init {
@@ -35,7 +36,7 @@ class PlaylistsViewModel(
 
     fun removePlaylist(position: Int) {
         viewModelScope.launch {
-            playlistsData.value?.let { deletePlaylist.deletePlaylist(it[position].playlist.id)}
+            playlistsData.value?.let { deletePlaylist.deletePlaylist(it[position].playlist.id) }
             playlistsData.value = retrievePlaylistAudio.retrievePlaylists()
         }
     }

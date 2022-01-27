@@ -33,6 +33,10 @@ class LocalMusicFragment :
         }
     }
 
+    override fun initView() {
+        binding.tvSelectedPlaylistName.text = resources.getString(R.string.local_music)
+    }
+
     override fun setObservers() {
         viewModel.apply {
             localMusicData.observe(viewLifecycleOwner) {
