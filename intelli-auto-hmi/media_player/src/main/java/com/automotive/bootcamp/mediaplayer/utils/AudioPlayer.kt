@@ -7,9 +7,9 @@ interface AudioPlayer {
     fun setOnAudioCompletionListener(audioCompletionListener: AudioCompletionListener)
     fun setOnAudioRunningListener(audioRunningListener: AudioRunningListener)
 
-    fun playAudio(songURL: String?)
+    fun playAudio(url: String?)
     fun pauseAudio()
-    fun previousAudio(songURL: String?)
-    fun nextAudio(songURL: String?)
+    fun previousAudio(url: String?)
+    fun nextAudio(url: String?)
     fun updateAudioProgress(progress: Int)
 }

@@ -3,11 +3,11 @@ package com.automotive.bootcamp.mediaplayer.utils
 import android.content.Context
 import android.media.MediaPlayer
 import android.net.Uri
-import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.AudioCompletionListener
 import android.os.Handler
 import android.os.Looper
 import com.automotive.bootcamp.mediaplayer.utils.extensions.currentSeconds
 import com.automotive.bootcamp.mediaplayer.utils.extensions.seconds
+import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.AudioCompletionListener
 import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.AudioRunningListener
 
 class DefaultAudioPlayer(private val context: Context) : AudioPlayer {
@@ -16,11 +16,10 @@ class DefaultAudioPlayer(private val context: Context) : AudioPlayer {
     private lateinit var audioRunningListener: AudioRunningListener
     private lateinit var runnable: Runnable
 
-    private var length = 0
+    private var lastAudioUrl: String? = null
 
     init {
         player.setOnCompletionListener {
-            length = 0
             audioCompletionListener.onAudioCompletion()
         }
 
@@ -44,38 +43,38 @@ class DefaultAudioPlayer(private val context: Context) : AudioPlayer {
         this.audioRunningListener = audioRunningListener
     }
 
-    override fun playAudio(songURL: String?) {
-        player.apply {
-            if (length > 0) {
-                seekTo(length)
-            } else {
+    override fun playAudio(url: String?) {
+        if (lastAudioUrl != url) {
+            player.apply {
                 reset()
-                setDataSource(context, Uri.parse(songURL))
+                setDataSource(context, Uri.parse(url))
                 prepare()
+                start()
             }
-            start()
+        } else {
+            if (!player.isPlaying) {
+                player.apply {
+                    seekTo(player.currentPosition)
+                    start()
+                }
+            }
         }
+        lastAudioUrl = url
     }
 
     override fun pauseAudio() {
-        player.apply {
-            pause()
-            length = currentPosition;
-        }
+        player.pause()
     }
 
-    override fun previousAudio(songURL: String?) {
-        length = 0
-        playAudio(songURL)
+    override fun previousAudio(url: String?) {
+        playAudio(url)
     }
 
-    override fun nextAudio(songURL: String?) {
-        length = 0
-        playAudio(songURL)
+    override fun nextAudio(url: String?) {
+        playAudio(url)
     }
 
-    override fun updateAudioProgress(progress:Int){
-        length = progress * 1000
-        player.seekTo(length)
+    override fun updateAudioProgress(progress: Int) {
+        player.seekTo(progress * 1000)
     }
 }
