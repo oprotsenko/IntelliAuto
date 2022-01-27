@@ -1,6 +1,5 @@
 package com.automotive.bootcamp.mediaplayer.presentation
 
-import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import com.automotive.bootcamp.common.base.BaseFragment
@@ -26,9 +25,12 @@ class LocalMusicFragment :
         )
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initRecyclerView()
+    override fun initRecyclerView() {
+        binding.rvAlbums.apply {
+            layoutManager = AutoFitGridLayoutManager(requireContext(), GRID_RECYCLE_COLUMN_WIDTH)
+            adapter = audioAdapter
+            itemAnimator?.changeDuration = 0
+        }
     }
 
     override fun setObservers() {
@@ -40,7 +42,7 @@ class LocalMusicFragment :
                 FRAGMENT_RESULT_KEY, viewLifecycleOwner, { _, bundle ->
                     val playlistName = bundle.getString(PLAYLIST_NAME_KEY)
                     playlistName?.let { viewModel.apply {
-                        createPlaylist(playlistName, dynamicPlaylistAddAudioPosition) }
+                        createPlaylist(playlistName, dynamicallyAddAudioPosition) }
                     }
                 })
 
@@ -67,7 +69,7 @@ class LocalMusicFragment :
                         return@setOnMenuItemClickListener true
                     }
                     R.id.audioAddToPlaylist -> {
-                        viewModel.playlistsData?.let { playlists ->
+                        viewModel.playlists?.let { playlists ->
                             for (i in playlists.indices) {
                                 menu.findItem(R.id.audioAddToPlaylist).subMenu.add(
                                     R.id.audioAddToPlaylist,
@@ -84,7 +86,7 @@ class LocalMusicFragment :
                         return@setOnMenuItemClickListener true
                     }
                     R.id.audioCreatePlaylist -> {
-                        viewModel.dynamicPlaylistAddAudioPosition = position
+                        viewModel.dynamicallyAddAudioPosition = position
                         val enterNameDialog = EnterNameDialog()
                         enterNameDialog.show(
                             parentFragmentManager, null
@@ -119,14 +121,6 @@ class LocalMusicFragment :
                 )
                 .addToBackStack(null)
                 .commit()
-        }
-    }
-
-    private fun initRecyclerView() {
-        binding.rvAlbums.apply {
-            layoutManager = AutoFitGridLayoutManager(requireContext(), GRID_RECYCLE_COLUMN_WIDTH)
-            adapter = audioAdapter
-            itemAnimator?.changeDuration = 0
         }
     }
 }

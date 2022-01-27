@@ -1,5 +1,7 @@
 package com.automotive.bootcamp.mediaplayer.presentation
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +22,7 @@ class EnterNameDialog : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         binding = DialogPlaylistNameBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
@@ -46,5 +49,6 @@ class EnterNameDialog : DialogFragment() {
         params?.width = WindowManager.LayoutParams.MATCH_PARENT
         params?.height = WindowManager.LayoutParams.MATCH_PARENT
         dialog?.onWindowAttributesChanged(params)
+
     }
 }

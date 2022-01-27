@@ -5,7 +5,7 @@ import com.automotive.bootcamp.mediaplayer.data.FavouriteAudioRepository
 import com.automotive.bootcamp.mediaplayer.data.PlaylistRepository
 import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
 
-class AddRemoveFavourite(
+class ManageFavourite(
     private val favouriteAudioRepository: FavouriteAudioRepository,
     private val playlistRepository: PlaylistRepository
 ) {

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import com.automotive.bootcamp.common.base.BaseFragment
+import com.automotive.bootcamp.common.extensions.hideKeyboard
 import com.automotive.bootcamp.common.utils.AutoFitGridLayoutManager
 import com.automotive.bootcamp.common.utils.GRID_RECYCLE_COLUMN_WIDTH
 import com.automotive.bootcamp.mediaplayer.R
@@ -26,7 +27,15 @@ class PlaylistsFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initRecyclerView()
+        binding.layoutAddCustomPlaylist.visibility = View.VISIBLE
+    }
+
+    override fun initRecyclerView() {
+        binding.rvAlbums.apply {
+            layoutManager = AutoFitGridLayoutManager(requireContext(), GRID_RECYCLE_COLUMN_WIDTH)
+            adapter = audioAdapter
+            itemAnimator?.changeDuration = 0
+        }
     }
 
     override fun setObservers() {
@@ -36,10 +45,37 @@ class PlaylistsFragment :
             }
 
             selectedPlaylist.observe(viewLifecycleOwner) {
-                requireActivity().supportFragmentManager.beginTransaction().replace(
+                parentFragmentManager.beginTransaction().replace(
                     R.id.mediaPlayerServiceContainer,
                     CustomPlaylistFragment.newInstance(it)
                 ).commit()
+            }
+        }
+    }
+
+    override fun setListeners() {
+        binding.apply {
+            root.setOnClickListener { root.hideKeyboard() }
+
+            bUndoCreateCustomPlaylist.setOnClickListener {
+                bUndoCreateCustomPlaylist.visibility = View.GONE
+                tilCustomPlaylistName.visibility = View.GONE
+                bCreateCustomPlaylist.visibility = View.GONE
+                bAddCustomPlaylist.visibility = View.VISIBLE
+            }
+            bAddCustomPlaylist.setOnClickListener {
+                bUndoCreateCustomPlaylist.visibility = View.VISIBLE
+                tilCustomPlaylistName.visibility = View.VISIBLE
+                bCreateCustomPlaylist.visibility = View.VISIBLE
+                bAddCustomPlaylist.visibility = View.GONE
+                bCreateCustomPlaylist.setOnClickListener {
+                    val playlistName = etCustomPlaylistName.text.toString()
+                    viewModel.createPlaylist(playlistName)
+                    bUndoCreateCustomPlaylist.visibility = View.GONE
+                    tilCustomPlaylistName.visibility = View.GONE
+                    bCreateCustomPlaylist.visibility = View.GONE
+                    bAddCustomPlaylist.visibility = View.VISIBLE
+                }
             }
         }
     }
@@ -55,9 +91,11 @@ class PlaylistsFragment :
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.playlistPlay -> {
-                        return@setOnMenuItemClickListener false
+                        viewModel.openPlaylist(position)
+                        return@setOnMenuItemClickListener true
                     }
                     R.id.playlistRemovePlaylist -> {
+                        viewModel.removePlaylist(position)
                         return@setOnMenuItemClickListener false
                     }
                     else -> {
@@ -66,14 +104,6 @@ class PlaylistsFragment :
                 }
             }
             show()
-        }
-    }
-
-    private fun initRecyclerView() {
-        binding.rvAlbums.apply {
-            layoutManager = AutoFitGridLayoutManager(requireContext(), GRID_RECYCLE_COLUMN_WIDTH)
-            adapter = audioAdapter
-            itemAnimator?.changeDuration = 0
         }
     }
 }

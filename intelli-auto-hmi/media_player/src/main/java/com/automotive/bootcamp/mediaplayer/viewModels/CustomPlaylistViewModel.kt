@@ -1,48 +1,57 @@
 package com.automotive.bootcamp.mediaplayer.viewModels
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.automotive.bootcamp.common.utils.FAVOURITE_PLAYLIST_NAME
-import com.automotive.bootcamp.mediaplayer.data.PlaylistRepository
-import com.automotive.bootcamp.mediaplayer.data.extensions.mapToAudio
-import com.automotive.bootcamp.mediaplayer.domain.extensions.wrapAudio
 import com.automotive.bootcamp.mediaplayer.domain.extensions.mapToPlaylistWrapper
+import com.automotive.bootcamp.mediaplayer.domain.extensions.wrapAudio
 import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
-import com.automotive.bootcamp.mediaplayer.domain.useCases.*
+import com.automotive.bootcamp.mediaplayer.domain.useCases.ManageFavourite
+import com.automotive.bootcamp.mediaplayer.domain.useCases.ManagePlaylists
+import com.automotive.bootcamp.mediaplayer.domain.useCases.ManageRecent
 import com.automotive.bootcamp.mediaplayer.presentation.extensions.unwrap
 import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
 import kotlinx.coroutines.launch
 
 class CustomPlaylistViewModel(
-    private val addRemoveFavourite: AddRemoveFavourite,
-    private val addRemoveRecent: AddRemoveRecent,
-    private val addToPlaylist: AddToPlaylist,
-    private val createPlaylist: CreatePlaylist,
-    private val playlistRepository: PlaylistRepository
+    private val manageFavourite: ManageFavourite,
+    private val manageRecent: ManageRecent,
+    private val managePlaylists: ManagePlaylists
 ) : ViewModel() {
 
     val customMusicData by lazy { MutableLiveData<List<AudioWrapper>>() }
-    var playlistsData: List<PlaylistWrapper>? = null
+    var playlists: List<PlaylistWrapper>? = null
+    var dynamicallyAddAudioPosition: Int = 0
 
     fun init(playlist: PlaylistWrapper?) {
-        customMusicData.value = playlist?.playlist?.list?.map {
+        viewModelScope.launch {
+            retrieveMusic(playlist)
+            getAllPlaylists()
+        }
+    }
+
+    private suspend fun retrieveMusic(playlist: PlaylistWrapper?) {
+        val list = playlist?.playlist?.list?.map {
             it.wrapAudio()
         }
-        getAllPlaylists()
+        list?.map {
+            it.isFavourite = manageFavourite.hasAudio(it.audio.id)
+            it.isRecent = manageRecent.hasAudio(it.audio.id)
+        }
+        customMusicData.value = list
     }
 
     fun setIsFavourite(position: Int) {
         viewModelScope.launch {
             val list = customMusicData.value?.toMutableList()
             list?.let {
-                if (addRemoveFavourite.hasAudio(it[position].audio.id)) {
-                    addRemoveFavourite.removeFavourite(it[position].audio.id)
+                if (manageFavourite.hasAudio(it[position].audio.id)) {
+                    manageFavourite.removeFavourite(it[position].audio.id)
                     list[position] = list[position].copy(isFavourite = false)
                 } else {
-                    addRemoveFavourite.addFavourite(it[position].audio.id)
+                    manageFavourite.addFavourite(it[position].audio.id)
                     list[position] = list[position].copy(isFavourite = true)
                 }
             }
@@ -50,10 +59,14 @@ class CustomPlaylistViewModel(
         }
     }
 
-    fun setIsRecent(position: Int) {
+    fun removeFromRecent(position: Int) {
         viewModelScope.launch {
-            customMusicData.value =
-                addRemoveRecent.addRemoveRecent(customMusicData.value, position)
+            customMusicData.value?.let {
+                val list = customMusicData.value?.toMutableList()
+                list?.let { list[position] = list[position].copy(isRecent = false) }
+                manageRecent.removeAudio(it[position].audio.id)
+                customMusicData.value = list
+            }
         }
     }
 
@@ -66,33 +79,34 @@ class CustomPlaylistViewModel(
         return list?.let { Playlist(1, "name", it).mapToPlaylistWrapper() }
     }
 
-    fun createPlaylist(playlistName: String) {
+    fun createPlaylist(playlistName: String, position: Int) {
         viewModelScope.launch {
-            createPlaylist.createPlaylist(playlistName)
+            addToPlaylist(managePlaylists.createPlaylist(playlistName), position)
+            getAllPlaylists()
         }
     }
 
     fun addToPlaylist(pid: Long, position: Int) {
         viewModelScope.launch {
-            if (playlistRepository.getEmbeddedPlaylist(FAVOURITE_PLAYLIST_NAME)?.id == pid) {
+            if (managePlaylists.getEmbeddedPlaylist(FAVOURITE_PLAYLIST_NAME)?.id == pid) {
                 customMusicData.value?.let {
-                    if (!addRemoveFavourite.hasAudio(it[position].audio.id)) {
+                    if (!manageFavourite.hasAudio(it[position].audio.id)) {
                         val list = customMusicData.value?.toMutableList()
-                        addRemoveFavourite.addFavourite(it[position].audio.id)
+                        manageFavourite.addFavourite(it[position].audio.id)
                         list?.set(position, list[position].copy(isFavourite = true))
                         customMusicData.value = list
                     }
                 }
             }
             customMusicData.value?.let {
-                addToPlaylist.addToPlaylist(it[position].audio.id, pid)
+                managePlaylists.addToPlaylist(it[position].audio.id, pid)
             }
         }
     }
 
     fun getAllPlaylists() {
         viewModelScope.launch {
-            playlistsData = playlistRepository.getAllPlaylists()
+            playlists = managePlaylists.getAllPlaylists()
         }
     }
 }

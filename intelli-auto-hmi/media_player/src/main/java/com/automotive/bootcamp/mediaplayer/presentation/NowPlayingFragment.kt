@@ -40,6 +40,7 @@ class NowPlayingFragment :
                     parentFragmentManager.popBackStack()
                 }
             }
+
             ibNowPlayingPlayPause.setOnClickListener {
                 if (nowPlayingViewModel.isPlaying.value == true) {
                     nowPlayingViewModel.pauseAudio()

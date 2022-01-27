@@ -1,19 +1,19 @@
 package com.automotive.bootcamp.mediaplayer.presentation
 
-import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import com.automotive.bootcamp.common.base.BaseFragment
 import com.automotive.bootcamp.common.utils.AutoFitGridLayoutManager
+import com.automotive.bootcamp.common.utils.FRAGMENT_RESULT_KEY
 import com.automotive.bootcamp.common.utils.GRID_RECYCLE_COLUMN_WIDTH
+import com.automotive.bootcamp.common.utils.PLAYLIST_NAME_KEY
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.FragmentAudiosListBinding
 import com.automotive.bootcamp.mediaplayer.presentation.adapters.AudioRecyclerViewAdapter
 import com.automotive.bootcamp.mediaplayer.viewModels.RecentAudioViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class RecentAudioFragment:
+class RecentAudioFragment :
     BaseFragment<FragmentAudiosListBinding>(FragmentAudiosListBinding::inflate),
     MediaItemClickListener, OnItemClickListener {
 
@@ -25,14 +25,27 @@ class RecentAudioFragment:
         )
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initRecyclerView()
+    override fun initRecyclerView() {
+        binding.rvAlbums.apply {
+            layoutManager = AutoFitGridLayoutManager(requireContext(), GRID_RECYCLE_COLUMN_WIDTH)
+            adapter = audioAdapter
+            itemAnimator?.changeDuration = 0
+        }
     }
 
     override fun setObservers() {
-        viewModel.recentAudioData.observe(viewLifecycleOwner) {
-            audioAdapter.submitList(it)
+        viewModel.apply {
+            recentMusicData.observe(viewLifecycleOwner) {
+                audioAdapter.submitList(it)
+            }
+            parentFragmentManager.setFragmentResultListener(
+                FRAGMENT_RESULT_KEY, viewLifecycleOwner, { _, bundle ->
+                    val playlistName = bundle.getString(PLAYLIST_NAME_KEY)
+                    playlistName?.let { viewModel.apply {
+                        createPlaylist(playlistName, dynamicallyAddAudioPosition) }
+                    }
+                })
+
         }
     }
 
@@ -44,7 +57,7 @@ class RecentAudioFragment:
         val popupMenu = PopupMenu(requireContext(), view)
         popupMenu.apply {
             inflate(R.menu.audio_popup_menu)
-            if (viewModel.recentAudioData.value?.get(position)?.isRecent == false) {
+            if (viewModel.recentMusicData.value?.get(position)?.isRecent == false) {
                 menu.findItem(R.id.audioRemoveRecent).apply {
                     isVisible = false
                 }
@@ -56,7 +69,30 @@ class RecentAudioFragment:
                         return@setOnMenuItemClickListener true
                     }
                     R.id.audioAddToPlaylist -> {
-                        return@setOnMenuItemClickListener false
+                        viewModel.playlists?.let { playlists ->
+                            for (i in playlists.indices) {
+                                menu.findItem(R.id.audioAddToPlaylist).subMenu.add(
+                                    R.id.audioAddToPlaylist,
+                                    playlists[i].playlist.id.toInt(),
+                                    i,
+                                    playlists[i].playlistName
+                                ).setOnMenuItemClickListener submenu@{
+                                    viewModel.addToPlaylist(playlists[i].playlist.id, position)
+                                    return@submenu true
+                                }
+                                show()
+                            }
+                        }
+                        return@setOnMenuItemClickListener true
+                    }
+                    R.id.audioCreatePlaylist -> {
+                        viewModel.dynamicallyAddAudioPosition = position
+                        val enterNameDialog = EnterNameDialog()
+                        enterNameDialog.show(
+                            parentFragmentManager, null
+                        )
+                        viewModel.getAllPlaylists()
+                        return@setOnMenuItemClickListener true
                     }
                     R.id.audioRemoveRecent -> {
                         viewModel.removeFromRecent(position)
@@ -85,14 +121,6 @@ class RecentAudioFragment:
                 )
                 .addToBackStack(null)
                 .commit()
-        }
-    }
-
-    private fun initRecyclerView() {
-        binding.rvAlbums.apply {
-            layoutManager = AutoFitGridLayoutManager(requireContext(), GRID_RECYCLE_COLUMN_WIDTH)
-            adapter = audioAdapter
-            itemAnimator?.changeDuration = 0
         }
     }
 }
