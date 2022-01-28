@@ -28,38 +28,39 @@ class LocalMusicViewModel(
 
     init {
         viewModelScope.launch {
-            retrieveMusic()
+            val list = retrieveLocalMusic.retrieveLocalMusic().toMutableList()
+            list.map {
+                it.isFavourite = manageFavourite.hasAudio(it.audio.id)
+                it.isRecent = manageRecent.hasAudio(it.audio.id)
+            }
+            localMusicData.value = list
             getAllPlaylists()
         }
     }
 
-    private suspend fun retrieveMusic() {
-        val list = retrieveLocalMusic.retrieveLocalMusic().toMutableList()
-        list.map {
-            it.isFavourite = manageFavourite.hasAudio(it.audio.id)
-            it.isRecent = manageRecent.hasAudio(it.audio.id)
-        }
-        localMusicData.value = list
-    }
-
     fun setIsFavourite(position: Int) {
         viewModelScope.launch {
+            val list = localMusicData.value?.toMutableList()
             localMusicData.value?.let {
                 if (manageFavourite.hasAudio(it[position].audio.id)) {
                     manageFavourite.removeFavourite(it[position].audio.id)
+                    list?.set(position, list[position].copy(isFavourite = false))
                 } else {
                     manageFavourite.addFavourite(it[position].audio.id)
+                    list?.set(position, list[position].copy(isFavourite = true))
                 }
             }
-            retrieveMusic()
+            localMusicData.value = list
         }
     }
 
     fun removeFromRecent(position: Int) {
         viewModelScope.launch {
+            val list = localMusicData.value?.toMutableList()
             localMusicData.value?.let {
                 manageRecent.removeAudio(it[position].audio.id)
-                retrieveMusic()
+                list?.set(position, list[position].copy(isRecent = false))
+                localMusicData.value = list
             }
         }
     }
