@@ -1,6 +1,6 @@
 package com.automotive.bootcamp.mediaplayer.domain.useCases
 
-import com.automotive.bootcamp.common.utils.FAVOURITE_PLAYLIST_NAME
+import com.automotive.bootcamp.mediaplayer.utils.FAVOURITE_PLAYLIST_NAME
 import com.automotive.bootcamp.mediaplayer.data.FavouriteAudioRepository
 import com.automotive.bootcamp.mediaplayer.data.PlaylistRepository
 import com.automotive.bootcamp.mediaplayer.domain.models.Playlist

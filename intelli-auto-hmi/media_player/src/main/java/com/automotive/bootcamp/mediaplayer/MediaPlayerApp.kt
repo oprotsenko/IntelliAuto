@@ -1,9 +1,7 @@
 package com.automotive.bootcamp.mediaplayer
 
 import android.app.Application
-import com.automotive.bootcamp.mediaplayer.di.appModule
-import com.automotive.bootcamp.mediaplayer.di.dataModule
-import com.automotive.bootcamp.mediaplayer.di.domainModule
+import com.automotive.bootcamp.mediaplayer.di.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -15,7 +13,7 @@ class MediaPlayerApp: Application() {
         startKoin {
             androidLogger(Level.ERROR)
             androidContext(this@MediaPlayerApp)
-            modules(listOf(appModule, domainModule, dataModule))
+            modules(listOf(appModule, domainModule, dataModule, retrofitModule, remoteModule))
         }
     }
 }

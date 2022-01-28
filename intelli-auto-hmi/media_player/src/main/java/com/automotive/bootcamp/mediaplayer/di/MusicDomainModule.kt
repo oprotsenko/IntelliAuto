@@ -13,6 +13,7 @@ val domainModule = module {
     single { RetrieveFavouriteMusic(get()) }
     single { RetrieveLocalMusic(get(), get()) }
     single { RetrieveRecentAudio(get()) }
+    single { RetrieveOnlineMusic(get(), get()) }
     single { RetrievePlaylistAudio(get()) }
     single { ManagePlaylists(get()) }
 }

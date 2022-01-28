@@ -6,8 +6,8 @@ import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import com.automotive.bootcamp.common.base.BaseFragment
 import com.automotive.bootcamp.common.extensions.loadImage
-import com.automotive.bootcamp.common.utils.PLAYLIST_BUNDLE_KEY
-import com.automotive.bootcamp.common.utils.POSITION_BUNDLE_KEY
+import com.automotive.bootcamp.mediaplayer.utils.PLAYLIST_BUNDLE_KEY
+import com.automotive.bootcamp.mediaplayer.utils.POSITION_BUNDLE_KEY
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.FragmentNowPlayingBinding
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper

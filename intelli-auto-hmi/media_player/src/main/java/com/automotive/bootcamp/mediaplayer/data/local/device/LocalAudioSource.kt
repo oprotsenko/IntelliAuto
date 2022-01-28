@@ -6,17 +6,13 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
-import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import com.automotive.bootcamp.common.utils.DEFAULT_COVER
-import com.automotive.bootcamp.common.utils.PICTURES_DIRECTORY_NAME
 import com.automotive.bootcamp.mediaplayer.data.local.LocalMedia
-
 import com.automotive.bootcamp.mediaplayer.data.models.AudioItem
+import com.automotive.bootcamp.mediaplayer.utils.PICTURES_DIRECTORY_NAME
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 import java.util.*
 
 class LocalAudioSource(

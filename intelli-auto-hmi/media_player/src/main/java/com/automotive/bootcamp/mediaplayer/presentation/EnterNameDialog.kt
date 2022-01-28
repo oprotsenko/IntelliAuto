@@ -9,8 +9,8 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
-import com.automotive.bootcamp.common.utils.FRAGMENT_RESULT_KEY
-import com.automotive.bootcamp.common.utils.PLAYLIST_NAME_KEY
+import com.automotive.bootcamp.mediaplayer.utils.FRAGMENT_RESULT_KEY
+import com.automotive.bootcamp.mediaplayer.utils.PLAYLIST_NAME_KEY
 import com.automotive.bootcamp.mediaplayer.databinding.DialogPlaylistNameBinding
 
 class EnterNameDialog : DialogFragment() {
