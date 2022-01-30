@@ -4,12 +4,20 @@
 
     <application
         android:name=".MediaPlayerApp"
-        android:requestLegacyExternalStorage="true"
-        />
+        android:requestLegacyExternalStorage="true">
+
+        <service android:name=".services.MediaPlayerService"
+            android:label="@string/service_name"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.media.browse.MediaBrowserService"/>
+            </intent-filter>
+        </service>
+    </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    <!--    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />-->
+
 
 </manifest>

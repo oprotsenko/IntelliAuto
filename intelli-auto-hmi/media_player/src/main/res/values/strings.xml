@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="service_name">Media Player Service</string>
+
     <string name="local_music">Local</string>
     <string name="online_music">Online</string>
     <string name="recent_music">Recent</string>
@@ -16,4 +18,5 @@
     <string name="add_custom_playlist">Add playlist</string>
     <string name="undo">Undo</string>
     <string name="playlist_name">Playlist name</string>
+
 </resources>
