@@ -7,7 +7,7 @@ import com.automotive.bootcamp.mediaplayer.domain.RemoteMediaRepository
 import com.automotive.bootcamp.mediaplayer.domain.extensions.wrapAudio
 import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
 
-class RetrieveOnlineMusic(
+class RetrieveOnlineAudio(
     private val remoteAudioRepository: RemoteMediaRepository,
     private val cacheAudioRepository: CacheAudioRepository
 ) {

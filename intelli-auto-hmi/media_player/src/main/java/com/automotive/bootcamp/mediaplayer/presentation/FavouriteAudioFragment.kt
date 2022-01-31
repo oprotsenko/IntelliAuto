@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import com.automotive.bootcamp.mediaplayer.utils.FRAGMENT_RESULT_KEY
 import com.automotive.bootcamp.mediaplayer.utils.PLAYLIST_NAME_KEY
-import com.automotive.bootcamp.mediaplayer.viewModels.FavouriteMusicViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FavouriteAudioFragment :

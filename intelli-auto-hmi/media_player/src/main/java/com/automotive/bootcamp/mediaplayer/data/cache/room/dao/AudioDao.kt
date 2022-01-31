@@ -34,12 +34,16 @@ interface AudioDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertEmbeddedPlaylist(playlist: EmbeddedPlaylistEntity)
 
+    @Transaction
+    @Query("SELECT * FROM embedded_playlists WHERE name = :name")
+    suspend fun getEmbeddedPlaylist(name: String): EmbeddedPlaylistEntity?
+
     @Query("DELETE FROM playlists WHERE pid = :pid")
     suspend fun deletePlaylist(pid: Long)
 
     @Transaction
-    @Query("SELECT * FROM embedded_playlists WHERE name = :name")
-    suspend fun getEmbeddedPlaylist(name: String): EmbeddedPlaylistEntity?
+    @Query("SELECT COUNT(*) FROM audio_playlist_cross_ref WHERE pid = :pid")
+    suspend fun getPlaylistSize(pid: Long): Int
 
     @Transaction
     @Query("SELECT * FROM playlists WHERE pid = :pid")

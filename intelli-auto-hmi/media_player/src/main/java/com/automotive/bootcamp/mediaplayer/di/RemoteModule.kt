@@ -8,7 +8,6 @@ import com.automotive.bootcamp.mediaplayer.domain.RemoteMediaRepository
 import org.koin.dsl.module
 
 val remoteModule = module {
-
     single { provideMyProfileRepository(get()) }
     single { provideRemoteDataSource(get()) }
 }

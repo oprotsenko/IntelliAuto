@@ -69,6 +69,10 @@ class RoomAudioSource(context: Context) : CacheAudioSource {
         return dao.getEmbeddedPlaylist(name)?.mapToEmbeddedPlaylistItem()
     }
 
+    override suspend fun getPlaylistSize(pid: Long): Int {
+        return dao.getPlaylistSize(pid)
+    }
+
     override fun getPlaylist(pid: Long): Flow<PlaylistItem?> {
         return dao.getPlaylistWithAudios(pid).map { playlist ->
             playlist?.mapToPlaylistItem()

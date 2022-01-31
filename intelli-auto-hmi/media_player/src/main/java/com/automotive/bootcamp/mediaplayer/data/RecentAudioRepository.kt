@@ -50,6 +50,13 @@ class RecentAudioRepository(private val cacheAudioSource: CacheAudioSource) {
         return null
     }
 
+    suspend fun getSize():Int? {
+        pid?.let {
+            return cacheAudioSource.getPlaylistSize(it)
+        }
+        return null
+    }
+
     suspend fun getEmbeddedPlaylist():EmbeddedPlaylistItem? {
         return cacheAudioSource.getEmbeddedPlaylist(RECENT_PLAYLIST_NAME)
     }
