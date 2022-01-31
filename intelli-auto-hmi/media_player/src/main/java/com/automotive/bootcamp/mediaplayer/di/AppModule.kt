@@ -19,7 +19,7 @@ val appModule = module {
     single { LocalMusicViewModel(get(), get(), get(), get()) }
     single { FavouriteMusicViewModel(get(), get(), get(), get()) }
     single { OnlineMusicViewModel(get(), get(), get(), get()) }
-    single { PlaylistsViewModel(get(), get(), get()) }
+    viewModel { PlaylistsViewModel(get(), get(), get()) }
     single { NowPlayingViewModel(get(), get()) }
     single { RecentAudioViewModel(get(), get(), get(), get()) }
     single { CustomPlaylistViewModel(get(),get(), get()) }

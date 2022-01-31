@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.automotive.bootcamp.common.extensions.loadImage
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.ItemPlaylistBinding
 import com.automotive.bootcamp.mediaplayer.presentation.MediaItemClickListener
@@ -46,12 +47,18 @@ class PlaylistRecyclerViewAdapter(
 
         fun bind(playlist: PlaylistWrapper) {
             binding.apply {
-//                for (i in 4) {
-//                    if (!playlist.playlist.list.isNullOrEmpty()) {
-//                        ivFirstPlaceholder.setImageBitmap(playlist.playlist.list[i].cover)
-//                    }
-//                    i++
-//                }
+                if (!playlist.playlist.list.isNullOrEmpty()) {
+                    playlist.playlist.list[0].cover?.let { ivFirstPlaceholder.loadImage(it) }
+                    if (playlist.playlist.list.size > 1){
+                        playlist.playlist.list[1].cover?.let { ivSecondPlaceholder.loadImage(it) }
+                    }
+                    if (playlist.playlist.list.size > 2){
+                        playlist.playlist.list[2].cover?.let { ivThirdPlaceholder.loadImage(it) }
+                    }
+                    if (playlist.playlist.list.size > 3){
+                        playlist.playlist.list[3].cover?.let { ivForthPlaceholder.loadImage(it) }
+                    }
+                }
                 tvSongTitle.text = playlist.playlistName
             }
         }

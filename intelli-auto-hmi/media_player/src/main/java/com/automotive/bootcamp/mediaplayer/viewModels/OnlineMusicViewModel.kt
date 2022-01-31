@@ -6,10 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.automotive.bootcamp.mediaplayer.utils.FAVOURITE_PLAYLIST_NAME
 import com.automotive.bootcamp.mediaplayer.domain.extensions.mapToPlaylistWrapper
 import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
-import com.automotive.bootcamp.mediaplayer.domain.useCases.ManageFavourite
-import com.automotive.bootcamp.mediaplayer.domain.useCases.ManagePlaylists
-import com.automotive.bootcamp.mediaplayer.domain.useCases.ManageRecent
-import com.automotive.bootcamp.mediaplayer.domain.useCases.RetrieveOnlineMusic
+import com.automotive.bootcamp.mediaplayer.domain.useCases.*
 import com.automotive.bootcamp.mediaplayer.presentation.extensions.unwrap
 import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper

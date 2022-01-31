@@ -1,6 +1,5 @@
 package com.automotive.bootcamp.mediaplayer.data.remote.retrofit.responses
 
-import com.automotive.bootcamp.common.utils.generateKey
 import com.automotive.bootcamp.mediaplayer.data.models.AudioItem
 import com.automotive.bootcamp.mediaplayer.utils.BASE_URL
 
