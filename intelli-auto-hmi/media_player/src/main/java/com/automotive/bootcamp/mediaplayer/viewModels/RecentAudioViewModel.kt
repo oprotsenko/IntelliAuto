@@ -1,7 +1,11 @@
 package com.automotive.bootcamp.mediaplayer.viewModels
 
 import androidx.lifecycle.*
-import com.automotive.bootcamp.common.utils.RECENT_PLAYLIST_NAME
+import android.util.Log
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.automotive.bootcamp.mediaplayer.utils.RECENT_PLAYLIST_NAME
 import com.automotive.bootcamp.mediaplayer.domain.extensions.mapToPlaylistWrapper
 import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
 import com.automotive.bootcamp.mediaplayer.domain.useCases.ManageFavourite

@@ -16,13 +16,13 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
-    viewModel { LocalAudioViewModel(get(), get(), get(), get()) }
-    viewModel { FavouriteAudioViewModel(get(), get(), get(), get()) }
-    viewModel { OnlineAudioViewModel(get(), get(), get(), get()) }
-    viewModel { PlaylistsViewModel(get(), get()) }
-    viewModel { NowPlayingViewModel(get(), get()) }
-    viewModel { RecentAudioViewModel(get(), get(), get(), get()) }
-    viewModel { CustomPlaylistViewModel(get(),get(), get()) }
+    single { LocalAudioViewModel(get(), get(), get(), get()) }
+    single { FavouriteAudioViewModel(get(), get(), get(), get()) }
+    single { OnlineAudioViewModel(get(), get(), get(), get()) }
+    viewModel { PlaylistsViewModel(get(), get(), get()) }
+    single { NowPlayingViewModel(get(), get()) }
+    single { RecentAudioViewModel(get(), get(), get(), get()) }
+    single { CustomPlaylistViewModel(get(),get(), get()) }
 
     single { provideDefaultAudioPlayer(get()) }
     single { MediaMetadataRetriever() }

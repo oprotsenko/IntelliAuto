@@ -1,8 +1,8 @@
 package com.automotive.bootcamp.mediaplayer.domain.useCases
 
 import androidx.lifecycle.asLiveData
-import com.automotive.bootcamp.common.utils.RECENT_PLAYLIST_CAPACITY
-import com.automotive.bootcamp.common.utils.RECENT_PLAYLIST_NAME
+import com.automotive.bootcamp.mediaplayer.utils.RECENT_PLAYLIST_CAPACITY
+import com.automotive.bootcamp.mediaplayer.utils.RECENT_PLAYLIST_NAME
 import com.automotive.bootcamp.mediaplayer.data.PlaylistRepository
 import com.automotive.bootcamp.mediaplayer.data.RecentAudioRepository
 import com.automotive.bootcamp.mediaplayer.data.models.PlaylistItem

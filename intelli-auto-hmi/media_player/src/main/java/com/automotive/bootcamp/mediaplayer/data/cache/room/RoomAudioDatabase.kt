@@ -4,13 +4,13 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.automotive.bootcamp.common.utils.DATABASE_NAME
-import com.automotive.bootcamp.common.utils.DATABASE_VERSION
+import com.automotive.bootcamp.mediaplayer.utils.DATABASE_NAME
 import com.automotive.bootcamp.mediaplayer.data.cache.room.dao.AudioDao
 import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.AudioEntity
 import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.EmbeddedPlaylistEntity
 import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.PlaylistEntity
 import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.relations.AudioPlaylistCrossRefEntity
+import com.automotive.bootcamp.mediaplayer.utils.DATABASE_VERSION
 
 @Database(
     entities = [
