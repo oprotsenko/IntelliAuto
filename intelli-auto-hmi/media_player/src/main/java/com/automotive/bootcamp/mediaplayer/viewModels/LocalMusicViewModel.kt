@@ -28,39 +28,38 @@ class LocalMusicViewModel(
 
     init {
         viewModelScope.launch {
-            val list = retrieveLocalMusic.retrieveLocalMusic().toMutableList()
-            list.map {
-                it.isFavourite = manageFavourite.hasAudio(it.audio.id)
-                it.isRecent = manageRecent.hasAudio(it.audio.id)
-            }
-            localMusicData.value = list
+            retrieveMusic()
             getAllPlaylists()
         }
     }
 
+    private suspend fun retrieveMusic() {
+        val list = retrieveLocalMusic.retrieveLocalMusic().toMutableList()
+        list.map {
+            it.isFavourite = manageFavourite.hasAudio(it.audio.id)
+            it.isRecent = manageRecent.hasAudio(it.audio.id)
+        }
+        localMusicData.value = list
+    }
+
     fun setIsFavourite(position: Int) {
         viewModelScope.launch {
-            val list = localMusicData.value?.toMutableList()
             localMusicData.value?.let {
                 if (manageFavourite.hasAudio(it[position].audio.id)) {
                     manageFavourite.removeFavourite(it[position].audio.id)
-                    list?.set(position, list[position].copy(isFavourite = false))
                 } else {
                     manageFavourite.addFavourite(it[position].audio.id)
-                    list?.set(position, list[position].copy(isFavourite = true))
                 }
             }
-            localMusicData.value = list
+            retrieveMusic()
         }
     }
 
     fun removeFromRecent(position: Int) {
         viewModelScope.launch {
-            val list = localMusicData.value?.toMutableList()
             localMusicData.value?.let {
                 manageRecent.removeAudio(it[position].audio.id)
-                list?.set(position, list[position].copy(isRecent = false))
-                localMusicData.value = list
+                retrieveMusic()
             }
         }
     }
@@ -71,7 +70,7 @@ class LocalMusicViewModel(
                 wrapper.unwrap()
             }
         }
-        return list?.let { Playlist(name = "name", list = it).mapToPlaylistWrapper() }
+        return list?.let { Playlist(1, "name", it).mapToPlaylistWrapper() }
     }
 
     fun createPlaylist(playlistName: String, position: Int) {

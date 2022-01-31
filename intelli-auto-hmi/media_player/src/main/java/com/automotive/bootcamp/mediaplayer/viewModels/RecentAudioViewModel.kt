@@ -1,18 +1,16 @@
 package com.automotive.bootcamp.mediaplayer.viewModels
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.automotive.bootcamp.mediaplayer.utils.FAVOURITE_PLAYLIST_NAME
 import com.automotive.bootcamp.mediaplayer.domain.extensions.mapToPlaylistWrapper
 import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
-import com.automotive.bootcamp.mediaplayer.domain.useCases.ManageFavourite
-import com.automotive.bootcamp.mediaplayer.domain.useCases.ManagePlaylists
-import com.automotive.bootcamp.mediaplayer.domain.useCases.ManageRecent
-import com.automotive.bootcamp.mediaplayer.domain.useCases.RetrieveRecentAudio
+import com.automotive.bootcamp.mediaplayer.domain.useCases.*
 import com.automotive.bootcamp.mediaplayer.presentation.extensions.unwrap
 import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
-import com.automotive.bootcamp.mediaplayer.utils.FAVOURITE_PLAYLIST_NAME
 import kotlinx.coroutines.launch
 
 class RecentAudioViewModel(
@@ -70,7 +68,7 @@ class RecentAudioViewModel(
                 wrapper.unwrap()
             }
         }
-        return list?.let { Playlist(name = "name", list = it).mapToPlaylistWrapper() }
+        return list?.let { Playlist(1, "name", it).mapToPlaylistWrapper() }
     }
 
     fun createPlaylist(playlistName: String, position: Int) {

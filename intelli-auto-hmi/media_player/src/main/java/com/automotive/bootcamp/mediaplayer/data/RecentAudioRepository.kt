@@ -1,6 +1,5 @@
 package com.automotive.bootcamp.mediaplayer.data
 
-import android.util.Log
 import com.automotive.bootcamp.mediaplayer.utils.RECENT_PLAYLIST_NAME
 import com.automotive.bootcamp.mediaplayer.data.cache.CacheAudioSource
 import com.automotive.bootcamp.mediaplayer.data.models.AudioPlaylistItemCrossRef

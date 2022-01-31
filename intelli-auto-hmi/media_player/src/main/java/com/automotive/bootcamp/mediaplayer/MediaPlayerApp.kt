@@ -13,7 +13,7 @@ class MediaPlayerApp: Application() {
         startKoin {
             androidLogger(Level.ERROR)
             androidContext(this@MediaPlayerApp)
-            modules(listOf(appModule, domainModule, dataModule, retrofitModule, remoteModule))
+            modules(listOf(appModule, domainModule, dataModule, remoteModule, retrofitModule))
         }
     }
 }
