@@ -2,6 +2,7 @@ package com.automotive.bootcamp.mediaplayer.presentation
 
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
+import androidx.lifecycle.asLiveData
 import com.automotive.bootcamp.common.base.BaseFragment
 import com.automotive.bootcamp.common.utils.AutoFitGridLayoutManager
 import com.automotive.bootcamp.common.utils.FRAGMENT_RESULT_KEY
@@ -10,14 +11,14 @@ import com.automotive.bootcamp.common.utils.PLAYLIST_NAME_KEY
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.FragmentAudiosListBinding
 import com.automotive.bootcamp.mediaplayer.presentation.adapters.AudioRecyclerViewAdapter
-import com.automotive.bootcamp.mediaplayer.viewModels.LocalMusicViewModel
+import com.automotive.bootcamp.mediaplayer.viewModels.LocalAudioViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class LocalMusicFragment :
+class LocalAudioFragment :
     BaseFragment<FragmentAudiosListBinding>(FragmentAudiosListBinding::inflate),
     MediaItemClickListener, OnItemClickListener {
 
-    private val viewModel: LocalMusicViewModel by viewModel()
+    private val viewModel: LocalAudioViewModel by viewModel()
     private val audioAdapter: AudioRecyclerViewAdapter by lazy {
         AudioRecyclerViewAdapter(
             onMediaItemClickListener = this,
@@ -39,7 +40,7 @@ class LocalMusicFragment :
 
     override fun setObservers() {
         viewModel.apply {
-            localMusicData.observe(viewLifecycleOwner) {
+            localAudioData.observe(viewLifecycleOwner) {
                 audioAdapter.submitList(it)
             }
             parentFragmentManager.setFragmentResultListener(
@@ -61,7 +62,7 @@ class LocalMusicFragment :
         val popupMenu = PopupMenu(requireContext(), view)
         popupMenu.apply {
             inflate(R.menu.audio_popup_menu)
-            if (viewModel.localMusicData.value?.get(position)?.isRecent == false) {
+            if (viewModel.localAudioData.value?.get(position)?.isRecent == false) {
                 menu.findItem(R.id.audioRemoveRecent).apply {
                     isVisible = false
                 }
@@ -95,7 +96,6 @@ class LocalMusicFragment :
                         enterNameDialog.show(
                             parentFragmentManager, null
                         )
-                        viewModel.getAllPlaylists()
                         return@setOnMenuItemClickListener true
                     }
                     R.id.audioRemoveRecent -> {

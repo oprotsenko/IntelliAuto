@@ -1,6 +1,8 @@
 package com.automotive.bootcamp.mediaplayer.data.cache.room
 
 import android.content.Context
+import android.util.Log
+import androidx.lifecycle.asLiveData
 import com.automotive.bootcamp.mediaplayer.data.cache.CacheAudioSource
 import com.automotive.bootcamp.mediaplayer.data.cache.room.extensions.mapToEmbeddedPlaylistItem
 import com.automotive.bootcamp.mediaplayer.data.cache.room.extensions.mapToPlaylistItem
@@ -9,6 +11,8 @@ import com.automotive.bootcamp.mediaplayer.data.models.AudioItem
 import com.automotive.bootcamp.mediaplayer.data.models.AudioPlaylistItemCrossRef
 import com.automotive.bootcamp.mediaplayer.data.models.EmbeddedPlaylistItem
 import com.automotive.bootcamp.mediaplayer.data.models.PlaylistItem
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class RoomAudioSource(context: Context) : CacheAudioSource {
     private val dao = RoomAudioDatabase.getInstance(context).audioDao
@@ -39,10 +43,6 @@ class RoomAudioSource(context: Context) : CacheAudioSource {
         dao.insertEmbeddedPlaylist(playlist.mapToEntity())
     }
 
-    override suspend fun getEmbeddedPlaylist(name: String): EmbeddedPlaylistItem? {
-        return dao.getEmbeddedPlaylist(name)?.mapToEmbeddedPlaylistItem()
-    }
-
     override suspend fun insertPlaylist(playlist: PlaylistItem): Long {
         val playlistEntity = playlist.mapToEntity()
 
@@ -65,15 +65,19 @@ class RoomAudioSource(context: Context) : CacheAudioSource {
         dao.deleteAudioFromPlaylist(audioPlaylistCrossRefEntity)
     }
 
-    override suspend fun getPlaylist(pid: Long): PlaylistItem? {
-        return dao.getPlaylistWithAudios(pid)?.mapToPlaylistItem()
+    override suspend fun getEmbeddedPlaylist(name: String): EmbeddedPlaylistItem? {
+        return dao.getEmbeddedPlaylist(name)?.mapToEmbeddedPlaylistItem()
     }
 
-    override suspend fun getAllPlaylists(): List<PlaylistItem>? {
-        val playlists = dao.getAllPlaylistsWithAudios()
+    override fun getPlaylist(pid: Long): Flow<PlaylistItem?> {
+        return dao.getPlaylistWithAudios(pid).map { playlist ->
+            playlist?.mapToPlaylistItem()
+        }
+    }
 
-        playlists.let {
-            return it?.map { playlist ->
+    override fun getAllPlaylists(): Flow<List<PlaylistItem>?> {
+        return dao.getAllPlaylistsWithAudios().map { playlists ->
+            playlists?.map { playlist ->
                 playlist.mapToPlaylistItem()
             }
         }

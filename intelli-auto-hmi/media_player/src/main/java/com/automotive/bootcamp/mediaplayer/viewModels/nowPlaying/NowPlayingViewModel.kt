@@ -78,7 +78,7 @@ class NowPlayingViewModel(
             _isPlaying.value = true
 
             viewModelScope.launch {
-                addRecent.execute(it)
+                addRecent.execute(it.audio.id)
             }
         }
     }
@@ -101,7 +101,7 @@ class NowPlayingViewModel(
         _isPlaying.value = true
 
         viewModelScope.launch {
-            addRecent.execute(audioWrapped)
+            addRecent.execute(audioWrapped.audio.id)
         }
     }
 
@@ -118,7 +118,7 @@ class NowPlayingViewModel(
         _isPlaying.value = true
 
         viewModelScope.launch {
-            addRecent.execute(audioWrapped)
+            addRecent.execute(audioWrapped.audio.id)
         }
     }
 

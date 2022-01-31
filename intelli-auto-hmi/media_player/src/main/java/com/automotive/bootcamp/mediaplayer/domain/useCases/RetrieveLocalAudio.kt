@@ -7,15 +7,14 @@ import com.automotive.bootcamp.mediaplayer.domain.LocalMediaRepository
 import com.automotive.bootcamp.mediaplayer.domain.extensions.wrapAudio
 import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
 
-class RetrieveLocalMusic(
+class RetrieveLocalAudio(
     private val repositoryLocal: LocalMediaRepository,
     private val cacheAudioRepository: CacheAudioRepository
 ) {
-
-    suspend fun retrieveLocalMusic() : List<AudioWrapper> {
+    suspend fun retrieveLocalMusic(): List<AudioWrapper> {
         val localMusic = repositoryLocal.retrieveLocalAudio()
         val ids = cacheAudioRepository.addAudios(localMusic)
-        return localMusic.zip(ids) { audio: AudioItem, id: Long ->  
+        return localMusic.zip(ids) { audio: AudioItem, id: Long ->
             audio.copy(id = id)
         }.map { audio ->
             audio.mapToAudio().wrapAudio()

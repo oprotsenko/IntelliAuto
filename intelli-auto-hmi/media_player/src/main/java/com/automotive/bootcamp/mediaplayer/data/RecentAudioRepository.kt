@@ -1,16 +1,28 @@
 package com.automotive.bootcamp.mediaplayer.data
 
-import android.util.Log
 import com.automotive.bootcamp.common.utils.RECENT_PLAYLIST_NAME
 import com.automotive.bootcamp.mediaplayer.data.cache.CacheAudioSource
 import com.automotive.bootcamp.mediaplayer.data.models.AudioPlaylistItemCrossRef
 import com.automotive.bootcamp.mediaplayer.data.models.EmbeddedPlaylistItem
 import com.automotive.bootcamp.mediaplayer.data.models.PlaylistItem
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class RecentAudioRepository(private val cacheAudioSource: CacheAudioSource) {
-    suspend fun addAudio(aid: Long) {
-        val pid = cacheAudioSource.getEmbeddedPlaylist(RECENT_PLAYLIST_NAME)?.id
+    private var pid:Long? = null
 
+    init {
+        runBlocking {
+            launch(Dispatchers.IO)
+            {
+                pid = getEmbeddedPlaylist()?.id
+            }
+        }
+    }
+
+    suspend fun addAudio(aid: Long) {
         pid?.let {
             val crossRef = AudioPlaylistItemCrossRef(aid, it)
             cacheAudioSource.insertAudioPlaylistCrossRef(crossRef)
@@ -18,8 +30,6 @@ class RecentAudioRepository(private val cacheAudioSource: CacheAudioSource) {
     }
 
     suspend fun removeAudio(aid: Long) {
-        val pid = cacheAudioSource.getEmbeddedPlaylist(RECENT_PLAYLIST_NAME)?.id
-
         pid?.let {
             val crossRef = AudioPlaylistItemCrossRef(aid, it)
             cacheAudioSource.deleteAudioFromPlaylist(crossRef)
@@ -27,29 +37,26 @@ class RecentAudioRepository(private val cacheAudioSource: CacheAudioSource) {
     }
 
     suspend fun hasAudio(aid: Long): Boolean {
-        val pid = cacheAudioSource.getEmbeddedPlaylist(RECENT_PLAYLIST_NAME)?.id
-        return if (pid != null) {
-            cacheAudioSource.playlistHasAudio(pid, aid)
-        } else false
+        pid?.let {
+            return cacheAudioSource.playlistHasAudio(it, aid)
+        }
+        return false
     }
 
-    suspend fun getPlaylist(): PlaylistItem? {
-        val pid = cacheAudioSource.getEmbeddedPlaylist(RECENT_PLAYLIST_NAME)?.id
-
+    fun getPlaylist(): Flow<PlaylistItem?>? {
         pid?.let {
             return cacheAudioSource.getPlaylist(it)
         }
-
         return null
+    }
+
+    suspend fun getEmbeddedPlaylist():EmbeddedPlaylistItem? {
+        return cacheAudioSource.getEmbeddedPlaylist(RECENT_PLAYLIST_NAME)
     }
 
     suspend fun addEmbeddedPlaylist(pid: Long) {
         val embeddedPlaylistItem = EmbeddedPlaylistItem(pid, RECENT_PLAYLIST_NAME)
-
         cacheAudioSource.insertEmbeddedPlaylist(embeddedPlaylistItem)
-    }
-
-    suspend fun getEmbeddedPlaylist(): EmbeddedPlaylistItem? {
-        return cacheAudioSource.getEmbeddedPlaylist(RECENT_PLAYLIST_NAME)
+        this.pid = pid
     }
 }

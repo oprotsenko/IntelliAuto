@@ -13,25 +13,22 @@ class ManageFavourite(
         favouriteAudioRepository.removeAudio(aid)
     }
 
-
     suspend fun addFavourite(aid: Long) {
-        setFavouritePlaylist()
+        tryCreatePlaylist()
         favouriteAudioRepository.addAudio(aid)
     }
 
-    suspend fun hasAudio(aid: Long) : Boolean =
+    suspend fun hasAudio(aid: Long): Boolean =
         favouriteAudioRepository.hasAudio(aid)
 
-    private suspend fun setFavouritePlaylist() {
-        val favouritePlaylist = favouriteAudioRepository.getEmbeddedPlaylist()
-        if (favouritePlaylist == null) {
-            createPlaylist()
-        }
-    }
+    suspend fun getId(): Long? =
+        favouriteAudioRepository.getEmbeddedPlaylist()?.id
 
-    private suspend fun createPlaylist() {
-        val favouritePlaylist = Playlist(name = FAVOURITE_PLAYLIST_NAME, list = null)
-        val favouritePlaylistId = playlistRepository.addPlaylist(favouritePlaylist)
-        favouriteAudioRepository.addEmbeddedPlaylist(favouritePlaylistId)
+    private suspend fun tryCreatePlaylist() {
+        if (favouriteAudioRepository.getEmbeddedPlaylist() == null) {
+            val favouritePlaylist = Playlist(name = FAVOURITE_PLAYLIST_NAME, list = null)
+            val favouritePlaylistId = playlistRepository.addPlaylist(favouritePlaylist)
+            favouriteAudioRepository.addEmbeddedPlaylist(favouritePlaylistId)
+        }
     }
 }

@@ -9,21 +9,22 @@ import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
 import com.automotive.bootcamp.mediaplayer.domain.useCases.ManageFavourite
 import com.automotive.bootcamp.mediaplayer.domain.useCases.ManagePlaylists
 import com.automotive.bootcamp.mediaplayer.domain.useCases.ManageRecent
-import com.automotive.bootcamp.mediaplayer.domain.useCases.RetrieveLocalMusic
+import com.automotive.bootcamp.mediaplayer.domain.useCases.RetrieveLocalAudio
 import com.automotive.bootcamp.mediaplayer.presentation.extensions.unwrap
 import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class OnlineMusicViewModel(
-    private val retrieveLocalMusic: RetrieveLocalMusic,
+class OnlineAudioViewModel(
+    private val retrieveLocalAudio: RetrieveLocalAudio,
     private val manageFavourite: ManageFavourite,
     private val manageRecent: ManageRecent,
     private val managePlaylists: ManagePlaylists
 ) : ViewModel() {
-
-    val onlineMusicData by lazy { MutableLiveData<List<AudioWrapper>>() }
-    var playlists: List<PlaylistWrapper>? = null
+    val onlineAudioData by lazy { MutableLiveData<List<AudioWrapper>>() }
+    var playlists: List<PlaylistWrapper>? = listOf()
     var dynamicallyAddAudioPosition: Int = 0
 
     init {
@@ -37,11 +38,17 @@ class OnlineMusicViewModel(
 //            onlineMusicData.value = list
 //            getAllPlaylists()
 //        }
+
+        viewModelScope.launch {
+            managePlaylists.getAllPlaylists().collect {
+                playlists = it
+            }
+        }
     }
 
     fun setIsFavourite(position: Int) {
         viewModelScope.launch {
-            val list = onlineMusicData.value?.toMutableList()
+            val list = onlineAudioData.value?.toMutableList()
             list?.let {
                 if (manageFavourite.hasAudio(it[position].audio.id)) {
                     manageFavourite.removeFavourite(it[position].audio.id)
@@ -51,20 +58,20 @@ class OnlineMusicViewModel(
                     list[position] = list[position].copy(isFavourite = true)
                 }
             }
-            onlineMusicData.value = list
+            onlineAudioData.value = list
         }
     }
 
     fun removeFromRecent(position: Int) {
         viewModelScope.launch {
-            onlineMusicData.value?.let {
+            onlineAudioData.value?.let {
                 manageRecent.removeAudio(it[position].audio.id)
             }
         }
     }
 
     fun getAudioList(): PlaylistWrapper? {
-        val list = onlineMusicData.value?.let {
+        val list = onlineAudioData.value?.let {
             it.map { wrapper ->
                 wrapper.unwrap()
             }
@@ -80,25 +87,19 @@ class OnlineMusicViewModel(
 
     fun addToPlaylist(pid: Long, position: Int) {
         viewModelScope.launch {
-            if (managePlaylists.getEmbeddedPlaylist(FAVOURITE_PLAYLIST_NAME)?.id == pid) {
-                onlineMusicData.value?.let {
+            if (pid == manageFavourite.getId()) {
+                onlineAudioData.value?.let {
                     if (!manageFavourite.hasAudio(it[position].audio.id)) {
-                        val list = onlineMusicData.value?.toMutableList()
+                        val list = onlineAudioData.value?.toMutableList()
                         manageFavourite.addFavourite(it[position].audio.id)
                         list?.set(position, list[position].copy(isFavourite = true))
-                        onlineMusicData.value = list
+                        onlineAudioData.value = list
                     }
                 }
             }
-            onlineMusicData.value?.let {
+            onlineAudioData.value?.let {
                 managePlaylists.addToPlaylist(it[position].audio.id, pid)
             }
-        }
-    }
-
-    fun getAllPlaylists() {
-        viewModelScope.launch {
-            playlists = managePlaylists.getAllPlaylists()
         }
     }
 }

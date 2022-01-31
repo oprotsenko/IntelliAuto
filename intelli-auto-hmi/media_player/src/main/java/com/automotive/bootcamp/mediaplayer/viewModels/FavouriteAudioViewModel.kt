@@ -2,11 +2,13 @@ package com.automotive.bootcamp.mediaplayer.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.automotive.bootcamp.common.utils.FAVOURITE_PLAYLIST_NAME
 import com.automotive.bootcamp.mediaplayer.domain.extensions.mapToPlaylistWrapper
 import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
 import com.automotive.bootcamp.mediaplayer.domain.useCases.ManageFavourite
 import com.automotive.bootcamp.mediaplayer.domain.useCases.ManagePlaylists
 import com.automotive.bootcamp.mediaplayer.domain.useCases.ManageRecent
+import com.automotive.bootcamp.mediaplayer.domain.useCases.RetrieveFavouriteAudio
 import com.automotive.bootcamp.mediaplayer.presentation.extensions.unwrap
 import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
@@ -14,17 +16,17 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class CustomPlaylistViewModel(
+class FavouriteAudioViewModel(
+    retrieveFavouriteAudio: RetrieveFavouriteAudio,
     private val manageFavourite: ManageFavourite,
     private val manageRecent: ManageRecent,
     private val managePlaylists: ManagePlaylists
 ) : ViewModel() {
-    var customAudioFlow: Flow<List<AudioWrapper>?>? = null
-    var customAudio: List<AudioWrapper>? = listOf()
+    val favouriteAudioFlow: Flow<List<AudioWrapper>?>? = retrieveFavouriteAudio.retrieveFavouriteAudio()
+    var favouriteAudio:  List<AudioWrapper>? = listOf()
     var playlists: List<PlaylistWrapper>? = listOf()
 
     var dynamicallyAddAudioPosition: Int = 0
-    private var pid: Long? = null
 
     init {
         viewModelScope.launch {
@@ -34,60 +36,39 @@ class CustomPlaylistViewModel(
         }
     }
 
-    fun init(playlist: PlaylistWrapper?) {
-        pid = playlist?.playlist?.id
-        pid?.let {
-            customAudioFlow = managePlaylists.getPlaylistAudio(it)
-        }
-    }
-
     suspend fun updateAudioList(audio:List<AudioWrapper>?) {
-        customAudio = audio
-        customAudio?.map {
+        favouriteAudio = audio
+        favouriteAudio?.map {
             it.isFavourite = manageFavourite.hasAudio(it.audio.id)
             it.isRecent = true
         }
     }
 
-    fun removeFromCurrentPlaylist(position: Int) {
+    fun removeFavourite(position: Int) {
         viewModelScope.launch {
-            customAudio?.let {
-                pid?.let { pid ->
-                    managePlaylists.removeFromPlaylist(it[position].audio.id, pid)
-                }
-            }
-        }
-    }
-
-    fun setIsFavourite(position: Int) {
-        viewModelScope.launch {
-            val list = customAudio?.toMutableList()
-            list?.let {
-                val aid = it[position].audio.id
-                if (manageFavourite.hasAudio(aid)) {
-                    manageFavourite.removeFavourite(aid)
-                } else {
-                    manageFavourite.addFavourite(aid)
-                }
+            favouriteAudio?.let {
+                manageFavourite.removeFavourite(it[position].audio.id)
             }
         }
     }
 
     fun removeFromRecent(position: Int) {
         viewModelScope.launch {
-            customAudio?.let {
+            favouriteAudio?.let {
                 manageRecent.removeAudio(it[position].audio.id)
             }
         }
     }
 
     fun getAudioList(): PlaylistWrapper? {
-        val list = customAudio?.let {
+        val list = favouriteAudio?.let {
             it.map { wrapper ->
                 wrapper.unwrap()
             }
         }
-        return list?.let { Playlist(name = "name", list = it).mapToPlaylistWrapper() }
+        return list?.let {
+            Playlist(name = FAVOURITE_PLAYLIST_NAME, list = it).mapToPlaylistWrapper()
+        }
     }
 
     fun createPlaylist(playlistName: String, position: Int) {
@@ -97,7 +78,7 @@ class CustomPlaylistViewModel(
     }
 
     fun addToPlaylist(pid: Long, position: Int) {
-        customAudio?.let {
+        favouriteAudio?.let {
             val aid = it[position].audio.id
             viewModelScope.launch {
                 if (pid == manageFavourite.getId()) {
