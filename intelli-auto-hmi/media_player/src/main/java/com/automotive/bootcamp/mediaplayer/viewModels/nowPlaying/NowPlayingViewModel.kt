@@ -1,23 +1,30 @@
 package com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.automotive.bootcamp.mediaplayer.domain.extensions.wrapAudio
 import com.automotive.bootcamp.mediaplayer.domain.useCases.*
+import com.automotive.bootcamp.mediaplayer.presentation.extensions.unwrap
 import com.automotive.bootcamp.mediaplayer.utils.enums.RepeatMode
 import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class NowPlayingViewModel(
     private val audioPlaybackControl: AudioPlaybackControl,
-    private val addRecent: AddRecent
+    private val addRecent: AddRecent,
+    retrieveRecentAudio: RetrieveRecentAudio
 ) : ViewModel(),
     AudioCompletionListener, AudioRunningListener {
     private var audioListData = mutableListOf<AudioWrapper>()
     private var originalAudioListData = mutableListOf<AudioWrapper>()
+    private val recentAudioFlow: Flow<List<AudioWrapper>?>? = retrieveRecentAudio.retrieveRecentAudio()
+    private var recentAudio: List<AudioWrapper>? = null
 
     private val _isPlaying by lazy { MutableLiveData<Boolean>() }
     private val _isShuffled by lazy { MutableLiveData<Boolean>() }
@@ -45,6 +52,14 @@ class NowPlayingViewModel(
 
     val currentAudioProgress: LiveData<Int>
         get() = _currentAudioProgress
+
+    init {
+        viewModelScope.launch {
+            recentAudioFlow?.collect {
+                recentAudio = it
+            }
+        }
+    }
 
     fun init(playlist: PlaylistWrapper, position: Int) {
         this.position = position
@@ -78,7 +93,9 @@ class NowPlayingViewModel(
             _isPlaying.value = true
 
             viewModelScope.launch {
-                addRecent.execute(it)
+                addRecent.execute(it.audio.id, recentAudio?.map { audio ->
+                    audio.unwrap()
+                })
             }
         }
     }
@@ -101,7 +118,9 @@ class NowPlayingViewModel(
         _isPlaying.value = true
 
         viewModelScope.launch {
-            addRecent.execute(audioWrapped)
+            addRecent.execute(audioWrapped.audio.id, recentAudio?.map { audio ->
+                audio.unwrap()
+            })
         }
     }
 
@@ -118,7 +137,9 @@ class NowPlayingViewModel(
         _isPlaying.value = true
 
         viewModelScope.launch {
-            addRecent.execute(audioWrapped)
+            addRecent.execute(audioWrapped.audio.id, recentAudio?.map { audio ->
+                audio.unwrap()
+            })
         }
     }
 

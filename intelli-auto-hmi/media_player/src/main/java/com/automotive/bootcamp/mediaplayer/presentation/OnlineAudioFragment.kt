@@ -2,22 +2,23 @@ package com.automotive.bootcamp.mediaplayer.presentation
 
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
+import androidx.lifecycle.asLiveData
 import com.automotive.bootcamp.common.base.BaseFragment
 import com.automotive.bootcamp.common.utils.AutoFitGridLayoutManager
+import com.automotive.bootcamp.mediaplayer.utils.FRAGMENT_RESULT_KEY
 import com.automotive.bootcamp.common.utils.GRID_RECYCLE_COLUMN_WIDTH
+import com.automotive.bootcamp.mediaplayer.utils.PLAYLIST_NAME_KEY
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.FragmentAudiosListBinding
 import com.automotive.bootcamp.mediaplayer.presentation.adapters.AudioRecyclerViewAdapter
-import com.automotive.bootcamp.mediaplayer.utils.FRAGMENT_RESULT_KEY
-import com.automotive.bootcamp.mediaplayer.utils.PLAYLIST_NAME_KEY
-import com.automotive.bootcamp.mediaplayer.viewModels.LocalMusicViewModel
+import com.automotive.bootcamp.mediaplayer.viewModels.OnlineAudioViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class LocalMusicFragment :
+class OnlineAudioFragment :
     BaseFragment<FragmentAudiosListBinding>(FragmentAudiosListBinding::inflate),
     MediaItemClickListener, OnItemClickListener {
 
-    private val viewModel: LocalMusicViewModel by viewModel()
+    private val viewModel: OnlineAudioViewModel by viewModel()
     private val audioAdapter: AudioRecyclerViewAdapter by lazy {
         AudioRecyclerViewAdapter(
             onMediaItemClickListener = this,
@@ -34,12 +35,12 @@ class LocalMusicFragment :
     }
 
     override fun initView() {
-        binding.tvSelectedPlaylistName.text = resources.getString(R.string.local_music)
+        binding.tvSelectedPlaylistName.text = resources.getString(R.string.online_music)
     }
 
     override fun setObservers() {
         viewModel.apply {
-            localMusicData.observe(viewLifecycleOwner) {
+            onlineAudioData.observe(viewLifecycleOwner) {
                 audioAdapter.submitList(it)
             }
             parentFragmentManager.setFragmentResultListener(
@@ -61,7 +62,7 @@ class LocalMusicFragment :
         val popupMenu = PopupMenu(requireContext(), view)
         popupMenu.apply {
             inflate(R.menu.audio_popup_menu)
-            if (viewModel.localMusicData.value?.get(position)?.isRecent == false) {
+            if (viewModel.onlineAudioData.value?.get(position)?.isRecent == false) {
                 menu.findItem(R.id.audioRemoveRecent).apply {
                     isVisible = false
                 }
@@ -95,7 +96,6 @@ class LocalMusicFragment :
                         enterNameDialog.show(
                             parentFragmentManager, null
                         )
-                        viewModel.getAllPlaylists()
                         return@setOnMenuItemClickListener true
                     }
                     R.id.audioRemoveRecent -> {

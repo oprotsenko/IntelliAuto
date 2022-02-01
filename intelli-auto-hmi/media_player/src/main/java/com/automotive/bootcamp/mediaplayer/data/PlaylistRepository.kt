@@ -1,51 +1,61 @@
 package com.automotive.bootcamp.mediaplayer.data
 
 import com.automotive.bootcamp.mediaplayer.data.cache.CacheAudioSource
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.EmbeddedPlaylistEntity
 import com.automotive.bootcamp.mediaplayer.data.extensions.mapToPlaylist
 import com.automotive.bootcamp.mediaplayer.data.models.AudioPlaylistItemCrossRef
-import com.automotive.bootcamp.mediaplayer.data.models.EmbeddedPlaylistItem
-import com.automotive.bootcamp.mediaplayer.data.models.PlaylistItem
+import com.automotive.bootcamp.mediaplayer.domain.PlaylistMediaRepository
 import com.automotive.bootcamp.mediaplayer.domain.extensions.mapToPlaylistItem
-import com.automotive.bootcamp.mediaplayer.domain.extensions.mapToPlaylistWrapper
 import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
-import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
-class PlaylistRepository(private val cacheAudioSource: CacheAudioSource) {
-    suspend fun playlistExists(pid: Long): Boolean {
-        return cacheAudioSource.playlistExists(pid)
-    }
+class PlaylistRepository(
+    private val cacheAudioSource: CacheAudioSource,
+    private val dispatcher: CoroutineDispatcher
+) : PlaylistMediaRepository{
+    override suspend fun playlistExists(pid: Long): Boolean =
+        withContext(dispatcher) {
+            cacheAudioSource.playlistExists(pid)
+        }
 
-    suspend fun playlistHasAudio(pid: Long, aid: Long): Boolean {
-        return cacheAudioSource.playlistHasAudio(pid, aid)
-    }
+    override suspend fun playlistHasAudio(pid: Long, aid: Long): Boolean =
+        withContext(dispatcher) {
+            cacheAudioSource.playlistHasAudio(pid, aid)
+        }
 
-    suspend fun addPlaylist(playlist: Playlist): Long {
-        return cacheAudioSource.insertPlaylist(playlist.mapToPlaylistItem())
-    }
+    override suspend fun addPlaylist(playlist: Playlist): Long =
+        withContext(dispatcher) {
+            cacheAudioSource.insertPlaylist(playlist.mapToPlaylistItem())
+        }
 
-    suspend fun removePlaylist(pid: Long) {
+    override suspend fun removePlaylist(pid: Long) = withContext(dispatcher) {
         cacheAudioSource.deletePlaylist(pid)
     }
 
-    suspend fun addAudioToPlaylist(crossRef: AudioPlaylistItemCrossRef) {
+    override suspend fun addAudioToPlaylist(crossRef: AudioPlaylistItemCrossRef) = withContext(dispatcher) {
         cacheAudioSource.insertAudioPlaylistCrossRef(crossRef)
     }
 
-    suspend fun removeAudioFromPlaylist(crossRef: AudioPlaylistItemCrossRef) {
-        cacheAudioSource.deleteAudioFromPlaylist(crossRef)
-    }
-
-    suspend fun getPlaylist(pid: Long): PlaylistItem? {
-        return cacheAudioSource.getPlaylist(pid)
-    }
-
-    suspend fun getAllPlaylists(): List<PlaylistWrapper>? {
-        return cacheAudioSource.getAllPlaylists()?.map {
-            it.mapToPlaylist().mapToPlaylistWrapper()
+    override suspend fun removeAudioFromPlaylist(crossRef: AudioPlaylistItemCrossRef) =
+        withContext(dispatcher) {
+            cacheAudioSource.deleteAudioFromPlaylist(crossRef)
         }
+
+    override fun getPlaylist(pid: Long): Flow<Playlist?> {
+        return cacheAudioSource.getPlaylist(pid).map {
+            it?.mapToPlaylist()
+        }.flowOn(dispatcher)
     }
 
-    suspend fun getEmbeddedPlaylist(name: String): EmbeddedPlaylistItem? =
-        cacheAudioSource.getEmbeddedPlaylist(name)
+    override fun getAllPlaylists(): Flow<List<Playlist>?> {
+        return cacheAudioSource.getAllPlaylists().map { playlists ->
+            playlists?.map { playlist ->
+                playlist.mapToPlaylist()
+            }
+        }.flowOn(dispatcher)
+    }
 }

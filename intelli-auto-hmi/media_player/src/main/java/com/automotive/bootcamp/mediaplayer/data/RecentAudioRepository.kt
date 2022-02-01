@@ -5,50 +5,71 @@ import com.automotive.bootcamp.mediaplayer.data.cache.CacheAudioSource
 import com.automotive.bootcamp.mediaplayer.data.models.AudioPlaylistItemCrossRef
 import com.automotive.bootcamp.mediaplayer.data.models.EmbeddedPlaylistItem
 import com.automotive.bootcamp.mediaplayer.data.models.PlaylistItem
+import com.automotive.bootcamp.mediaplayer.domain.RecentMediaRepository
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 
-class RecentAudioRepository(private val cacheAudioSource: CacheAudioSource) {
-    suspend fun addAudio(aid: Long) {
-        val pid = cacheAudioSource.getEmbeddedPlaylist(RECENT_PLAYLIST_NAME)?.id
+class RecentAudioRepository(
+    private val cacheAudioSource: CacheAudioSource,
+    private val dispatcher: CoroutineDispatcher
+): RecentMediaRepository {
+    private var pid: Long? = null
 
+    init {
+        runBlocking {
+            launch(dispatcher)
+            {
+                pid = getEmbeddedPlaylist()?.id
+            }
+        }
+    }
+
+    override suspend fun addAudio(aid: Long): Unit = withContext(dispatcher) {
         pid?.let {
             val crossRef = AudioPlaylistItemCrossRef(aid, it)
             cacheAudioSource.insertAudioPlaylistCrossRef(crossRef)
         }
     }
 
-    suspend fun removeAudio(aid: Long) {
-        val pid = cacheAudioSource.getEmbeddedPlaylist(RECENT_PLAYLIST_NAME)?.id
-
+    override suspend fun removeAudio(aid: Long): Unit = withContext(dispatcher) {
         pid?.let {
             val crossRef = AudioPlaylistItemCrossRef(aid, it)
             cacheAudioSource.deleteAudioFromPlaylist(crossRef)
         }
     }
 
-    suspend fun hasAudio(aid: Long): Boolean {
-        val pid = cacheAudioSource.getEmbeddedPlaylist(RECENT_PLAYLIST_NAME)?.id
-        return if (pid != null) {
-            cacheAudioSource.playlistHasAudio(pid, aid)
-        } else false
-    }
-
-    suspend fun getPlaylist(): PlaylistItem? {
-        val pid = cacheAudioSource.getEmbeddedPlaylist(RECENT_PLAYLIST_NAME)?.id
-
-        pid?.let {
-            return cacheAudioSource.getPlaylist(it)
+    override suspend fun hasAudio(aid: Long): Boolean =
+        withContext(dispatcher) {
+            pid?.let {
+                cacheAudioSource.playlistHasAudio(it, aid)
+            }
+            false
         }
 
+    override fun getPlaylist(): Flow<PlaylistItem?>? {
+        pid?.let {
+            return cacheAudioSource.getPlaylist(it).flowOn(dispatcher)
+        }
         return null
     }
 
-    suspend fun addEmbeddedPlaylist(pid: Long) {
+    override suspend fun getSize(): Int? =
+        withContext(dispatcher) {
+            pid?.let {
+                cacheAudioSource.getPlaylistSize(it)
+            }
+            null
+        }
+
+    override suspend fun getEmbeddedPlaylist(): EmbeddedPlaylistItem? =
+        withContext(dispatcher) {
+            cacheAudioSource.getEmbeddedPlaylist(RECENT_PLAYLIST_NAME)
+        }
+
+    override suspend fun addEmbeddedPlaylist(pid: Long) = withContext(dispatcher) {
         val embeddedPlaylistItem = EmbeddedPlaylistItem(pid, RECENT_PLAYLIST_NAME)
-
         cacheAudioSource.insertEmbeddedPlaylist(embeddedPlaylistItem)
-    }
-
-    suspend fun getEmbeddedPlaylist(): EmbeddedPlaylistItem? {
-        return cacheAudioSource.getEmbeddedPlaylist(RECENT_PLAYLIST_NAME)
+        this@RecentAudioRepository.pid = pid
     }
 }

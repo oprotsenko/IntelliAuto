@@ -9,42 +9,48 @@ import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
 import com.automotive.bootcamp.mediaplayer.domain.useCases.ManageFavourite
 import com.automotive.bootcamp.mediaplayer.domain.useCases.ManagePlaylists
 import com.automotive.bootcamp.mediaplayer.domain.useCases.ManageRecent
-import com.automotive.bootcamp.mediaplayer.domain.useCases.RetrieveLocalMusic
+import com.automotive.bootcamp.mediaplayer.domain.useCases.RetrieveLocalAudio
 import com.automotive.bootcamp.mediaplayer.presentation.extensions.unwrap
 import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class LocalMusicViewModel(
-    private val retrieveLocalMusic: RetrieveLocalMusic,
+class LocalAudioViewModel(
+    private val retrieveLocalAudio: RetrieveLocalAudio,
     private val manageFavourite: ManageFavourite,
     private val manageRecent: ManageRecent,
     private val managePlaylists: ManagePlaylists
 ) : ViewModel() {
-
-    val localMusicData by lazy { MutableLiveData<List<AudioWrapper>>() }
-    var playlists: List<PlaylistWrapper>? = null
+    val localAudioData by lazy { MutableLiveData<List<AudioWrapper>>() }
+    var playlists: List<PlaylistWrapper>? = listOf()
     var dynamicallyAddAudioPosition: Int = 0
 
     init {
         viewModelScope.launch {
             retrieveMusic()
-            getAllPlaylists()
+        }
+        viewModelScope.launch {
+            managePlaylists.getAllPlaylists().collect {
+                playlists = it
+            }
         }
     }
 
     private suspend fun retrieveMusic() {
-        val list = retrieveLocalMusic.retrieveLocalMusic().toMutableList()
+        val list = retrieveLocalAudio.retrieveLocalMusic().toMutableList()
         list.map {
             it.isFavourite = manageFavourite.hasAudio(it.audio.id)
             it.isRecent = manageRecent.hasAudio(it.audio.id)
         }
-        localMusicData.value = list
+        localAudioData.value = list
     }
 
     fun setIsFavourite(position: Int) {
         viewModelScope.launch {
-            localMusicData.value?.let {
+            localAudioData.value?.let {
                 if (manageFavourite.hasAudio(it[position].audio.id)) {
                     manageFavourite.removeFavourite(it[position].audio.id)
                 } else {
@@ -57,7 +63,7 @@ class LocalMusicViewModel(
 
     fun removeFromRecent(position: Int) {
         viewModelScope.launch {
-            localMusicData.value?.let {
+            localAudioData.value?.let {
                 manageRecent.removeAudio(it[position].audio.id)
                 retrieveMusic()
             }
@@ -65,7 +71,7 @@ class LocalMusicViewModel(
     }
 
     fun getAudioList(): PlaylistWrapper? {
-        val list = localMusicData.value?.let {
+        val list = localAudioData.value?.let {
             it.map { wrapper ->
                 wrapper.unwrap()
             }
@@ -76,31 +82,24 @@ class LocalMusicViewModel(
     fun createPlaylist(playlistName: String, position: Int) {
         viewModelScope.launch {
             addToPlaylist(managePlaylists.createPlaylist(playlistName), position)
-            getAllPlaylists()
         }
     }
 
     fun addToPlaylist(pid: Long, position: Int) {
         viewModelScope.launch {
-            if (managePlaylists.getEmbeddedPlaylist(FAVOURITE_PLAYLIST_NAME)?.id == pid) {
-                localMusicData.value?.let {
+            if (pid == manageFavourite.getId()) {
+                localAudioData.value?.let {
                     if (!manageFavourite.hasAudio(it[position].audio.id)) {
-                        val list = localMusicData.value?.toMutableList()
+                        val list = localAudioData.value?.toMutableList()
                         manageFavourite.addFavourite(it[position].audio.id)
                         list?.set(position, list[position].copy(isFavourite = true))
-                        localMusicData.value = list
+                        localAudioData.value = list
                     }
                 }
             }
-            localMusicData.value?.let {
+            localAudioData.value?.let {
                 managePlaylists.addToPlaylist(it[position].audio.id, pid)
             }
-        }
-    }
-
-    fun getAllPlaylists() {
-        viewModelScope.launch {
-            playlists = managePlaylists.getAllPlaylists()
         }
     }
 }

@@ -6,6 +6,7 @@ import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.PlaylistEnti
 import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.EmbeddedPlaylistEntity
 import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.relations.AudioPlaylistCrossRefEntity
 import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.relations.PlaylistWithAudios
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface AudioDao {
@@ -22,13 +23,6 @@ interface AudioDao {
     suspend fun playlistHasAudio(pid: Long, aid: Long): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertEmbeddedPlaylist(playlist: EmbeddedPlaylistEntity)
-
-    @Transaction
-    @Query("SELECT * FROM embedded_playlists WHERE name = :name")
-    suspend fun getEmbeddedPlaylist(name: String): EmbeddedPlaylistEntity?
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPlaylist(playlist: PlaylistEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -37,14 +31,25 @@ interface AudioDao {
     @Delete
     suspend fun deleteAudioFromPlaylist(crossRefEntity: AudioPlaylistCrossRefEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertEmbeddedPlaylist(playlist: EmbeddedPlaylistEntity)
+
+    @Transaction
+    @Query("SELECT * FROM embedded_playlists WHERE name = :name")
+    suspend fun getEmbeddedPlaylist(name: String): EmbeddedPlaylistEntity?
+
     @Query("DELETE FROM playlists WHERE pid = :pid")
     suspend fun deletePlaylist(pid: Long)
 
     @Transaction
+    @Query("SELECT COUNT(*) FROM audio_playlist_cross_ref WHERE pid = :pid")
+    suspend fun getPlaylistSize(pid: Long): Int
+
+    @Transaction
     @Query("SELECT * FROM playlists WHERE pid = :pid")
-    suspend fun getPlaylistWithAudios(pid: Long): PlaylistWithAudios?
+    fun getPlaylistWithAudios(pid: Long): Flow<PlaylistWithAudios?>
 
     @Transaction
     @Query("SELECT * FROM playlists")
-    suspend fun getAllPlaylistsWithAudios(): List<PlaylistWithAudios>?
+    fun getAllPlaylistsWithAudios(): Flow<List<PlaylistWithAudios>?>
 }

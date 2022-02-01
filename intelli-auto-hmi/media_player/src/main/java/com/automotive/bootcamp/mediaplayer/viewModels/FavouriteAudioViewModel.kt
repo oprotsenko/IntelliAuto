@@ -7,23 +7,23 @@ import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
 import com.automotive.bootcamp.mediaplayer.domain.useCases.ManageFavourite
 import com.automotive.bootcamp.mediaplayer.domain.useCases.ManagePlaylists
 import com.automotive.bootcamp.mediaplayer.domain.useCases.ManageRecent
-import com.automotive.bootcamp.mediaplayer.domain.useCases.RetrieveRecentAudio
+import com.automotive.bootcamp.mediaplayer.domain.useCases.RetrieveFavouriteAudio
 import com.automotive.bootcamp.mediaplayer.presentation.extensions.unwrap
 import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
-import com.automotive.bootcamp.mediaplayer.utils.RECENT_PLAYLIST_NAME
+import com.automotive.bootcamp.mediaplayer.utils.FAVOURITE_PLAYLIST_NAME
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class RecentAudioViewModel(
-    retrieveRecentAudio: RetrieveRecentAudio,
+class FavouriteAudioViewModel(
+    retrieveFavouriteAudio: RetrieveFavouriteAudio,
     private val manageFavourite: ManageFavourite,
     private val manageRecent: ManageRecent,
     private val managePlaylists: ManagePlaylists
 ) : ViewModel() {
-    val recentAudioFlow: Flow<List<AudioWrapper>?>? = retrieveRecentAudio.retrieveRecentAudio()
-    var recentAudio: List<AudioWrapper>? = listOf()
+    val favouriteAudioFlow: Flow<List<AudioWrapper>?>? = retrieveFavouriteAudio.retrieveFavouriteAudio()
+    var favouriteAudio:  List<AudioWrapper>? = listOf()
     var playlists: List<PlaylistWrapper>? = listOf()
 
     var dynamicallyAddAudioPosition: Int = 0
@@ -37,42 +37,37 @@ class RecentAudioViewModel(
     }
 
     suspend fun updateAudioList(audio:List<AudioWrapper>?) {
-        recentAudio = audio
-        recentAudio?.map {
+        favouriteAudio = audio
+        favouriteAudio?.map {
             it.isFavourite = manageFavourite.hasAudio(it.audio.id)
             it.isRecent = true
         }
     }
 
-    fun setIsFavourite(position: Int) {
+    fun removeFavourite(position: Int) {
         viewModelScope.launch {
-            recentAudio?.let {
-                val aid = it[position].audio.id
-                if (manageFavourite.hasAudio(aid)) {
-                    manageFavourite.removeFavourite(aid)
-                } else {
-                    manageFavourite.addFavourite(aid)
-                }
+            favouriteAudio?.let {
+                manageFavourite.removeFavourite(it[position].audio.id)
             }
         }
     }
 
     fun removeFromRecent(position: Int) {
-        recentAudio?.let {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            favouriteAudio?.let {
                 manageRecent.removeAudio(it[position].audio.id)
             }
         }
     }
 
     fun getAudioList(): PlaylistWrapper? {
-        val list = recentAudio?.let {
+        val list = favouriteAudio?.let {
             it.map { wrapper ->
                 wrapper.unwrap()
             }
         }
         return list?.let {
-            Playlist(name = RECENT_PLAYLIST_NAME, list = it).mapToPlaylistWrapper()
+            Playlist(name = FAVOURITE_PLAYLIST_NAME, list = it).mapToPlaylistWrapper()
         }
     }
 
@@ -83,7 +78,7 @@ class RecentAudioViewModel(
     }
 
     fun addToPlaylist(pid: Long, position: Int) {
-        recentAudio?.let {
+        favouriteAudio?.let {
             val aid = it[position].audio.id
             viewModelScope.launch {
                 if (pid == manageFavourite.getId()) {

@@ -13,6 +13,5 @@ package com.automotive.bootcamp.mediaplayer.utils
     const val FAVOURITE_PLAYLIST_NAME = "favourite"
     const val RECENT_PLAYLIST_NAME = "recent"
     const val RECENT_PLAYLIST_CAPACITY = 20
-    const val DEFAULT_COVER =
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvhFOCONBEFMsTa_jZ13N_Ekihx1mWfxUq9w&usqp=CAU"
+    const val DEFAULT_COVER = "default_cover.jpg"
     const val PICTURES_DIRECTORY_NAME = "Pictures"

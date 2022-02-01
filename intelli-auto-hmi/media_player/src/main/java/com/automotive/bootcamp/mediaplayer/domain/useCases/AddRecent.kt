@@ -1,34 +1,30 @@
 package com.automotive.bootcamp.mediaplayer.domain.useCases
 
+import android.util.Log
+import com.automotive.bootcamp.mediaplayer.domain.PlaylistMediaRepository
+import com.automotive.bootcamp.mediaplayer.domain.RecentMediaRepository
+import com.automotive.bootcamp.mediaplayer.domain.models.Audio
+import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
 import com.automotive.bootcamp.mediaplayer.utils.RECENT_PLAYLIST_CAPACITY
 import com.automotive.bootcamp.mediaplayer.utils.RECENT_PLAYLIST_NAME
-import com.automotive.bootcamp.mediaplayer.data.PlaylistRepository
-import com.automotive.bootcamp.mediaplayer.data.RecentAudioRepository
-import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
-import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
 
 class AddRecent(
-    private val recentAudioRepository: RecentAudioRepository,
-    private val playlistRepository: PlaylistRepository,
+    private val recentAudioRepository: RecentMediaRepository,
+    private val playlistRepository: PlaylistMediaRepository,
 ) {
-    suspend fun execute(audioWrapped: AudioWrapper) {
+    suspend fun execute(aid: Long, recentAudios: List<Audio>?) {
+        Log.d("AddRecent", "execute")
+
         tryCreatePlaylist()
-
-        val aid = audioWrapped.audio.id
-
         if (recentAudioRepository.hasAudio(aid)) {
             recentAudioRepository.removeAudio(aid)
         }
-
-        checkPlaylistCapacity()
-
+        checkPlaylistCapacity(recentAudios)
         recentAudioRepository.addAudio(aid)
     }
 
-    private suspend fun checkPlaylistCapacity(){
-        val recentPlaylistAudios = recentAudioRepository.getPlaylist()?.list
-
-        recentPlaylistAudios?.let { audios ->
+    private suspend fun checkPlaylistCapacity(recentAudios: List<Audio>?) {
+        recentAudios?.let { audios ->
             if (audios.size >= RECENT_PLAYLIST_CAPACITY) {
                 val aid = audios.minOf { it.id }
                 recentAudioRepository.removeAudio(aid)
@@ -37,9 +33,7 @@ class AddRecent(
     }
 
     private suspend fun tryCreatePlaylist() {
-        val embeddedRecentPlaylist = recentAudioRepository.getEmbeddedPlaylist()
-
-        if (embeddedRecentPlaylist == null) {
+        if (recentAudioRepository.getEmbeddedPlaylist() == null) {
             val recentPlaylist = Playlist(name = RECENT_PLAYLIST_NAME, list = null)
             val recentPlaylistId = playlistRepository.addPlaylist(recentPlaylist)
             recentAudioRepository.addEmbeddedPlaylist(recentPlaylistId)

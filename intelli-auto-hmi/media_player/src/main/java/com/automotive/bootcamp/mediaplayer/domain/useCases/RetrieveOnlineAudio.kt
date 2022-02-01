@@ -1,15 +1,15 @@
 package com.automotive.bootcamp.mediaplayer.domain.useCases
 
-import com.automotive.bootcamp.mediaplayer.data.CacheAudioRepository
 import com.automotive.bootcamp.mediaplayer.data.extensions.mapToAudio
 import com.automotive.bootcamp.mediaplayer.data.models.AudioItem
+import com.automotive.bootcamp.mediaplayer.domain.CacheMediaRepository
 import com.automotive.bootcamp.mediaplayer.domain.RemoteMediaRepository
 import com.automotive.bootcamp.mediaplayer.domain.extensions.wrapAudio
 import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
 
-class RetrieveOnlineMusic(
+class RetrieveOnlineAudio(
     private val remoteAudioRepository: RemoteMediaRepository,
-    private val cacheAudioRepository: CacheAudioRepository
+    private val cacheAudioRepository: CacheMediaRepository
 ) {
 
     suspend fun retrieveOnlineMusic(): List<AudioWrapper>? {

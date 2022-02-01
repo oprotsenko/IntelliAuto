@@ -7,21 +7,22 @@ import com.automotive.bootcamp.mediaplayer.utils.AudioPlayer
 import com.automotive.bootcamp.mediaplayer.utils.DefaultAudioPlayer
 import com.automotive.bootcamp.mediaplayer.viewModels.*
 import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.NowPlayingViewModel
-import com.automotive.bootcamp.mediaplayer.viewModels.LocalMusicViewModel
+import com.automotive.bootcamp.mediaplayer.viewModels.LocalAudioViewModel
 import com.automotive.bootcamp.mediaplayer.viewModels.RecentAudioViewModel
-import com.automotive.bootcamp.mediaplayer.viewModels.OnlineMusicViewModel
+import com.automotive.bootcamp.mediaplayer.viewModels.OnlineAudioViewModel
 import com.automotive.bootcamp.mediaplayer.viewModels.PlaylistsViewModel
-import com.automotive.bootcamp.mediaplayer.viewModels.FavouriteMusicViewModel
+import com.automotive.bootcamp.mediaplayer.viewModels.FavouriteAudioViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
-    single { LocalMusicViewModel(get(), get(), get(), get()) }
-    single { FavouriteMusicViewModel(get(), get(), get(), get()) }
-    single { OnlineMusicViewModel(get(), get(), get(), get()) }
-    viewModel { PlaylistsViewModel(get(), get(), get()) }
-    single { NowPlayingViewModel(get(), get()) }
-    single { RecentAudioViewModel(get(), get(), get(), get()) }
+    viewModel { PlaylistsViewModel(get(), get()) }
+    viewModel { NowPlayingViewModel(get(), get(), get()) }
+    viewModel { FavouriteAudioViewModel(get(), get(), get(), get()) }
+    viewModel { RecentAudioViewModel(get(), get(), get(), get()) }
+
+    single { LocalAudioViewModel(get(), get(), get(), get()) }
+    single { OnlineAudioViewModel(get(), get(), get(), get()) }
     single { CustomPlaylistViewModel(get(),get(), get()) }
 
     single { provideDefaultAudioPlayer(get()) }
