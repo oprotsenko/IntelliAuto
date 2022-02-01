@@ -1,16 +1,16 @@
 package com.automotive.bootcamp.mediaplayer.domain.useCases
 
 import android.util.Log
-import com.automotive.bootcamp.mediaplayer.data.PlaylistRepository
-import com.automotive.bootcamp.mediaplayer.data.RecentAudioRepository
+import com.automotive.bootcamp.mediaplayer.domain.PlaylistMediaRepository
+import com.automotive.bootcamp.mediaplayer.domain.RecentMediaRepository
 import com.automotive.bootcamp.mediaplayer.domain.models.Audio
 import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
 import com.automotive.bootcamp.mediaplayer.utils.RECENT_PLAYLIST_CAPACITY
 import com.automotive.bootcamp.mediaplayer.utils.RECENT_PLAYLIST_NAME
 
 class AddRecent(
-    private val recentAudioRepository: RecentAudioRepository,
-    private val playlistRepository: PlaylistRepository,
+    private val recentAudioRepository: RecentMediaRepository,
+    private val playlistRepository: PlaylistMediaRepository,
 ) {
     suspend fun execute(aid: Long, recentAudios: List<Audio>?) {
         Log.d("AddRecent", "execute")

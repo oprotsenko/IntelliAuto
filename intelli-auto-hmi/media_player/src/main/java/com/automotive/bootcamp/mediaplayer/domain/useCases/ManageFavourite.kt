@@ -1,13 +1,13 @@
 package com.automotive.bootcamp.mediaplayer.domain.useCases
 
-import com.automotive.bootcamp.mediaplayer.utils.FAVOURITE_PLAYLIST_NAME
-import com.automotive.bootcamp.mediaplayer.data.FavouriteAudioRepository
-import com.automotive.bootcamp.mediaplayer.data.PlaylistRepository
+import com.automotive.bootcamp.mediaplayer.domain.FavouriteMediaRepository
+import com.automotive.bootcamp.mediaplayer.domain.PlaylistMediaRepository
 import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
+import com.automotive.bootcamp.mediaplayer.utils.FAVOURITE_PLAYLIST_NAME
 
 class ManageFavourite(
-    private val favouriteAudioRepository: FavouriteAudioRepository,
-    private val playlistRepository: PlaylistRepository
+    private val favouriteAudioRepository: FavouriteMediaRepository,
+    private val playlistRepository: PlaylistMediaRepository
 ) {
     suspend fun removeFavourite(aid: Long) {
         favouriteAudioRepository.removeAudio(aid)
