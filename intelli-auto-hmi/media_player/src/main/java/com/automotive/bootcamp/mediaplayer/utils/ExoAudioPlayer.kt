@@ -1,20 +1,18 @@
 package com.automotive.bootcamp.mediaplayer.utils
 
 import android.content.Context
-import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import com.automotive.bootcamp.mediaplayer.utils.extensions.currentSeconds
-import com.automotive.bootcamp.mediaplayer.utils.extensions.seconds
 import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.AudioCompletionListener
 import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.AudioRunningListener
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
 import java.util.concurrent.TimeUnit
 
-class DefaultAudioPlayer(private val context: Context) : AudioPlayer,
-    MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener {
-    private val player: MediaPlayer by lazy { MediaPlayer() }
+class ExoAudioPlayer(context: Context) : AudioPlayer, Player.Listener {
+    private var player = ExoPlayer.Builder(context).build()
     private var audioCompletionListener: AudioCompletionListener? = null
     private var audioRunningListener: AudioRunningListener? = null
 
@@ -25,15 +23,17 @@ class DefaultAudioPlayer(private val context: Context) : AudioPlayer,
     private var lastAudioUrl: String? = null
 
     init {
-        player.setOnPreparedListener(this)
-        player.setOnCompletionListener(this)
-
+        player.addListener(this)
         initializeRunnable()
     }
 
     private fun initializeRunnable() {
         runnable = Runnable {
-            audioRunningListener?.onAudioRunning(player.seconds, player.currentSeconds)
+            TimeUnit.MILLISECONDS.let {
+                val contentDuration = it.toSeconds(player.contentDuration).toInt()
+                val currentPosition = it.toSeconds(player.currentPosition).toInt()
+                audioRunningListener?.onAudioRunning(contentDuration, currentPosition)
+            }
             runnable?.let {
                 handler.postDelayed(it, delay)
             }
@@ -51,31 +51,37 @@ class DefaultAudioPlayer(private val context: Context) : AudioPlayer,
         this.audioRunningListener = audioRunningListener
     }
 
+    override fun onPlaybackStateChanged(playbackState: Int) {
+        super.onPlaybackStateChanged(playbackState)
+
+        when (playbackState) {
+            Player.STATE_ENDED -> {
+                lastAudioUrl = null
+                audioCompletionListener?.onAudioCompletion()
+            }
+            Player.STATE_READY -> {
+                player.play()
+            }
+        }
+    }
+
     override fun playAudio(url: String?) {
         if (lastAudioUrl != url) {
+            val mediaItem: MediaItem = MediaItem.fromUri(Uri.parse(url))
+
             player.apply {
-                reset()
-                setDataSource(context, Uri.parse(url))
-                prepareAsync()
+                setMediaItem(mediaItem)
+                prepare()
             }
         } else {
             if (!player.isPlaying) {
                 player.apply {
                     seekTo(this.currentPosition)
-                    start()
+                    play()
                 }
             }
         }
         lastAudioUrl = url
-    }
-
-    override fun onPrepared(mp: MediaPlayer?) {
-        player.start()
-    }
-
-    override fun onCompletion(p0: MediaPlayer?) {
-        lastAudioUrl = null
-        audioCompletionListener?.onAudioCompletion()
     }
 
     override fun pauseAudio() {
@@ -83,7 +89,7 @@ class DefaultAudioPlayer(private val context: Context) : AudioPlayer,
     }
 
     override fun updateAudioProgress(progress: Int) {
-        player.seekTo(progress * 1000)
+        player.seekTo(progress.toLong() * 1000)
     }
 
     override fun stop() {

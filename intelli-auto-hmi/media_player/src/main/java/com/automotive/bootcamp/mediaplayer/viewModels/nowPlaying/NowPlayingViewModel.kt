@@ -1,16 +1,17 @@
 package com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.automotive.bootcamp.mediaplayer.domain.extensions.wrapAudio
-import com.automotive.bootcamp.mediaplayer.domain.useCases.*
+import com.automotive.bootcamp.mediaplayer.domain.useCases.AddRecent
+import com.automotive.bootcamp.mediaplayer.domain.useCases.AudioPlaybackControl
+import com.automotive.bootcamp.mediaplayer.domain.useCases.RetrieveRecentAudio
 import com.automotive.bootcamp.mediaplayer.presentation.extensions.unwrap
-import com.automotive.bootcamp.mediaplayer.utils.enums.RepeatMode
 import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
+import com.automotive.bootcamp.mediaplayer.utils.enums.RepeatMode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -20,7 +21,7 @@ class NowPlayingViewModel(
     private val addRecent: AddRecent,
     retrieveRecentAudio: RetrieveRecentAudio
 ) : ViewModel(),
-    AudioCompletionListener, AudioRunningListener {
+    AudioCompletionListener, AudioRunningListener, AudioServiceConnectionListener {
     private var audioListData = mutableListOf<AudioWrapper>()
     private var originalAudioListData = mutableListOf<AudioWrapper>()
     private val recentAudioFlow: Flow<List<AudioWrapper>?>? = retrieveRecentAudio.retrieveRecentAudio()
@@ -83,8 +84,7 @@ class NowPlayingViewModel(
         _isShuffled.value = false
         _repeatMode.value = RepeatMode.DEFAULT
 
-        audioPlaybackControl.setOnAudioCompletionListener(this)
-        audioPlaybackControl.setOnAudioRunningListener(this)
+        audioPlaybackControl.setOnAudioServiceConnectionListener(this)
     }
 
     fun playAudio() {
@@ -113,7 +113,7 @@ class NowPlayingViewModel(
         }
 
         val audioWrapped = audioListData[position]
-        audioPlaybackControl.nextAudio(audioWrapped.audio.url)
+        audioPlaybackControl.playAudio(audioWrapped.audio.url)
         _currentAudio.value = audioWrapped
         _isPlaying.value = true
 
@@ -132,7 +132,7 @@ class NowPlayingViewModel(
         }
 
         val audioWrapped = audioListData[position]
-        audioPlaybackControl.previousAudio(audioWrapped.audio.url)
+        audioPlaybackControl.playAudio(audioWrapped.audio.url)
         _currentAudio.value = audioWrapped
         _isPlaying.value = true
 
@@ -206,5 +206,10 @@ class NowPlayingViewModel(
     override fun onAudioRunning(duration: Int, currentProgress: Int) {
         _currentAudioDuration.value = duration
         _currentAudioProgress.value = currentProgress
+    }
+
+    override fun onAudioServiceConnected() {
+        audioPlaybackControl.setOnAudioCompletionListener(this)
+        audioPlaybackControl.setOnAudioRunningListener(this)
     }
 }

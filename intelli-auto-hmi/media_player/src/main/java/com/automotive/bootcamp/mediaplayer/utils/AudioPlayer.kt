@@ -9,7 +9,6 @@ interface AudioPlayer {
 
     fun playAudio(url: String?)
     fun pauseAudio()
-    fun previousAudio(url: String?)
-    fun nextAudio(url: String?)
     fun updateAudioProgress(progress: Int)
+    fun stop()
 }

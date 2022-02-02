@@ -13,8 +13,6 @@ class AddRecent(
     private val playlistRepository: PlaylistRepository,
 ) {
     suspend fun execute(aid: Long, recentAudios: List<Audio>?) {
-        Log.d("AddRecent", "execute")
-
         tryCreatePlaylist()
         if (recentAudioRepository.hasAudio(aid)) {
             recentAudioRepository.removeAudio(aid)

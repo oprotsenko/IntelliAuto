@@ -90,5 +90,10 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:$okhttp3_version")
 
     // Gson
-    implementation "com.google.code.gson:gson:2.8.6"
+    implementation "com.google.code.gson:gson:2.8.7"
+
+    // ExoPlayer
+    api "com.google.android.exoplayer:exoplayer-core:2.16.1"
+    api "com.google.android.exoplayer:exoplayer-ui:2.16.1"
+    api "com.google.android.exoplayer:extension-mediasession:2.16.1"
 }
