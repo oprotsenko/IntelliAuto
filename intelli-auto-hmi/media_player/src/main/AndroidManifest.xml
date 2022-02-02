@@ -8,7 +8,7 @@
 
         <service
             android:enabled="true"
-            android:name=".utils.AudioPlayerService"/>
+            android:name=".utils.service.AudioPlayerService"/>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
