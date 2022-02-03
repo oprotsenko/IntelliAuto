@@ -6,7 +6,7 @@
         android:name=".MediaPlayerApp"
         android:requestLegacyExternalStorage="true">
 
-        <service android:name=".services.MediaPlayerService"
+        <service android:name=".service.MusicService"
             android:label="@string/service_name"
             android:exported="false">
             <intent-filter>
