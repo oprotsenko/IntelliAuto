@@ -49,8 +49,9 @@ class MusicServiceConnection(
         get() = mediaController.transportControls
 
     fun subscribe(parentId: String, callback: MediaBrowserCompat.SubscriptionCallback) {
-
-        mediaBrowser.subscribe(parentId, callback)
+        mediaBrowser.subscribe(parentId, Bundle().apply {
+            putString(ROOT_ID_BUNDLE_KEY, LOCAL_ROOT_ID)
+        } ,callback)
     }
 
     fun unsubscribe(parentId: String, callback: MediaBrowserCompat.SubscriptionCallback) {

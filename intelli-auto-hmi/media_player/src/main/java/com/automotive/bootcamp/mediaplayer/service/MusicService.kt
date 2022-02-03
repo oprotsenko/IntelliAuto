@@ -1,7 +1,9 @@
 package com.automotive.bootcamp.mediaplayer.service
 
+import android.R
 import android.app.PendingIntent
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaDescriptionCompat
@@ -23,10 +25,10 @@ import com.google.android.exoplayer2.upstream.DefaultDataSource
 import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
 
+
 private const val SERVICE_TAG = "MusicServiceTag"
 
-class MusicService : MediaBrowserServiceCompat() {
-
+class MusicService : MediaBrowserServiceCompat () {
     private val player: ExoPlayer by inject()
     private val musicSource: MusicSource by inject()
     private val defaultDataSource: DefaultDataSource.Factory by inject()
@@ -126,7 +128,15 @@ class MusicService : MediaBrowserServiceCompat() {
         parentId: String,
         result: Result<MutableList<MediaBrowserCompat.MediaItem>>
     ) {
-        when (parentId) {
+
+    }
+
+    override fun onLoadChildren(
+        parentId: String,
+        result: Result<MutableList<MediaBrowserCompat.MediaItem>>,
+        bundle: Bundle
+    ) {
+        when (bundle.getString(ROOT_ID_BUNDLE_KEY)) {
             LOCAL_ROOT_ID -> {
                 serviceScope.launch {
                     musicSource.retrieveLocalAudio()

@@ -53,8 +53,6 @@ class LocalAudioViewModel(
     }
 
     override fun onChildLoaded(audios: Resource<List<AudioWrapper>>) {
-        Log.d("LocalAudioViewModel", "onChildLoaded")
-
         viewModelScope.launch {
             audios.data?.map {
                 it.isFavourite = manageFavourite.hasAudio(it.audio.id)
