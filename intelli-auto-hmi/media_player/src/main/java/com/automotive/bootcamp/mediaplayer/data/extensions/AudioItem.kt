@@ -10,7 +10,6 @@ fun AudioItem.mapToAudio() : Audio =
         cover = this.cover,
         title = this.title,
         artist = this.artist,
-        duration = this.duration,
         url = this.url
     )
 
@@ -20,6 +19,5 @@ fun AudioItem.mapToEntity() : AudioEntity =
         cover = this.cover,
         title = this.title,
         artist = this.artist,
-        duration = this.duration,
         url = this.url
     )

@@ -5,6 +5,5 @@ data class AudioItem(
     val cover: String?,
     val title: String?,
     val artist: String?,
-    val duration: String?,
     val url: String
 )

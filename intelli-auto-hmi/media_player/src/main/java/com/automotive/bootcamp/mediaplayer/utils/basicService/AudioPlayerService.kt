@@ -1,4 +1,4 @@
-package com.automotive.bootcamp.mediaplayer.utils.service
+package com.automotive.bootcamp.mediaplayer.utils.basicService
 
 import android.app.Service
 import android.content.Intent

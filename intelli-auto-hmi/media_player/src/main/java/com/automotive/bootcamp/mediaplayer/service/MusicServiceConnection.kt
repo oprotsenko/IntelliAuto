@@ -11,7 +11,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.automotive.bootcamp.common.utils.Event
 import com.automotive.bootcamp.common.utils.Resource
+import com.automotive.bootcamp.mediaplayer.utils.LOCAL_ROOT_ID
 import com.automotive.bootcamp.mediaplayer.utils.NETWORK_ERROR
+import com.automotive.bootcamp.mediaplayer.utils.ROOT_ID_BUNDLE_KEY
 
 class MusicServiceConnection(
     context: Context
@@ -36,7 +38,9 @@ class MusicServiceConnection(
             MusicService::class.java
         ),
         mediaBrowserConnectionCallback,
-        null
+        Bundle().apply {
+            putString(ROOT_ID_BUNDLE_KEY, LOCAL_ROOT_ID)
+        }
     ).apply { connect() }
 
     lateinit var mediaController: MediaControllerCompat
@@ -45,13 +49,13 @@ class MusicServiceConnection(
         get() = mediaController.transportControls
 
     fun subscribe(parentId: String, callback: MediaBrowserCompat.SubscriptionCallback) {
+
         mediaBrowser.subscribe(parentId, callback)
     }
 
     fun unsubscribe(parentId: String, callback: MediaBrowserCompat.SubscriptionCallback) {
         mediaBrowser.unsubscribe(parentId, callback)
     }
-
 
     private inner class MediaBrowserConnectionCallback(
         private val context: Context

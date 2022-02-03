@@ -56,7 +56,6 @@ class ResourcesAudioSource(
                     imagePath,
                     title,
                     artist,
-                    duration,
                     audioPath.toString()
                 )
             )

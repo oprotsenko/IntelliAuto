@@ -9,6 +9,5 @@ fun AudioEntity.mapToAudioItem() : AudioItem =
         cover = this.cover,
         title = this.title,
         artist = this.artist,
-        duration = this.duration,
         url = this.url
     )

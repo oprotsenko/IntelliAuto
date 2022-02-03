@@ -42,13 +42,11 @@ class LocalAudioSource(
             val idCol = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)
             val titleCol = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)
             val artistCol = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)
-            val durationCol = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
             val dataCol = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
             while (cursor.moveToNext()) {
                 val id = cursor.getLong(idCol)
                 val title = cursor.getString(titleCol)
                 val artist = cursor.getString(artistCol)
-                val duration = cursor.getString(durationCol)
                 val url = cursor.getString(dataCol)
                 retriever.setDataSource(url)
                 val data = retriever.embeddedPicture
@@ -62,7 +60,7 @@ class LocalAudioSource(
 
                 val imagePath = saveImageToExternalStorage(image)
 
-                list.add(AudioItem(id, imagePath, title, artist, duration, url))
+                list.add(AudioItem(id, imagePath, title, artist, url))
             }
         }
         return list

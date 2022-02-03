@@ -1,6 +1,7 @@
 package com.automotive.bootcamp.mediaplayer.di
 
 import android.content.Context
+import com.automotive.bootcamp.mediaplayer.service.MusicServiceConnection
 import com.automotive.bootcamp.mediaplayer.service.MusicSource
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
@@ -14,6 +15,7 @@ val serviceModule = module {
     single { provideAudioAttributes() }
     single { provideExoPlayer(get(), get()) }
     single { provideDataSourceFactory(get()) }
+    single { provideMusicServiceConnection(get()) }
 }
 
 fun provideAudioAttributes(): AudioAttributes = AudioAttributes.Builder()
@@ -21,7 +23,7 @@ fun provideAudioAttributes(): AudioAttributes = AudioAttributes.Builder()
     .setUsage(C.USAGE_MEDIA)
     .build()
 
-fun provideExoPlayer(context: Context, audioAttributes: AudioAttributes): Player =
+fun provideExoPlayer(context: Context, audioAttributes: AudioAttributes): ExoPlayer =
     ExoPlayer.Builder(context).build().apply {
         setAudioAttributes(audioAttributes, true)
         setHandleAudioBecomingNoisy(true)
@@ -29,3 +31,6 @@ fun provideExoPlayer(context: Context, audioAttributes: AudioAttributes): Player
 
 fun provideDataSourceFactory(context: Context): DefaultDataSource.Factory =
     DefaultDataSource.Factory(context)
+
+fun provideMusicServiceConnection(context: Context): MusicServiceConnection =
+    MusicServiceConnection(context)

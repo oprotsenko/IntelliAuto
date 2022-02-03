@@ -26,6 +26,5 @@ fun AudioResponse.mapToAudioItem() =
         cover = BASE_URL + this.image,
         title = this.title,
         artist = this.artist,
-        duration = this.duration.toString(),
         url = BASE_URL + this.source
     )

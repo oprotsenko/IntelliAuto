@@ -7,6 +7,7 @@ import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
+import android.util.Log
 import androidx.media.MediaBrowserServiceCompat
 import com.automotive.bootcamp.mediaplayer.service.callbacks.MusicPlaybackPreparer
 import com.automotive.bootcamp.mediaplayer.service.callbacks.MusicPlayerEventListener
@@ -18,7 +19,6 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator
-import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSource
 import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
@@ -118,6 +118,7 @@ class MusicService : MediaBrowserServiceCompat() {
         rootHints: Bundle?
     ): BrowserRoot? {
         val rootId = rootHints?.getString(ROOT_ID_BUNDLE_KEY)
+
         return if (rootId != null) BrowserRoot(rootId, null) else null
     }
 

@@ -1,5 +1,6 @@
 package com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,7 +20,7 @@ import kotlinx.coroutines.launch
 class NowPlayingViewModel(
     private val audioPlaybackControl: AudioPlaybackControl,
     private val addRecent: AddRecent,
-    retrieveRecentAudio: RetrieveRecentAudio
+    retrieveRecentAudio: RetrieveRecentAudio,
 ) : ViewModel(),
     AudioCompletionListener, AudioRunningListener, AudioServiceConnectionListener {
     private var audioListData = mutableListOf<AudioWrapper>()
@@ -89,7 +90,8 @@ class NowPlayingViewModel(
 
     fun playAudio() {
         _currentAudio.value?.let {
-            audioPlaybackControl.playAudio(it.audio.url)
+            audioPlaybackControl.playOrToggleAudio(it)
+            //audioPlaybackControl.playAudio(it.audio.url)
             _isPlaying.value = true
 
             viewModelScope.launch {

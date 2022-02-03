@@ -45,9 +45,8 @@ class MusicSource(
         state = INITIALIZING
         audios = localRepository.retrieveLocalAudio().map { audio ->
             MediaMetadataCompat.Builder()
-                .putLong(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, audio.id)
+                .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, audio.id.toString())
                 .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, audio.artist)
-                .putString(MediaMetadataCompat.METADATA_KEY_DURATION, audio.duration)
                 .putString(MediaMetadataCompat.METADATA_KEY_TITLE, audio.title)
                 .putString(MediaMetadataCompat.METADATA_KEY_ART_URI, audio.cover)
                 .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, audio.url)
