@@ -5,29 +5,62 @@ import android.media.MediaMetadataRetriever
 import com.automotive.bootcamp.mediaplayer.data.*
 import com.automotive.bootcamp.mediaplayer.data.cache.CacheAudioSource
 import com.automotive.bootcamp.mediaplayer.data.cache.room.RoomAudioSource
-import com.automotive.bootcamp.mediaplayer.data.local.LocalMedia
+import com.automotive.bootcamp.mediaplayer.data.local.LocalAudioSource
 import com.automotive.bootcamp.mediaplayer.data.local.resources.ResourcesAudioSource
-import com.automotive.bootcamp.mediaplayer.domain.LocalMediaRepository
+import com.automotive.bootcamp.mediaplayer.domain.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import org.koin.dsl.module
 
 val dataModule = module {
-    single { provideMusicRepository(get()) }
-    single { provideLocalMusicSource(get(), get()) }
+    single { provideLocalMediaRepository(get(), get()) }
+    single { provideCacheMediaRepository(get(), get()) }
+    single { provideRecentMediaRepository(get(), get()) }
+    single { provideFavouriteMediaRepository(get(), get()) }
+    single { providePlaylistMediaRepository(get(), get()) }
+    single { provideLocalAudioSource(get(), get()) }
     single { provideCacheAudioSource(get()) }
-    single { provideCacheAudioRepository(get()) }
-    single { provideRecentAudioRepository(get()) }
-    single { provideFavouriteAudioRepository(get()) }
-    single { providePlaylistRepository(get()) }
     single { ResourcesAudioSource(get(), get()) }
+
+    factory { provideDispatcher() }
 }
 
-fun provideMusicRepository(localMusic: LocalMedia): LocalMediaRepository =
-    LocalAudioRepository(localMusic)
+fun provideDispatcher(): CoroutineDispatcher = Dispatchers.IO
+
+fun provideLocalMediaRepository(
+    localMusic: LocalAudioSource,
+    dispatcher: CoroutineDispatcher
+): LocalMediaRepository =
+    LocalAudioRepository(localMusic, dispatcher)
+
+fun provideCacheMediaRepository(
+    cacheSource: CacheAudioSource,
+    dispatcher: CoroutineDispatcher
+): CacheMediaRepository =
+    CacheAudioRepository(cacheSource, dispatcher)
+
+fun provideRecentMediaRepository(
+    cacheSource: CacheAudioSource,
+    dispatcher: CoroutineDispatcher
+): RecentMediaRepository =
+    RecentAudioRepository(cacheSource, dispatcher)
+
+fun provideFavouriteMediaRepository(
+    cacheSource: CacheAudioSource,
+    dispatcher: CoroutineDispatcher
+): FavouriteMediaRepository =
+    FavouriteAudioRepository(cacheSource, dispatcher)
+
+fun providePlaylistMediaRepository(
+    cacheSource: CacheAudioSource,
+    dispatcher: CoroutineDispatcher
+): PlaylistMediaRepository =
+    PlaylistRepository(cacheSource, dispatcher)
 
 /**
 To retrieve audio from external storage
  */
-//fun provideLocalMusicSource(
+//fun provideLocalAudioSource(
 //    contentResolver: ContentResolver,
 //    retriever: MediaMetadataRetriever,
 //): LocalMedia =
@@ -36,22 +69,10 @@ To retrieve audio from external storage
 /**
 To retrieve audio from raw folder
  */
-fun provideLocalMusicSource(
+fun provideLocalAudioSource(
     retriever: MediaMetadataRetriever, context: Context
-): LocalMedia =
+): LocalAudioSource =
     ResourcesAudioSource(retriever, context)
 
 fun provideCacheAudioSource(context: Context): CacheAudioSource =
     RoomAudioSource(context)
-
-fun provideCacheAudioRepository(cacheSource: CacheAudioSource): CacheAudioRepository =
-    CacheAudioRepository(cacheSource)
-
-fun provideRecentAudioRepository(cacheSource: CacheAudioSource): RecentAudioRepository =
-    RecentAudioRepository(cacheSource)
-
-fun provideFavouriteAudioRepository(cacheSource: CacheAudioSource): FavouriteAudioRepository =
-    FavouriteAudioRepository(cacheSource)
-
-fun providePlaylistRepository(cacheSource: CacheAudioSource): PlaylistRepository =
-    PlaylistRepository(cacheSource)

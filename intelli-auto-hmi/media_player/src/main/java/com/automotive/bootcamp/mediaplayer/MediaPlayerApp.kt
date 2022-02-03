@@ -7,13 +7,22 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
 
-class MediaPlayerApp: Application() {
+class MediaPlayerApp : Application() {
     override fun onCreate() {
         super.onCreate()
         startKoin {
             androidLogger(Level.ERROR)
             androidContext(this@MediaPlayerApp)
-            modules(listOf(appModule, domainModule, dataModule, remoteModule, retrofitModule))
+            modules(
+                listOf(
+                    appModule,
+                    domainModule,
+                    dataModule,
+                    remoteModule,
+                    retrofitModule,
+                    serviceModule
+                )
+            )
         }
     }
 }

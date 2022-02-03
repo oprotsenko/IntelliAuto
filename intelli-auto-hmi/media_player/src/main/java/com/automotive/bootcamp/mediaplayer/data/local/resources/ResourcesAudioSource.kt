@@ -8,15 +8,16 @@ import android.net.Uri
 import android.util.Log
 import com.automotive.bootcamp.mediaplayer.utils.PICTURES_DIRECTORY_NAME
 import com.automotive.bootcamp.mediaplayer.R
-import com.automotive.bootcamp.mediaplayer.data.local.LocalMedia
+import com.automotive.bootcamp.mediaplayer.data.local.LocalAudioSource
 import com.automotive.bootcamp.mediaplayer.data.models.AudioItem
+import com.automotive.bootcamp.mediaplayer.utils.DEFAULT_COVER
 import java.io.*
 import java.util.*
 
 class ResourcesAudioSource(
     private val retriever: MediaMetadataRetriever,
     private val context: Context
-) : LocalMedia {
+) : LocalAudioSource {
     private val media = listOf(
         R.raw.abba_just_a_notion,
         R.raw.alina_libkind_radars,
@@ -40,7 +41,7 @@ class ResourcesAudioSource(
             val image =
                 if (data != null) BitmapFactory.decodeByteArray(data, 0, data.size)
                 else {
-                    val inputStream = context.assets.open("default_cover.jpg")
+                    val inputStream = context.assets.open(DEFAULT_COVER)
                     BitmapFactory.decodeStream(inputStream)
                 }
             val title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)

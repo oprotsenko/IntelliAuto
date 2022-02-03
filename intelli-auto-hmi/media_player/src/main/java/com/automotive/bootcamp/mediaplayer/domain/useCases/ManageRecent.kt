@@ -1,9 +1,9 @@
 package com.automotive.bootcamp.mediaplayer.domain.useCases
 
-import com.automotive.bootcamp.mediaplayer.data.RecentAudioRepository
+import com.automotive.bootcamp.mediaplayer.domain.RecentMediaRepository
 
 class ManageRecent(
-    private val recentAudioRepository: RecentAudioRepository,
+    private val recentAudioRepository: RecentMediaRepository,
 ) {
     suspend fun removeAudio(aid: Long) {
         recentAudioRepository.removeAudio(aid)
