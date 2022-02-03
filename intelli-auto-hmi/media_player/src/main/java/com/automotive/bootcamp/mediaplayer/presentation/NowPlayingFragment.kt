@@ -152,6 +152,7 @@ class NowPlayingFragment :
             RepeatMode.REPEAT_ONE -> {
                 binding.ibNowPlayingRepeat.setImageResource(R.drawable.ic_repeat_one)
             }
+            else -> Unit
         }
     }
 

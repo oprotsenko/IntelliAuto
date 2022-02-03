@@ -199,7 +199,7 @@ class NowPlayingViewModel(
             RepeatMode.REPEAT_PLAYLIST -> {
                 nextAudio()
             }
-            else -> {}
+            else -> Unit
         }
     }
 
