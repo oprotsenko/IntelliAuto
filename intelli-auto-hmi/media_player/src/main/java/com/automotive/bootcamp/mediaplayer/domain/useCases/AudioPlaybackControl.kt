@@ -4,14 +4,14 @@ import android.content.*
 import android.os.IBinder
 import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_MEDIA_ID
 import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
-import com.automotive.bootcamp.mediaplayer.service.MusicServiceConnection
-import com.automotive.bootcamp.mediaplayer.service.extensions.isPlayEnabled
-import com.automotive.bootcamp.mediaplayer.service.extensions.isPlaying
-import com.automotive.bootcamp.mediaplayer.service.extensions.isPrepared
 import com.automotive.bootcamp.mediaplayer.utils.basicService.AudioPlayerService
 import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.AudioCompletionListener
 import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.AudioRunningListener
 import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.AudioServiceConnectionListener
+import com.automotive.bootcamp.music_service.service.MusicServiceConnection
+import com.automotive.bootcamp.music_service.service.utils.extensions.isPlayEnabled
+import com.automotive.bootcamp.music_service.service.utils.extensions.isPlaying
+import com.automotive.bootcamp.music_service.service.utils.extensions.isPrepared
 
 class AudioPlaybackControl(
     private val context: Context,

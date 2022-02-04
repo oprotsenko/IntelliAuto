@@ -2,12 +2,11 @@ package com.automotive.bootcamp.mediaplayer.domain.useCases
 
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
-import android.util.Log
 import com.automotive.bootcamp.common.utils.Resource
-import com.automotive.bootcamp.mediaplayer.service.ChildLoadedListener
-import com.automotive.bootcamp.mediaplayer.service.MusicServiceConnection
-import com.automotive.bootcamp.mediaplayer.service.StartChildLoadingListener
-import com.automotive.bootcamp.mediaplayer.service.extensions.mapToAudioWrapper
+import com.automotive.bootcamp.mediaplayer.viewModels.ChildLoadedListener
+import com.automotive.bootcamp.music_service.service.MusicServiceConnection
+import com.automotive.bootcamp.mediaplayer.viewModels.StartChildLoadingListener
+import com.automotive.bootcamp.mediaplayer.presentation.extensions.mapToAudioWrapper
 
 class MediaServiceControl(private val musicServiceConnection: MusicServiceConnection) {
     private var startChildLoadingListener: StartChildLoadingListener? = null
