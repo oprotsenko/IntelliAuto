@@ -128,15 +128,9 @@ class MusicService : MediaBrowserServiceCompat () {
         parentId: String,
         result: Result<MutableList<MediaBrowserCompat.MediaItem>>
     ) {
+        Log.d("onLoadChildren", parentId)
 
-    }
-
-    override fun onLoadChildren(
-        parentId: String,
-        result: Result<MutableList<MediaBrowserCompat.MediaItem>>,
-        bundle: Bundle
-    ) {
-        when (bundle.getString(ROOT_ID_BUNDLE_KEY)) {
+        when (parentId) {
             LOCAL_ROOT_ID -> {
                 serviceScope.launch {
                     musicSource.retrieveLocalAudio()

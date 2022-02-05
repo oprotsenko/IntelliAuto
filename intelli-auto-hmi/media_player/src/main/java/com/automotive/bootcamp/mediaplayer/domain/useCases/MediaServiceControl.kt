@@ -29,7 +29,6 @@ class MediaServiceControl(private val musicServiceConnection: MusicServiceConnec
                 override fun onChildrenLoaded(
                     parentId: String,
                     children: MutableList<MediaBrowserCompat.MediaItem>,
-                    bundle: Bundle
                 ) {
                     super.onChildrenLoaded(parentId, children)
                     val audios = children.map {
