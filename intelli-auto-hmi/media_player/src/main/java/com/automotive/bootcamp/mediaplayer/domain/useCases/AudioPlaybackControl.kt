@@ -8,14 +8,11 @@ import com.automotive.bootcamp.mediaplayer.utils.basicService.AudioPlayerService
 import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.AudioCompletionListener
 import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.AudioRunningListener
 import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.AudioServiceConnectionListener
-import com.automotive.bootcamp.music_service.service.MusicServiceConnection
-import com.automotive.bootcamp.music_service.service.utils.extensions.isPlayEnabled
-import com.automotive.bootcamp.music_service.service.utils.extensions.isPlaying
-import com.automotive.bootcamp.music_service.service.utils.extensions.isPrepared
+
 
 class AudioPlaybackControl(
     private val context: Context,
-    private val audioServiceConnection: MusicServiceConnection
+//    private val audioServiceConnection: MusicServiceConnection
 ) : ServiceConnection {
     private var audioPlayerService: AudioPlayerService? = null
     private var audioServiceConnectionListener: AudioServiceConnectionListener? = null
@@ -79,37 +76,37 @@ class AudioPlaybackControl(
     }
 
     //new
-    val isConnected = audioServiceConnection.isConnected
-    val networkError = audioServiceConnection.networkError
-    val currentPlayingAudio = audioServiceConnection.currentPlayingAudio
-    val playbackState = audioServiceConnection.playbackState
+//    val isConnected = audioServiceConnection.isConnected
+//    val networkError = audioServiceConnection.networkError
+//    val currentPlayingAudio = audioServiceConnection.currentPlayingAudio
+//    val playbackState = audioServiceConnection.playbackState
 
     fun skipToNextAudio() {
-        audioServiceConnection.transportControls.skipToNext()
+//        audioServiceConnection.transportControls.skipToNext()
     }
 
     fun skipToPreviousAudio() {
-        audioServiceConnection.transportControls.skipToPrevious()
+//        audioServiceConnection.transportControls.skipToPrevious()
     }
 
     fun seekTo(pos: Long) {
-        audioServiceConnection.transportControls.seekTo(pos)
+//        audioServiceConnection.transportControls.seekTo(pos)
     }
 
     fun playOrToggleAudio(mediaItem: AudioWrapper, toggle: Boolean = false) {
-        val isPrepared = playbackState.value?.isPrepared ?: false
+//        val isPrepared = playbackState.value?.isPrepared ?: false
 
-        if (isPrepared && mediaItem.audio.id.toString() == currentPlayingAudio.value?.getString(METADATA_KEY_MEDIA_ID)) {
-            playbackState.value?.let { playbackState ->
-                when {
-                    playbackState.isPlaying -> if (toggle) audioServiceConnection.transportControls.pause()
-                    playbackState.isPlayEnabled -> audioServiceConnection.transportControls.play()
-                    else -> Unit
-                }
-            }
-        } else {
-            audioServiceConnection.transportControls.playFromMediaId(mediaItem.audio.id.toString(), null)
-        }
+//        if (isPrepared && mediaItem.audio.id.toString() == currentPlayingAudio.value?.getString(METADATA_KEY_MEDIA_ID)) {
+//            playbackState.value?.let { playbackState ->
+//                when {
+//                    playbackState.isPlaying -> if (toggle) audioServiceConnection.transportControls.pause()
+//                    playbackState.isPlayEnabled -> audioServiceConnection.transportControls.play()
+//                    else -> Unit
+//                }
+//            }
+//        } else {
+//            audioServiceConnection.transportControls.playFromMediaId(mediaItem.audio.id.toString(), null)
+//        }
     }
     //
 }

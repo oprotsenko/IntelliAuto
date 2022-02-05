@@ -10,7 +10,7 @@ import com.automotive.bootcamp.mediaplayer.domain.useCases.*
 import com.automotive.bootcamp.mediaplayer.presentation.extensions.unwrap
 import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
-import com.automotive.bootcamp.music_service.service.utils.LOCAL_ROOT_ID
+//import com.automotive.bootcamp.music_service.service.utils.LOCAL_ROOT_ID
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -19,16 +19,16 @@ class LocalAudioViewModel(
     private val manageFavourite: ManageFavourite,
     private val manageRecent: ManageRecent,
     private val managePlaylists: ManagePlaylists,
-    private val mediaServiceControl: MediaServiceControl,
+//    private val mediaServiceControl: MediaServiceControl,
 ) : ViewModel(), ChildLoadedListener, StartChildLoadingListener {
     val localAudioData by lazy { MutableLiveData<List<AudioWrapper>>() }
     var playlists: List<PlaylistWrapper>? = listOf()
     var dynamicallyAddAudioPosition: Int = 0
 
     init {
-//        viewModelScope.launch {
-//            retrieveMusic()
-//        }
+        viewModelScope.launch {
+            retrieveMusic()
+        }
         viewModelScope.launch {
             managePlaylists.getAllPlaylists().collect {
                 playlists = it
@@ -36,9 +36,9 @@ class LocalAudioViewModel(
         }
 
         // new
-        mediaServiceControl.setStartChildLoadingListener(this)
-        mediaServiceControl.setChildLoadedListener(this)
-        mediaServiceControl.subscribe(LOCAL_ROOT_ID)
+//        mediaServiceControl.setStartChildLoadingListener(this)
+//        mediaServiceControl.setChildLoadedListener(this)
+//        mediaServiceControl.subscribe(LOCAL_ROOT_ID)
         //
     }
 
@@ -58,7 +58,7 @@ class LocalAudioViewModel(
     }
 
     override fun onCleared() {
-        mediaServiceControl.unsubscribe()
+//        mediaServiceControl.unsubscribe()
         super.onCleared()
     }
     //

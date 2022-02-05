@@ -22,7 +22,7 @@ val appModule = module {
     viewModel { FavouriteAudioViewModel(get(), get(), get(), get()) }
     viewModel { RecentAudioViewModel(get(), get(), get(), get()) }
 
-    single { LocalAudioViewModel(get(), get(), get(), get(), get()) }
+    single { LocalAudioViewModel(get(), get(), get(), get()) }
     single { OnlineAudioViewModel(get(), get(), get(), get()) }
     single { CustomPlaylistViewModel(get(),get(), get()) }
     single { AudioPlayerService() }

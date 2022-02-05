@@ -3,7 +3,6 @@ package com.automotive.bootcamp.mediaplayer.data.extensions
 import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.PlaylistEntity
 import com.automotive.bootcamp.mediaplayer.data.models.PlaylistItem
 import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
-import com.automotive.bootcamp.music_service.data.extensions.mapToAudio
 
 fun PlaylistItem.mapToPlaylist() = Playlist(
     id = this.id,
