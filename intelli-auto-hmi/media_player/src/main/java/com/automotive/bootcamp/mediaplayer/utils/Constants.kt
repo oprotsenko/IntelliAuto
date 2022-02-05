@@ -15,3 +15,5 @@ const val RECENT_PLAYLIST_NAME = "recent"
 const val RECENT_PLAYLIST_CAPACITY = 20
 const val DEFAULT_COVER = "default_cover.jpg"
 const val PICTURES_DIRECTORY_NAME = "Pictures"
+
+const val NETWORK_ERROR = "network error"

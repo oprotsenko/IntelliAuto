@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">MusicBrowseService</string>
+    <string name="local_music">Local</string>
+    <string name="online_music">Online</string>
+    <string name="recent_music">Recent</string>
+    <string name="favourite_music">Favourite</string>
+    <string name="playlists">Playlists</string>
+</resources>

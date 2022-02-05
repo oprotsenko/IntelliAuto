@@ -22,6 +22,7 @@ val dataModule = module {
     single { ResourcesAudioSource(get(), get()) }
 
     factory { provideDispatcher() }
+    single { MediaMetadataRetriever() }
 }
 
 fun provideDispatcher(): CoroutineDispatcher = Dispatchers.IO

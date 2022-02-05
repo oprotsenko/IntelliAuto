@@ -1,7 +1,6 @@
 package com.automotive.bootcamp.music_service.di
 
 import android.content.Context
-import com.automotive.bootcamp.music_service.service.MusicServiceConnection
 import com.automotive.bootcamp.music_service.service.sources.MusicSourceService
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
@@ -10,11 +9,11 @@ import com.google.android.exoplayer2.upstream.DefaultDataSource
 import org.koin.dsl.module
 
 val serviceModule = module {
-    single { MusicSourceService(get(), get(), get(), get(), get()) }
+   factory { MusicSourceService(get(), get(), get(), get(), get()) }
     single { provideAudioAttributes() }
     single { provideExoPlayer(get(), get()) }
     single { provideDataSourceFactory(get()) }
-    single { provideMusicServiceConnection(get()) }
+//    single { provideMusicServiceConnection(get()) }
 }
 
 fun provideAudioAttributes(): AudioAttributes = AudioAttributes.Builder()
@@ -31,5 +30,5 @@ fun provideExoPlayer(context: Context, audioAttributes: AudioAttributes): ExoPla
 fun provideDataSourceFactory(context: Context): DefaultDataSource.Factory =
     DefaultDataSource.Factory(context)
 
-fun provideMusicServiceConnection(context: Context): MusicServiceConnection =
-    MusicServiceConnection(context)
+//fun provideMusicServiceConnection(context: Context): com.automotive.bootcamp.mediaplayer.MusicServiceConnection =
+//    com.automotive.bootcamp.mediaplayer.MusicServiceConnection(context)

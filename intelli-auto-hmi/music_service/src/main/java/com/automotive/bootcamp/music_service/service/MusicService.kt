@@ -4,6 +4,8 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
+import android.support.v4.media.MediaBrowserCompat.MediaItem.FLAG_BROWSABLE
+import android.support.v4.media.MediaBrowserCompat.MediaItem.FLAG_PLAYABLE
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
@@ -51,7 +53,7 @@ class MusicService : MediaBrowserServiceCompat() {
 
     companion object {
         var currentAudioDuration = 0L
-        private set
+            private set
     }
 
     private fun preparePlayer(
@@ -78,28 +80,40 @@ class MusicService : MediaBrowserServiceCompat() {
             setSessionActivity(activityIntent)
             isActive = true
         }
-        sessionToken = mediaSession.sessionToken
-        musicNotificationManager = MusicNotificationManager(
-            this,
-            mediaSession.sessionToken,
-            MusicPlayerNotificationListener(this)
-        ) {
-            currentAudioDuration = player.duration
+        browseTree.mediaIdToChildren.forEach {
+            it.value.forEach { mediaMetadataCompat ->
+                mediaSession.setMetadata(mediaMetadataCompat)
+            }
         }
+        sessionToken = mediaSession.sessionToken
+//        musicNotificationManager = MusicNotificationManager(
+//            this,
+//            mediaSession.sessionToken,
+//            MusicPlayerNotificationListener(this)
+//        ) {
+//            currentAudioDuration = player.duration
+//        }
+
+//        serviceScope.launch {
+//            musicSource.retrieveLocalAudio()
+//            musicSource.retrieveRemoteAudio()
+//            musicSource.retrieveRecentAudio()
+//            musicSource.retrieveFavouriteAudio()
+//        }
 
         val musicPlaybackPreparer = MusicPlaybackPreparer(musicSource) {
             currentPlayingAudio = it
             preparePlayer(musicSource.audios, it, true)
         }
 
-        mediaSessionConnector = MediaSessionConnector(mediaSession)
-        mediaSessionConnector.setPlaybackPreparer(musicPlaybackPreparer)
-        mediaSessionConnector.setQueueNavigator(MusicQueueNavigator())
-        mediaSessionConnector.setPlayer(player)
+//        mediaSessionConnector = MediaSessionConnector(mediaSession)
+//        mediaSessionConnector.setPlaybackPreparer(musicPlaybackPreparer)
+//        mediaSessionConnector.setQueueNavigator(MusicQueueNavigator())
+//        mediaSessionConnector.setPlayer(player)
 
-        musicPlayerEventListener = MusicPlayerEventListener(this)
-        player.addListener(musicPlayerEventListener)
-        musicNotificationManager.showNotification(player)
+//        musicPlayerEventListener = MusicPlayerEventListener(this)
+//        player.addListener(musicPlayerEventListener)
+//        musicNotificationManager.showNotification(player)
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
@@ -127,60 +141,58 @@ class MusicService : MediaBrowserServiceCompat() {
         parentId: String,
         result: Result<MutableList<MediaBrowserCompat.MediaItem>>
     ) {
-        when (parentId) {
-            LOCAL_ROOT_ID -> {
-                serviceScope.launch {
-                    musicSource.retrieveLocalAudio()
-                }
-            }
-            REMOTE_ROOT_ID -> {
-                serviceScope.launch {
-                    musicSource.retrieveRemoteAudio()
-                }
-            }
-            RECENT_ROOT_ID -> {
-                serviceScope.launch {
-                    musicSource.retrieveRecentAudio()
-                }
-            }
-            FAVOURITE_ROOT_ID -> {
-                serviceScope.launch {
-                    musicSource.retrieveFavouriteAudio()
-                }
-            }
-            else -> {
-                serviceScope.launch {
-                    musicSource.retrieveLocalAudio()
-                }
-            }
-        }
-        val resultSent = musicSource.whenReady { isInitialized ->
-            if (isInitialized) {
-                val children = browseTree[parentId]?.map { item ->
-                    MediaBrowserCompat.MediaItem(
-                        item.description,
-                        item.getLong(METADATA_KEY_FLAGS).toInt()
-                    )
-                }?.toMutableList()
-                result.sendResult(children)
+        val list = mutableListOf<MediaBrowserCompat.MediaItem>()
+        val desc = MediaDescriptionCompat.Builder().setDescription("item desc").setTitle("media item").setMediaId("id")
+
+        val item = MediaBrowserCompat.MediaItem(desc.build(), FLAG_PLAYABLE)
+        list.add(item)
+        result.sendResult(list)
+//        serviceScope.launch {
+//            musicSource.retrieveRemoteAudio()
+//            val resultSent = musicSource.whenReady { isInitialized ->
+//                if (isInitialized) {
+//                    result.sendResult(musicSource.audios.map {
+//                        MediaBrowserCompat.MediaItem(
+//                            it.description,
+//                            FLAG_PLAYABLE
+//                        )
+//                    }.toMutableList())
+//                } else {
+//                    mediaSession.sendSessionEvent(NETWORK_ERROR, null)
+//                    result.sendResult(null)
+//                }
+//            }
+//            if (!resultSent) {
+//            result.detach()
+//        }
+//        }
+//        val resultSent = musicSource.whenReady { isInitialized ->
+//            if (isInitialized) {
+//                val children = browseTree[parentId]?.map { item ->
+//                    MediaBrowserCompat.MediaItem(
+//                        item.description,
+//                        item.getLong(METADATA_KEY_FLAGS).toInt()
+//                    )
+//                }?.toMutableList()
+//                result.sendResult(children)
 //                result.sendResult(musicSource.asMediaItems())
 //                if (!isPlayerInitialized && musicSource.audios.isNotEmpty()) {
 //                    preparePlayer(musicSource.audios, musicSource.audios[0], false)
 //                    isPlayerInitialized = true
 //                }
-            } else {
-                mediaSession.sendSessionEvent(NETWORK_ERROR, null)
-                result.sendResult(null)
-            }
-        }
-        if (!resultSent) {
-            result.detach()
-        }
+//            } else {
+//                mediaSession.sendSessionEvent(NETWORK_ERROR, null)
+//                result.sendResult(null)
+//            }
+//        }
+//        if (!resultSent) {
+//            result.detach()
+//        }
     }
 
-    private inner class MusicQueueNavigator : TimelineQueueNavigator(mediaSession) {
-        override fun getMediaDescription(player: Player, windowIndex: Int): MediaDescriptionCompat {
-            return musicSource.audios[windowIndex].description
-        }
-    }
+//    private inner class MusicQueueNavigator : TimelineQueueNavigator(mediaSession) {
+//        override fun getMediaDescription(player: Player, windowIndex: Int): MediaDescriptionCompat {
+//            return musicSource.audios[windowIndex].description
+//        }
+//    }
 }

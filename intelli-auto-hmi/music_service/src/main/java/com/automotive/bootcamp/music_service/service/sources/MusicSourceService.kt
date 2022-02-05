@@ -60,6 +60,7 @@ class MusicSourceService(
                     .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, audio.title)
                     .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, audio.artist)
                     .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, audio.cover)
+                    .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION, audio.title)
                     .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, REMOTE_ROOT_ID)
                     .build()
             }

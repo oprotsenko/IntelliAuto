@@ -12,7 +12,7 @@ class BrowseTree(
     musicSource: MusicSource,
     private val recentMediaId: String? = null
 ) {
-    private val mediaIdToChildren = mutableMapOf<String, MutableList<MediaMetadataCompat>>()
+    val mediaIdToChildren = mutableMapOf<String, MutableList<MediaMetadataCompat>>()
 
     init {
         val rootList = mediaIdToChildren[BROWSABLE_ROOT_ID] ?: mutableListOf()
