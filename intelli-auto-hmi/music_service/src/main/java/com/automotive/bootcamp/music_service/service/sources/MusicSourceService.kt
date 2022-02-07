@@ -1,14 +1,12 @@
 package com.automotive.bootcamp.music_service.service.sources
 
+import android.media.browse.MediaBrowser
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaBrowserCompat.MediaItem.FLAG_PLAYABLE
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.MediaMetadataCompat
 import com.automotive.bootcamp.music_service.data.*
-import com.automotive.bootcamp.music_service.service.utils.FAVOURITE_ROOT_ID
-import com.automotive.bootcamp.music_service.service.utils.LOCAL_ROOT_ID
-import com.automotive.bootcamp.music_service.service.utils.RECENT_ROOT_ID
-import com.automotive.bootcamp.music_service.service.utils.REMOTE_ROOT_ID
+import com.automotive.bootcamp.music_service.service.utils.*
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
@@ -48,6 +46,7 @@ class MusicSourceService(
                 .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, audio.artist)
                 .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, audio.cover)
                 .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, LOCAL_ROOT_ID)
+                .putLong(METADATA_KEY_FLAGS, MediaBrowser.MediaItem.FLAG_PLAYABLE.toLong())
                 .build()
         })
     }
@@ -67,6 +66,7 @@ class MusicSourceService(
                     .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, audio.cover)
                     .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION, audio.title)
                     .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, REMOTE_ROOT_ID)
+                    .putLong(METADATA_KEY_FLAGS, MediaBrowser.MediaItem.FLAG_PLAYABLE.toLong())
                     .build()
             })
         }
@@ -89,6 +89,7 @@ class MusicSourceService(
                     .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, audio.artist)
                     .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, audio.cover)
                     .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, RECENT_ROOT_ID)
+                    .putLong(METADATA_KEY_FLAGS, MediaBrowser.MediaItem.FLAG_PLAYABLE.toLong())
                     .build()
             })
         }
@@ -111,6 +112,7 @@ class MusicSourceService(
                     .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, audio.artist)
                     .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, audio.cover)
                     .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, FAVOURITE_ROOT_ID)
+                    .putLong(METADATA_KEY_FLAGS, MediaBrowser.MediaItem.FLAG_PLAYABLE.toLong())
                     .build()
             })
         }

@@ -141,9 +141,9 @@ class MyMusicService : MediaBrowserServiceCompat() {
             .setState(PlaybackStateCompat.STATE_PAUSED, 0, 1f)
             .build()
         mediaSession.setPlaybackState(playbackState)
-//        serviceScope.launch {
+        serviceScope.launch {
         musicSource.load()
-//        }
+        }
     }
 
     override fun onDestroy() {
@@ -174,6 +174,7 @@ class MyMusicService : MediaBrowserServiceCompat() {
                             .build(), it.getLong(METADATA_KEY_FLAGS).toInt()
                     )
                 }?.toMutableList()
+                Log.d("serviceTAG", "treeItem " + treeItem + " size " + treeItem?.size)
                 result.sendResult(treeItem)
             } else {
                 mediaSession.sendSessionEvent(NETWORK_ERROR, null)
