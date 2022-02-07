@@ -23,7 +23,7 @@ class LocalAudioServiceSource(
 
     override fun iterator(): Iterator<MediaMetadataCompat> = audios.iterator()
 
-    suspend fun load() {
+    override suspend fun load() {
         state = INITIALIZING
         audios = localRepository.retrieveLocalAudio().map { audio ->
             Builder()

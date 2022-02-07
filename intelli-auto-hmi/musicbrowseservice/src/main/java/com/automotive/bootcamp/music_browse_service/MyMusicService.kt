@@ -1,20 +1,23 @@
 package com.automotive.bootcamp.music_browse_service
 
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaBrowserCompat.MediaItem
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.MediaMetadataCompat
-import androidx.media.MediaBrowserServiceCompat
+import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_TITLE
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import com.automotive.bootcamp.music_browse_service.data.ResourcesAudioSource
-import com.automotive.bootcamp.music_browse_service.data.RetrofitAudioSource
+import android.util.Log
+import androidx.media.MediaBrowserServiceCompat
+import com.automotive.bootcamp.music_browse_service.sources.ServiceSources
+import com.automotive.bootcamp.music_browse_service.utils.BROWSABLE_ROOT_ID
+import com.automotive.bootcamp.music_browse_service.utils.METADATA_KEY_FLAGS
+import com.automotive.bootcamp.music_browse_service.utils.NETWORK_ERROR
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import org.koin.android.ext.android.get
+import kotlinx.coroutines.launch
 
 /**
  * This class provides a MediaBrowser through a service. It exposes the media library to a browsing
@@ -64,47 +67,44 @@ import org.koin.android.ext.android.get
  *
  */
 class MyMusicService : MediaBrowserServiceCompat() {
-    private lateinit var session: MediaSessionCompat
-    private val resourcesAudioSource: ResourcesAudioSource = get()
-    private val remoteAudioSource: RetrofitAudioSource = get()
-    private val audioSources = mutableMapOf<String, AbstractAudioSource>()
+
+    private lateinit var mediaSession: MediaSessionCompat
 
     private val serviceJob = Job()
-    private val serviceScope = CoroutineScope(Dispatchers.IO + serviceJob)
+    private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
 
+    private val musicSource = ServiceSources(this)
     private val tree by lazy { BrowseTree(this, musicSource) }
 
     private val callback = object : MediaSessionCompat.Callback() {
+
         override fun onPlay() {
             val playbackState = PlaybackStateCompat.Builder()
                 .setActions(PlaybackStateCompat.ACTION_PLAY)
                 .setState(PlaybackStateCompat.STATE_PLAYING, 0, 1f)
                 .build()
-            session.setPlaybackState(playbackState)
+            mediaSession.setPlaybackState(playbackState)
         }
-
-//        override fun onSkipToQueueItem(queueId: Long) {}
-
-//        override fun onSeekTo(position: Long) {}
-
-//        override fun onPlayFromMediaId(mediaId: String?, extras: Bundle?) {}
+        //        override fun onSkipToQueueItem(queueId: Long) {}
+        //        override fun onSeekTo(position: Long) {}
+        //        override fun onPlayFromMediaId(mediaId: String?, extras: Bundle?) {}
 
         override fun onPause() {
             val playbackState = PlaybackStateCompat.Builder()
                 .setActions(PlaybackStateCompat.ACTION_PAUSE)
                 .setState(PlaybackStateCompat.STATE_PAUSED, 0, 1f)
                 .build()
-            session.setPlaybackState(playbackState)
+            mediaSession.setPlaybackState(playbackState)
         }
 
-//        override fun onStop() {}
+        //        override fun onStop() {}
 
         override fun onSkipToNext() {
             val playbackState = PlaybackStateCompat.Builder()
                 .setActions(PlaybackStateCompat.ACTION_SKIP_TO_NEXT)
                 .setState(PlaybackStateCompat.STATE_SKIPPING_TO_NEXT, 0, 1f)
                 .build()
-            session.setPlaybackState(playbackState)
+            mediaSession.setPlaybackState(playbackState)
         }
 
         override fun onSkipToPrevious() {
@@ -112,12 +112,10 @@ class MyMusicService : MediaBrowserServiceCompat() {
                 .setActions(PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
                 .setState(PlaybackStateCompat.STATE_SKIPPING_TO_PREVIOUS, 0, 1f)
                 .build()
-            session.setPlaybackState(playbackState)
+            mediaSession.setPlaybackState(playbackState)
         }
-
-//        override fun onCustomAction(action: String?, extras: Bundle?) {}
-
-//        override fun onPlayFromSearch(query: String?, extras: Bundle?) {}
+        //        override fun onCustomAction(action: String?, extras: Bundle?) {}
+        //        override fun onPlayFromSearch(query: String?, extras: Bundle?) {}
     }
 
     private val metadata = MediaMetadataCompat.Builder()
@@ -125,32 +123,31 @@ class MyMusicService : MediaBrowserServiceCompat() {
 
     override fun onCreate() {
         super.onCreate()
-
-        audioSources[LOCAL_ROOT_ID] = resourcesAudioSource
-        audioSources[REMOTE_ROOT_ID] = remoteAudioSource
-
-        session = MediaSessionCompat(this, "MyMusicService")
-        sessionToken = session.sessionToken
-        session.setCallback(callback)
-        session.setMetadata(metadata)
-        session.setFlags(
+        Log.d("serviceTAG", "onCreate")
+        mediaSession = MediaSessionCompat(this, "MyMusicService")
+        sessionToken = mediaSession.sessionToken
+        mediaSession.setCallback(callback)
+        mediaSession.setMetadata(metadata)
+        mediaSession.setFlags(
             MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or
                     MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS
         )
-
         val playbackState = PlaybackStateCompat.Builder()
             .setActions(
-                PlaybackStateCompat.ACTION_PLAY_PAUSE
+                +PlaybackStateCompat.ACTION_PLAY_PAUSE
                         or PlaybackStateCompat.ACTION_SKIP_TO_NEXT
                         or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
             )
             .setState(PlaybackStateCompat.STATE_PAUSED, 0, 1f)
             .build()
-        session.setPlaybackState(playbackState)
+        mediaSession.setPlaybackState(playbackState)
+//        serviceScope.launch {
+        musicSource.load()
+//        }
     }
 
     override fun onDestroy() {
-        session.release()
+        mediaSession.release()
     }
 
     override fun onGetRoot(
@@ -158,15 +155,17 @@ class MyMusicService : MediaBrowserServiceCompat() {
         clientUid: Int,
         rootHints: Bundle?
     ): MediaBrowserServiceCompat.BrowserRoot {
-        return MediaBrowserServiceCompat.BrowserRoot("root", null)
+        Log.d("serviceTAG", "onGetRoot")
+        return MediaBrowserServiceCompat.BrowserRoot(BROWSABLE_ROOT_ID, null)
     }
 
     override fun onLoadChildren(parentId: String, result: Result<MutableList<MediaItem>>) {
-        val list = mutableListOf<MediaBrowserCompat.MediaItem>()
-
-        if (parentId == "root") {
-            val treeItem = tree.mediaIdToChildren.map { item ->
-                item.value.map {
+        Log.d("serviceTAG", "onLoadChildren " + parentId)
+        val resultSent = musicSource.whenReady { initialized ->
+            if (initialized) {
+                Log.d("serviceTAG", "songs count " + tree[parentId]?.size)
+                val treeItem = tree[parentId]?.map {
+                    Log.d("serviceTAG", "children item " + it.getString(METADATA_KEY_TITLE))
                     MediaItem(
                         MediaDescriptionCompat.Builder()
                             .setTitle(it.getString(MediaMetadataCompat.METADATA_KEY_TITLE))
@@ -174,71 +173,15 @@ class MyMusicService : MediaBrowserServiceCompat() {
                             .setDescription(it.getString(MediaMetadataCompat.METADATA_KEY_TITLE))
                             .build(), it.getLong(METADATA_KEY_FLAGS).toInt()
                     )
-                }
-            }
-            treeItem.forEach {
-                it.forEach { it1 ->
-                    list.add(it1)
-                }
-            }
-        } else {
-            val mediaSource =  audioSources[parentId]
-            mediaSource?.load()
-
-            val resultsSent = mediaSource?.whenReady { successfullyInitialized ->
-                if (successfullyInitialized) {
-                    list = tree[parentId]?.map { item ->
-                        MediaItem(item.description, item.flag)
-                    }
-                    result.sendResult(list)
-                } else {
-                    session.sendSessionEvent(NETWORK_ERROR, null)
-                    result.sendResult(null)
-                }
-            }
-
-            resultsSent?.let {
-                if (!resultsSent) {
-                    result.detach()
-                }
+                }?.toMutableList()
+                result.sendResult(treeItem)
+            } else {
+                mediaSession.sendSessionEvent(NETWORK_ERROR, null)
+                result.sendResult(null)
             }
         }
-
-        result.sendResult(list)
-
-
-        when (parentId) {
-            LOCAL_ROOT_ID -> {
-                val res = musicSource.retrieveLocalAudio()
-                val mediaItems = res.map { audioItem ->
-                    val desc = MediaDescriptionCompat.Builder()
-                        .setDescription(audioItem.artist)
-                        .setTitle(audioItem.title)
-                        .setMediaId(audioItem.id.toString())
-                        .setMediaUri(Uri.parse(audioItem.url))
-                        .setIconUri(Uri.parse(audioItem.cover))
-                    MediaItem(desc.build(), MediaItem.FLAG_PLAYABLE)
-                }
-                mediaItems.forEach {
-                    list.add(it)
-                }
-            }
-
-            REMOTE_ROOT_ID -> {
-                val res = musicSource.retrieveRemoteAudio()
-                val mediaItems = res.map { audioItem ->
-                    val desc = MediaDescriptionCompat.Builder()
-                        .setDescription(audioItem.artist)
-                        .setTitle(audioItem.title)
-                        .setMediaId(audioItem.id.toString())
-                        .setMediaUri(Uri.parse(audioItem.url))
-                        .setIconUri(Uri.parse(audioItem.cover))
-                    MediaItem(desc.build(), MediaItem.FLAG_PLAYABLE)
-                }
-                mediaItems.forEach {
-                    list.add(it)
-                }
-            }
+        if (!resultSent) {
+            result.detach()
         }
     }
 }

@@ -17,7 +17,7 @@ class RemoteAudioServiceSource(
 
     override fun iterator(): Iterator<MediaMetadataCompat> = audios.iterator()
 
-    suspend fun load() {
+    override suspend fun load() {
         state = State.INITIALIZING
         val data = remoteRepository.retrieveRemoteAudio()
         if (data != null) {

@@ -17,7 +17,7 @@ class PlaylistsServiceSource(
 
     override fun iterator(): Iterator<MediaMetadataCompat> = playlists.iterator()
 
-    suspend fun load() {
+    override suspend fun load() {
         state = State.INITIALIZING
         val data = playlistRepository.getAllPlaylists()
 //        audios = data.map { audio ->

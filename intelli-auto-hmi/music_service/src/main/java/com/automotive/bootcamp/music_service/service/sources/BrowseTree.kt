@@ -12,7 +12,7 @@ class BrowseTree(
     musicSource: MusicSource,
     private val recentMediaId: String? = null
 ) {
-    val mediaIdToChildren = mutableMapOf<String, MutableList<MediaMetadataCompat>>()
+    private val mediaIdToChildren = mutableMapOf<String, MutableList<MediaMetadataCompat>>()
 
     init {
         val rootList = mediaIdToChildren[BROWSABLE_ROOT_ID] ?: mutableListOf()
@@ -53,7 +53,7 @@ class BrowseTree(
             putLong(METADATA_KEY_FLAGS, FLAG_BROWSABLE.toLong())
         }.build()
 
-        rootList+= albumsMetadata
+//        rootList+= albumsMetadata
         rootList += localMetadata
         rootList += remoteMetadata
         rootList += recentMetadata

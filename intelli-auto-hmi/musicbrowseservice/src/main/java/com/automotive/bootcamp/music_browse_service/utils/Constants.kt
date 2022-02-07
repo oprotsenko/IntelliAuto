@@ -1,4 +1,4 @@
-package com.automotive.bootcamp.music_browse_service
+package com.automotive.bootcamp.music_browse_service.utils
 
 const val BASE_URL = "https://storage.googleapis.com/automotive-media/"
 

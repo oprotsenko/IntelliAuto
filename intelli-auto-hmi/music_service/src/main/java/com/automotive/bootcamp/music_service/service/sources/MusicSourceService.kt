@@ -28,9 +28,16 @@ class MusicSourceService(
 
     override fun iterator(): Iterator<MediaMetadataCompat> = audios.iterator()
 
-    suspend fun retrieveLocalAudio() {
+    override suspend fun load() {
         state = State.INITIALIZING
-        audios = localRepository.retrieveLocalAudio().map { audio ->
+        retrieveLocalAudio()
+        retrieveRemoteAudio()
+        retrieveFavouriteAudio()
+        retrieveRecentAudio()
+        state = State.INITIALIZED
+    }
+    private suspend fun retrieveLocalAudio() {
+        audios.plus(localRepository.retrieveLocalAudio().map { audio ->
             MediaMetadataCompat.Builder()
                 .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, audio.id.toString())
                 .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, audio.artist)
@@ -42,15 +49,13 @@ class MusicSourceService(
                 .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, audio.cover)
                 .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, LOCAL_ROOT_ID)
                 .build()
-        }
-        state = State.INITIALIZED
+        })
     }
 
-    suspend fun retrieveRemoteAudio() {
-        state = State.INITIALIZING
+    private suspend fun retrieveRemoteAudio() {
         val data = remoteRepository.retrieveRemoteAudio()
         if (data != null) {
-            audios = data.map { audio ->
+            audios.plus(data.map { audio ->
                 MediaMetadataCompat.Builder()
                     .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, audio.id.toString())
                     .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, audio.artist)
@@ -63,19 +68,17 @@ class MusicSourceService(
                     .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION, audio.title)
                     .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, REMOTE_ROOT_ID)
                     .build()
-            }
-            state = State.INITIALIZED
+            })
         }
     }
 
-    suspend fun retrieveRecentAudio() {
-        state = State.INITIALIZING
+    private suspend fun retrieveRecentAudio() {
         val data = recentRepository.getPlaylist()?.map { playlist ->
             playlist?.list
         }?.toList()?.get(0)
 
         if (data != null) {
-            audios = data.map { audio ->
+            audios.plus(data.map { audio ->
                 MediaMetadataCompat.Builder()
                     .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, audio.id.toString())
                     .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, audio.artist)
@@ -87,19 +90,17 @@ class MusicSourceService(
                     .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, audio.cover)
                     .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, RECENT_ROOT_ID)
                     .build()
-            }
-            state = State.INITIALIZED
+            })
         }
     }
 
-    suspend fun retrieveFavouriteAudio() {
-        state = State.INITIALIZING
+    private suspend fun retrieveFavouriteAudio() {
         val data = favouriteRepository.getPlaylist()?.map { playlist ->
             playlist?.list
         }?.toList()?.get(0)
 
         if (data != null) {
-            audios = data.map { audio ->
+            audios.plus(data.map { audio ->
                 MediaMetadataCompat.Builder()
                     .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, audio.id.toString())
                     .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, audio.artist)
@@ -111,8 +112,7 @@ class MusicSourceService(
                     .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, audio.cover)
                     .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, FAVOURITE_ROOT_ID)
                     .build()
-            }
-            state = State.INITIALIZED
+            })
         }
     }
 

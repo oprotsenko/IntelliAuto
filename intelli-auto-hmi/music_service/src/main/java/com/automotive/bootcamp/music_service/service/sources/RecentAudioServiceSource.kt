@@ -19,7 +19,7 @@ class RecentAudioServiceSource(
 
     override fun iterator(): Iterator<MediaMetadataCompat> = audios.iterator()
 
-     suspend fun load() {
+     override suspend fun load() {
         state = State.INITIALIZING
         val data = recentRepository.getPlaylist()?.map { playlist ->
             playlist?.list
