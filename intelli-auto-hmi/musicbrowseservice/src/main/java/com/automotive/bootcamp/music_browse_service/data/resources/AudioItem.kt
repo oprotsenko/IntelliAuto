@@ -1,4 +1,4 @@
-package com.automotive.bootcamp.music_browse_service
+package com.automotive.bootcamp.music_browse_service.data.resources
 
 data class AudioItem(
     val id: Long = 0,

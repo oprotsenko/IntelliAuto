@@ -1,7 +1,5 @@
 package com.automotive.bootcamp.music_browse_service
 
-import android.graphics.Bitmap
-import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
@@ -11,10 +9,12 @@ import android.support.v4.media.MediaMetadataCompat
 import androidx.media.MediaBrowserServiceCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import com.automotive.bootcamp.music_browse_service.data.ResourcesAudioSource
+import com.automotive.bootcamp.music_browse_service.data.RetrofitAudioSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import org.koin.android.ext.android.get
 
 /**
  * This class provides a MediaBrowser through a service. It exposes the media library to a browsing
@@ -64,9 +64,10 @@ import kotlinx.coroutines.launch
  *
  */
 class MyMusicService : MediaBrowserServiceCompat() {
-
     private lateinit var session: MediaSessionCompat
-    private lateinit var musicSource: ResourcesAudioSource
+    private val resourcesAudioSource: ResourcesAudioSource = get()
+    private val remoteAudioSource: RetrofitAudioSource = get()
+    private val audioSources = mutableMapOf<String, AbstractAudioSource>()
 
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.IO + serviceJob)
@@ -124,7 +125,10 @@ class MyMusicService : MediaBrowserServiceCompat() {
 
     override fun onCreate() {
         super.onCreate()
-        musicSource = ResourcesAudioSource(MediaMetadataRetriever(), this)
+
+        audioSources[LOCAL_ROOT_ID] = resourcesAudioSource
+        audioSources[REMOTE_ROOT_ID] = remoteAudioSource
+
         session = MediaSessionCompat(this, "MyMusicService")
         sessionToken = session.sessionToken
         session.setCallback(callback)
@@ -153,61 +157,57 @@ class MyMusicService : MediaBrowserServiceCompat() {
         clientPackageName: String,
         clientUid: Int,
         rootHints: Bundle?
-    ): MediaBrowserServiceCompat.BrowserRoot? {
+    ): MediaBrowserServiceCompat.BrowserRoot {
         return MediaBrowserServiceCompat.BrowserRoot("root", null)
     }
 
     override fun onLoadChildren(parentId: String, result: Result<MutableList<MediaItem>>) {
         val list = mutableListOf<MediaBrowserCompat.MediaItem>()
-        when (parentId) {
-//        serviceScope.launch {
-//            val res = musicSource.retrieveLocalAudio()
-//            val mediaItems = res.map { audioItem ->
-//                val desc = MediaDescriptionCompat.Builder()
-//                    .setDescription(audioItem.artist)
-//                    .setTitle(audioItem.title)
-//                    .setMediaId(audioItem.id.toString())
-//                    .setMediaUri(Uri.parse(audioItem.url))
-//                    .setIconUri(Uri.parse(audioItem.cover))
-//                MediaItem(desc.build(), MediaItem.FLAG_PLAYABLE)
-//            }
-//            mediaItems.forEach {
-//                list.add(it)
-//            }
-//        }
-//            list.add(
-//                MediaItem(
-//                    MediaDescriptionCompat.Builder().setTitle("local").setMediaId("local")
-//                        .setDescription("folderDesc").setIconUri(
-//                            Uri.parse("https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Check_green_icon.svg/2048px-Check_green_icon.svg.png")
-//                        ).build(), MediaItem.FLAG_BROWSABLE
-//                )
-//            )
-//            list.add(
-//                MediaItem(
-//                    MediaDescriptionCompat.Builder().setTitle("online").setMediaId("online")
-//                        .setDescription("folderDesc").build(), MediaItem.FLAG_BROWSABLE
-//                )
-//            )
-            "root" -> {
-                val treeItem = tree.mediaIdToChildren.map { item ->
-                    item.value.map {
-                        MediaItem(
-                            MediaDescriptionCompat.Builder()
-                                .setTitle(it.getString(MediaMetadataCompat.METADATA_KEY_TITLE))
-                                .setMediaId(it.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID))
-                                .setDescription(it.getString(MediaMetadataCompat.METADATA_KEY_TITLE))
-                                .build(), it.getLong(METADATA_KEY_FLAGS).toInt()
-                        )
-                    }
-                }
-                treeItem.forEach {
-                    it.forEach { it1 ->
-                        list.add(it1)
-                    }
 
+        if (parentId == "root") {
+            val treeItem = tree.mediaIdToChildren.map { item ->
+                item.value.map {
+                    MediaItem(
+                        MediaDescriptionCompat.Builder()
+                            .setTitle(it.getString(MediaMetadataCompat.METADATA_KEY_TITLE))
+                            .setMediaId(it.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID))
+                            .setDescription(it.getString(MediaMetadataCompat.METADATA_KEY_TITLE))
+                            .build(), it.getLong(METADATA_KEY_FLAGS).toInt()
+                    )
                 }
             }
+            treeItem.forEach {
+                it.forEach { it1 ->
+                    list.add(it1)
+                }
+            }
+        } else {
+            val mediaSource =  audioSources[parentId]
+            mediaSource?.load()
+
+            val resultsSent = mediaSource?.whenReady { successfullyInitialized ->
+                if (successfullyInitialized) {
+                    list = tree[parentId]?.map { item ->
+                        MediaItem(item.description, item.flag)
+                    }
+                    result.sendResult(list)
+                } else {
+                    session.sendSessionEvent(NETWORK_ERROR, null)
+                    result.sendResult(null)
+                }
+            }
+
+            resultsSent?.let {
+                if (!resultsSent) {
+                    result.detach()
+                }
+            }
+        }
+
+        result.sendResult(list)
+
+
+        when (parentId) {
             LOCAL_ROOT_ID -> {
                 val res = musicSource.retrieveLocalAudio()
                 val mediaItems = res.map { audioItem ->
@@ -223,6 +223,7 @@ class MyMusicService : MediaBrowserServiceCompat() {
                     list.add(it)
                 }
             }
+
             REMOTE_ROOT_ID -> {
                 val res = musicSource.retrieveRemoteAudio()
                 val mediaItems = res.map { audioItem ->
@@ -239,6 +240,5 @@ class MyMusicService : MediaBrowserServiceCompat() {
                 }
             }
         }
-        result.sendResult(list)
     }
 }

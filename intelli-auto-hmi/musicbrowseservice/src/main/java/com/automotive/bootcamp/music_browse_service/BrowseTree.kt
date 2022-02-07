@@ -4,6 +4,7 @@ import android.content.Context
 import android.support.v4.media.MediaBrowserCompat.MediaItem.FLAG_BROWSABLE
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.MediaMetadataCompat.*
+import com.automotive.bootcamp.music_browse_service.data.ResourcesAudioSource
 
 class BrowseTree(
     val context: Context,
@@ -15,43 +16,36 @@ class BrowseTree(
     init {
         val rootList = mediaIdToChildren[BROWSABLE_ROOT_ID] ?: mutableListOf()
 
-        val albumsMetadata = MediaMetadataCompat.Builder().apply {
-            putString(METADATA_KEY_MEDIA_ID, ALBUMS_ROOT_ID)
-//            putString(METADATA_KEY_TITLE, context.getString(R.string.local_music))
-            putLong(METADATA_KEY_FLAGS, FLAG_BROWSABLE.toLong())
-        }.build()
-
-        val localMetadata = MediaMetadataCompat.Builder().apply {
+        val localMetadata = Builder().apply {
             putString(METADATA_KEY_MEDIA_ID, LOCAL_ROOT_ID)
             putString(METADATA_KEY_TITLE, context.getString(R.string.local_music))
             putLong(METADATA_KEY_FLAGS, FLAG_BROWSABLE.toLong())
         }.build()
 
-        val remoteMetadata = MediaMetadataCompat.Builder().apply {
+        val remoteMetadata = Builder().apply {
             putString(METADATA_KEY_MEDIA_ID, REMOTE_ROOT_ID)
             putString(METADATA_KEY_TITLE, context.getString(R.string.online_music))
             putLong(METADATA_KEY_FLAGS, FLAG_BROWSABLE.toLong())
         }.build()
 
-        val recentMetadata = MediaMetadataCompat.Builder().apply {
+        val recentMetadata = Builder().apply {
             putString(METADATA_KEY_MEDIA_ID, RECENT_ROOT_ID)
             putString(METADATA_KEY_TITLE, context.getString(R.string.recent_music))
             putLong(METADATA_KEY_FLAGS, FLAG_BROWSABLE.toLong())
         }.build()
 
-        val favouriteMetadata = MediaMetadataCompat.Builder().apply {
+        val favouriteMetadata = Builder().apply {
             putString(METADATA_KEY_MEDIA_ID, FAVOURITE_ROOT_ID)
             putString(METADATA_KEY_TITLE, context.getString(R.string.favourite_music))
             putLong(METADATA_KEY_FLAGS, FLAG_BROWSABLE.toLong())
         }.build()
 
-        val playlistsMetadata = MediaMetadataCompat.Builder().apply {
+        val playlistsMetadata = Builder().apply {
             putString(METADATA_KEY_MEDIA_ID, PLAYLISTS_ROOT_ID)
             putString(METADATA_KEY_TITLE, context.getString(R.string.playlists))
             putLong(METADATA_KEY_FLAGS, FLAG_BROWSABLE.toLong())
         }.build()
 
-//        rootList+= albumsMetadata
         rootList += localMetadata
         rootList += remoteMetadata
         rootList += recentMetadata

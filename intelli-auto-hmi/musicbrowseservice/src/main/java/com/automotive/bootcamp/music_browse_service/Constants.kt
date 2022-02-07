@@ -1,5 +1,8 @@
 package com.automotive.bootcamp.music_browse_service
 
+const val BASE_URL = "https://storage.googleapis.com/automotive-media/"
+
+
 const val NOTIFICATION_ID = 1
 const val NOTIFICATION_CHANNEL_ID = "music"
 
