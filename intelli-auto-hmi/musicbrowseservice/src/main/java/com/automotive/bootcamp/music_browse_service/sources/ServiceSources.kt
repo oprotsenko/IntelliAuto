@@ -1,15 +1,17 @@
 package com.automotive.bootcamp.music_browse_service.sources
 
 import android.content.Context
-import android.media.MediaMetadataRetriever
 import android.media.browse.MediaBrowser
 import android.support.v4.media.MediaMetadataCompat
 import android.util.Log
+import androidx.core.net.toUri
 import com.automotive.bootcamp.music_browse_service.sources.remote.RemoteAudioSource
-import com.automotive.bootcamp.music_browse_service.sources.remote.retrofit.RetrofitAudioSource
 import com.automotive.bootcamp.music_browse_service.utils.LOCAL_ROOT_ID
 import com.automotive.bootcamp.music_browse_service.utils.METADATA_KEY_FLAGS
 import com.automotive.bootcamp.music_browse_service.utils.REMOTE_ROOT_ID
+import com.google.android.exoplayer2.source.ConcatenatingMediaSource
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 
 class ServiceSources(
     context: Context
@@ -18,7 +20,7 @@ class ServiceSources(
     private val localSource = LocalAudioSource(context)
     private val remoteSource = RemoteAudioSource()
 
-    private val music = mutableListOf<MediaMetadataCompat>()
+    val music = mutableListOf<MediaMetadataCompat>()
 
     init {
         state = State.INITIALIZING
@@ -70,6 +72,16 @@ class ServiceSources(
         audios.forEach {
             music.add(it)
         }
+    }
+
+    fun asMediaSource(dataSourceFactory: DefaultDataSourceFactory): ConcatenatingMediaSource {
+        val concatenatingMediaSource = ConcatenatingMediaSource()
+        music.forEach { song ->
+            val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
+                .createMediaSource(song.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI).toUri())
+            concatenatingMediaSource.addMediaSource(mediaSource)
+        }
+        return concatenatingMediaSource
     }
 
     override fun iterator(): Iterator<MediaMetadataCompat> = music.iterator()

@@ -89,8 +89,8 @@ class NowPlayingViewModel(
 
     fun playAudio() {
         _currentAudio.value?.let {
-            audioPlaybackControl.playOrToggleAudio(it)
-            //audioPlaybackControl.playAudio(it.audio.url)
+           // audioPlaybackControl.playOrToggleAudio(it)
+            audioPlaybackControl.playAudio(it.audio.url)
             _isPlaying.value = true
 
             viewModelScope.launch {

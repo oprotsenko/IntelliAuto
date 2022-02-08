@@ -3,6 +3,7 @@
     package="com.automotive.bootcamp.music_browse_service">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <uses-feature
         android:name="android.hardware.type.automotive"
@@ -27,11 +28,13 @@
         -->
         <service
             android:name=".MyMusicService"
+            android:enabled="true"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
         </service>
+
     </application>
 
 </manifest>

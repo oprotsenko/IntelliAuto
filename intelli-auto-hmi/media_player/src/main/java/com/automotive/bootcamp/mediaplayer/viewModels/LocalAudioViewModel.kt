@@ -1,5 +1,6 @@
 package com.automotive.bootcamp.mediaplayer.viewModels
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,7 +21,9 @@ class LocalAudioViewModel(
     private val manageRecent: ManageRecent,
     private val managePlaylists: ManagePlaylists,
 //    private val mediaServiceControl: MediaServiceControl,
-) : ViewModel(), ChildLoadedListener, StartChildLoadingListener {
+) : ViewModel()
+   // , ChildLoadedListener, StartChildLoadingListener
+{
     val localAudioData by lazy { MutableLiveData<List<AudioWrapper>>() }
     var playlists: List<PlaylistWrapper>? = listOf()
     var dynamicallyAddAudioPosition: Int = 0
@@ -43,24 +46,25 @@ class LocalAudioViewModel(
     }
 
     // new
-    override fun onStartChildLoading(audios: Resource<List<AudioWrapper>>) {
-        localAudioData.postValue(audios.data)
-    }
-
-    override fun onChildLoaded(audios: Resource<List<AudioWrapper>>) {
-        viewModelScope.launch {
-            audios.data?.map {
-                it.isFavourite = manageFavourite.hasAudio(it.audio.id)
-                it.isRecent = manageRecent.hasAudio(it.audio.id)
-            }
-            localAudioData.postValue(audios.data)
-        }
-    }
-
-    override fun onCleared() {
-//        mediaServiceControl.unsubscribe()
-        super.onCleared()
-    }
+//    override fun onStartChildLoading(audios: Resource<List<AudioWrapper>>) {
+//        localAudioData.postValue(audios.data)
+//    }
+//
+//    override fun onChildLoaded(audios: Resource<List<AudioWrapper>>) {
+//        viewModelScope.launch {
+//            audios.data?.map {
+//                it.isFavourite = manageFavourite.hasAudio(it.audio.id)
+//                it.isRecent = manageRecent.hasAudio(it.audio.id)
+//            }
+//
+//            localAudioData.postValue(audios.data)
+//        }
+//    }
+//
+//    override fun onCleared() {
+////        mediaServiceControl.unsubscribe()
+//        super.onCleared()
+//    }
     //
 
     private suspend fun retrieveMusic() {
@@ -126,7 +130,4 @@ class LocalAudioViewModel(
             }
         }
     }
-
-
-
 }

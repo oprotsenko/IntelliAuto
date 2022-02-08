@@ -6,9 +6,9 @@
         android:name=".MediaPlayerApp"
         android:requestLegacyExternalStorage="true">
 
-<!--        <service-->
-<!--            android:enabled="true"-->
-<!--            android:name=".utils.basicService.AudioPlayerService"/>-->
+        <service
+            android:enabled="true"
+            android:name=".utils.basicService.AudioPlayerService"/>
 <!--        <service android:name="com.automotive.bootcamp.music_service.service.MusicService"-->
 <!--            android:label="@string/service_name"-->
 <!--            android:exported="true">-->
