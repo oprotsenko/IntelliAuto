@@ -18,7 +18,7 @@ import org.koin.dsl.module
 
 val appModule = module {
     viewModel { PlaylistsViewModel(get(), get()) }
-    viewModel { NowPlayingViewModel(get(), get(), get()) }
+    viewModel { NowPlayingViewModel(get()) }
     viewModel { FavouriteAudioViewModel(get(), get(), get(), get()) }
     viewModel { RecentAudioViewModel(get(), get(), get(), get()) }
 

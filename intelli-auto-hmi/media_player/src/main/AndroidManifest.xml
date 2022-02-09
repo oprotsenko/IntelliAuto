@@ -6,16 +6,16 @@
         android:name=".MediaPlayerApp"
         android:requestLegacyExternalStorage="true">
 
-<!--        <service-->
-<!--            android:enabled="true"-->
-<!--            android:name=".utils.basicService.AudioPlayerService"/>-->
-        <service android:name=".service.MusicService"
-            android:label="@string/service_name"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.media.browse.MediaBrowserService"/>
-            </intent-filter>
-        </service>
+        <service
+            android:enabled="true"
+            android:name=".utils.basicService.AudioPlayerService"/>
+<!--        <service android:name=".service.MusicService"-->
+<!--            android:label="@string/service_name"-->
+<!--            android:exported="false">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.media.browse.MediaBrowserService"/>-->
+<!--            </intent-filter>-->
+<!--        </service>-->
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
