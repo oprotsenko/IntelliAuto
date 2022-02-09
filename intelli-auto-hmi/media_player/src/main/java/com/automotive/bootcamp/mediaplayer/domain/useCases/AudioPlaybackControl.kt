@@ -4,9 +4,7 @@ import android.content.*
 import android.os.IBinder
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.automotive.bootcamp.mediaplayer.domain.extensions.wrapAudio
-import com.automotive.bootcamp.mediaplayer.presentation.extensions.unwrap
-import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
+import com.automotive.bootcamp.mediaplayer.domain.models.Audio
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
 import com.automotive.bootcamp.mediaplayer.utils.basicService.AudioPlayerService
 import com.automotive.bootcamp.mediaplayer.utils.enums.RepeatMode
@@ -27,19 +25,19 @@ class AudioPlaybackControl(
     private var audioPlayerService: AudioPlayerService? = null
     private var serviceBound = false
 
-    private var audiosList = mutableListOf<AudioWrapper>()
-    private var originalAudiosList = mutableListOf<AudioWrapper>()
-    private val recentAudiosFlow: Flow<List<AudioWrapper>?>? = retrieveRecentAudio.retrieveRecentAudio()
-    private var recentAudios: List<AudioWrapper>? = null
+    private var audiosList = mutableListOf<Audio>()
+    private var originalAudiosList = mutableListOf<Audio>()
+    private val recentAudiosFlow: Flow<List<Audio>?>? = retrieveRecentAudio.retrieveRecentAudio()
+    private var recentAudios: List<Audio>? = null
 
     private val _isPlaying by lazy { MutableLiveData<Boolean>() }
     private val _isShuffled by lazy { MutableLiveData<Boolean>() }
     private val _repeatMode by lazy { MutableLiveData<RepeatMode>() }
-    private val _currentAudio by lazy { MutableLiveData<AudioWrapper>() }
+    private val _currentAudio by lazy { MutableLiveData<Audio>() }
     private val _currentAudioDuration by lazy { MutableLiveData<Int>() }
     private val _currentAudioProgress by lazy { MutableLiveData<Int>() }
 
-    val currentAudio: LiveData<AudioWrapper>
+    val currentAudio: LiveData<Audio>
         get() = _currentAudio
 
     val isPlaying: LiveData<Boolean>
@@ -68,9 +66,8 @@ class AudioPlaybackControl(
 
         this.position = position
 
-        val audioList = playlist.playlist.list?.map { audio ->
-            audio.wrapAudio()
-        }
+        val audioList = playlist.playlist.list
+
         this.audiosList.clear()
         if (audioList != null) {
             this.audiosList.addAll(audioList)
@@ -88,7 +85,7 @@ class AudioPlaybackControl(
 
     fun playAudio() {
         _currentAudio.value?.let {
-            playAudioWithService(it.audio.url)
+            playAudioWithService(it.url)
             addToRecent()
             _isPlaying.value = true
         }
@@ -97,9 +94,7 @@ class AudioPlaybackControl(
     private fun addToRecent() {
         playbackScope.launch {
             _currentAudio.value?.let {
-                addRecent.execute(it.audio.id, recentAudios?.map { audio ->
-                    audio.unwrap()
-                })
+                addRecent.execute(it.id, recentAudios)
             }
         }
     }
@@ -122,7 +117,7 @@ class AudioPlaybackControl(
         audioPlayerService = binder.service
         audioPlayerService?.setOnAudioCompletionListener(this)
         audioPlayerService?.setOnAudioRunningListener(this)
-        audioPlayerService?.playAudio(_currentAudio.value?.audio?.url)
+        audioPlayerService?.playAudio(_currentAudio.value?.url)
         serviceBound = true
     }
 
@@ -184,9 +179,9 @@ class AudioPlaybackControl(
     }
 
     private fun getShuffledAudioList(
-        audioListData: MutableList<AudioWrapper>,
-        currentAudio: AudioWrapper
-    ): MutableList<AudioWrapper> {
+        audioListData: MutableList<Audio>,
+        currentAudio: Audio
+    ): MutableList<Audio> {
         val audioListMinusCurrentAudio = audioListData.filter {
             it != currentAudio
         }

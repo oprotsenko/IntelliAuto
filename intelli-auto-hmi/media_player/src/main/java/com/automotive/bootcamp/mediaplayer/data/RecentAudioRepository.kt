@@ -21,11 +21,10 @@ class RecentAudioRepository(
     private var pid: Long? = null
 
     private val job = Job()
-    private val repositoryScope = CoroutineScope(Dispatchers.Main + job)
+    private val repositoryScope = CoroutineScope(dispatcher + job)
 
     init {
-        repositoryScope.launch(dispatcher)
-        {
+        repositoryScope.launch {
             pid = getEmbeddedPlaylist()?.id
         }
     }

@@ -81,13 +81,13 @@ class NowPlayingFragment :
     override fun setObservers() {
         nowPlayingViewModel.currentAudio.observe(viewLifecycleOwner) {
             binding.apply {
-                it.audio.cover?.let{ url ->
+                it.cover?.let{ url ->
                     ivNowPlayingAudioArt.loadImage(url)
                     ivNowPlayingBackground.loadImage(url)
                 }
 
-                tvNowPlayingSingerName.text = it.audio.artist
-                tvNowPlayingAudioTitle.text = it.audio.title
+                tvNowPlayingSingerName.text = it.artist
+                tvNowPlayingAudioTitle.text = it.title
             }
         }
 
