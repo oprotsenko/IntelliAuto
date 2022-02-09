@@ -17,15 +17,11 @@ class NowPlayingViewModel(
     val currentAudioProgress = audioPlaybackControl.currentAudioProgress
 
     fun init(playlist: PlaylistWrapper, position: Int) {
-        viewModelScope.launch {
-            audioPlaybackControl.init(playlist, position)
-        }
+        audioPlaybackControl.init(playlist, position)
     }
 
     fun playAudio() {
-        viewModelScope.launch {
-            audioPlaybackControl.playAudio()
-        }
+        audioPlaybackControl.playAudio()
     }
 
     fun pauseAudio() {
@@ -33,15 +29,11 @@ class NowPlayingViewModel(
     }
 
     fun nextAudio() {
-        viewModelScope.launch {
-            audioPlaybackControl.nextAudio()
-        }
+        audioPlaybackControl.nextAudio()
     }
 
     fun previousAudio() {
-        viewModelScope.launch {
-            audioPlaybackControl.previousAudio()
-        }
+        audioPlaybackControl.previousAudio()
     }
 
     fun shuffleAudio() {
@@ -54,5 +46,10 @@ class NowPlayingViewModel(
 
     fun updateAudioProgress(progress: Int) {
         audioPlaybackControl.updateAudioProgress(progress)
+    }
+
+    override fun onCleared() {
+        audioPlaybackControl.clear()
+        super.onCleared()
     }
 }

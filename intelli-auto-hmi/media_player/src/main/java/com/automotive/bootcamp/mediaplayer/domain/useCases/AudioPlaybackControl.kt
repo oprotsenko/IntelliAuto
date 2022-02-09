@@ -2,7 +2,6 @@ package com.automotive.bootcamp.mediaplayer.domain.useCases
 
 import android.content.*
 import android.os.IBinder
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.automotive.bootcamp.mediaplayer.domain.extensions.wrapAudio
@@ -13,6 +12,7 @@ import com.automotive.bootcamp.mediaplayer.utils.basicService.AudioPlayerService
 import com.automotive.bootcamp.mediaplayer.utils.enums.RepeatMode
 import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.AudioCompletionListener
 import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.AudioRunningListener
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 
@@ -21,11 +21,16 @@ class AudioPlaybackControl(
     private val addRecent: AddRecent,
     retrieveRecentAudio: RetrieveRecentAudio
 ) : AudioCompletionListener, AudioRunningListener, ServiceConnection {
-    private var audioListData = mutableListOf<AudioWrapper>()
-    private var originalAudioListData = mutableListOf<AudioWrapper>()
-    private val recentAudioFlow: Flow<List<AudioWrapper>?>? =
-        retrieveRecentAudio.retrieveRecentAudio()
-    private var recentAudio: List<AudioWrapper>? = null
+    private val job = Job()
+    private val playbackScope = CoroutineScope(Dispatchers.IO + job)
+
+    private var audioPlayerService: AudioPlayerService? = null
+    private var serviceBound = false
+
+    private var audiosList = mutableListOf<AudioWrapper>()
+    private var originalAudiosList = mutableListOf<AudioWrapper>()
+    private val recentAudiosFlow: Flow<List<AudioWrapper>?>? = retrieveRecentAudio.retrieveRecentAudio()
+    private var recentAudios: List<AudioWrapper>? = null
 
     private val _isPlaying by lazy { MutableLiveData<Boolean>() }
     private val _isShuffled by lazy { MutableLiveData<Boolean>() }
@@ -54,154 +59,55 @@ class AudioPlaybackControl(
 
     private var position: Int = 0
 
-    suspend fun init(playlist: PlaylistWrapper, position: Int) {
+    fun init(playlist: PlaylistWrapper, position: Int) {
+        playbackScope.launch {
+            recentAudiosFlow?.collect {
+                recentAudios = it
+            }
+        }
+
         this.position = position
+
         val audioList = playlist.playlist.list?.map { audio ->
             audio.wrapAudio()
         }
-        audioListData.clear()
-
+        this.audiosList.clear()
         if (audioList != null) {
-            audioListData.addAll(audioList)
+            this.audiosList.addAll(audioList)
         }
 
-        originalAudioListData.clear()
-
+        originalAudiosList.clear()
         if (audioList != null) {
-            originalAudioListData.addAll(audioList)
+            originalAudiosList.addAll(audioList)
         }
 
-        _currentAudio.value = audioListData[position]
-
+        _currentAudio.value = this.audiosList[position]
         _isShuffled.value = false
         _repeatMode.value = RepeatMode.DEFAULT
-
-        recentAudioFlow?.collect {
-            recentAudio = it
-        }
     }
 
-    suspend fun playAudio() {
+    fun playAudio() {
         _currentAudio.value?.let {
-            playAudio(it.audio.url)
+            playAudioWithService(it.audio.url)
+            addToRecent()
             _isPlaying.value = true
-
-            addRecent.execute(it.audio.id, recentAudio?.map { audio ->
-                audio.unwrap()
-            })
         }
     }
 
-    fun pauseAudio() {
-        if (_isPlaying.value == true) {
-            audioPlayerService?.pauseAudio()
-            _isPlaying.value = false
-        }
-    }
-
-    suspend fun nextAudio() {
-        if (++position == audioListData.size) {
-            position = 0;
-        }
-
-        val audioWrapped = audioListData[position]
-        playAudio(audioWrapped.audio.url)
-        _currentAudio.value = audioWrapped
-        _isPlaying.value = true
-
-        addRecent.execute(audioWrapped.audio.id, recentAudio?.map { audio ->
-            audio.unwrap()
-        })
-    }
-
-    suspend fun previousAudio() {
-        if (--position < 0) {
-            audioListData.let {
-                position = it.size - 1
+    private fun addToRecent() {
+        playbackScope.launch {
+            _currentAudio.value?.let {
+                addRecent.execute(it.audio.id, recentAudios?.map { audio ->
+                    audio.unwrap()
+                })
             }
         }
-
-        val audioWrapped = audioListData[position]
-        playAudio(audioWrapped.audio.url)
-        _currentAudio.value = audioWrapped
-        _isPlaying.value = true
-
-        addRecent.execute(audioWrapped.audio.id, recentAudio?.map { audio ->
-            audio.unwrap()
-        })
     }
 
-    fun shuffleAudio() {
-        if (_isShuffled.value == true) {
-            setOriginalList()
-
-            _isShuffled.value = false
-        } else {
-            setShuffledList()
-
-            _isShuffled.value = true
-        }
-    }
-
-    private fun setOriginalList() {
-        audioListData = originalAudioListData
-        position = audioListData.indexOf(currentAudio.value)
-    }
-
-    private fun setShuffledList() {
-        position = 0
-        currentAudio.value?.let {
-            audioListData = getShuffledAudioList(audioListData, it)
-        }
-    }
-
-    fun nextRepeatMode() {
-        when (_repeatMode.value) {
-            RepeatMode.DEFAULT -> {
-                _repeatMode.value = RepeatMode.REPEAT_ONE
-            }
-            RepeatMode.REPEAT_ONE -> {
-                _repeatMode.value = RepeatMode.REPEAT_PLAYLIST
-            }
-            RepeatMode.REPEAT_PLAYLIST -> {
-                _repeatMode.value = RepeatMode.DEFAULT
-            }
-            else -> {}
-        }
-    }
-
-    override fun onAudioCompletion() {
-//        when (_repeatMode.value) {
-//            RepeatMode.DEFAULT -> {
-//                if (_currentAudio.value != audioListData.last()) {
-//                    nextAudio()
-//                }
-//            }
-//            RepeatMode.REPEAT_ONE -> {
-//                playAudio()
-//            }
-//            RepeatMode.REPEAT_PLAYLIST -> {
-//                nextAudio()
-//            }
-//            else -> Unit
-//        }
-    }
-
-    override fun onAudioRunning(duration: Int, currentProgress: Int) {
-        _currentAudioDuration.value = duration
-        _currentAudioProgress.value = currentProgress
-    }
-
-
-    private var audioPlayerService: AudioPlayerService? = null
-    private var serviceBound = false
-    private var audioUrl: String? = null
-
-    fun playAudio(audioUrl: String?) {
+    private fun playAudioWithService(audioUrl: String?) {
         if (serviceBound) {
             audioPlayerService?.playAudio(audioUrl)
         } else {
-            this.audioUrl = audioUrl
             context.let {
                 Intent(it, AudioPlayerService::class.java).also { intent ->
                     it.startService(intent)
@@ -211,7 +117,71 @@ class AudioPlaybackControl(
         }
     }
 
-    fun updateAudioProgress(progress: Int) = audioPlayerService?.updateAudioProgress(progress)
+    override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+        val binder: AudioPlayerService.LocalBinder = service as AudioPlayerService.LocalBinder
+        audioPlayerService = binder.service
+        audioPlayerService?.setOnAudioCompletionListener(this)
+        audioPlayerService?.setOnAudioRunningListener(this)
+        audioPlayerService?.playAudio(_currentAudio.value?.audio?.url)
+        serviceBound = true
+    }
+
+    override fun onServiceDisconnected(p0: ComponentName?) {
+        serviceBound = false
+    }
+
+    fun pauseAudio() {
+        if (_isPlaying.value == true) {
+            audioPlayerService?.pauseAudio()
+            _isPlaying.value = false
+        }
+    }
+
+    fun nextAudio() {
+        if (++position == audiosList.size) {
+            position = 0;
+        }
+
+        val audioWrapped = audiosList[position]
+        _currentAudio.value = audioWrapped
+
+        playAudio()
+    }
+
+    fun previousAudio() {
+        if (--position < 0) {
+            audiosList.let {
+                position = it.size - 1
+            }
+        }
+
+        val audioWrapped = audiosList[position]
+        _currentAudio.value = audioWrapped
+
+        playAudio()
+    }
+
+    fun shuffleAudio() {
+        if (_isShuffled.value == true) {
+            setOriginalList()
+            _isShuffled.value = false
+        } else {
+            setShuffledList()
+            _isShuffled.value = true
+        }
+    }
+
+    private fun setOriginalList() {
+        audiosList = originalAudiosList
+        position = audiosList.indexOf(currentAudio.value)
+    }
+
+    private fun setShuffledList() {
+        position = 0
+        currentAudio.value?.let {
+            audiosList = getShuffledAudioList(audiosList, it)
+        }
+    }
 
     private fun getShuffledAudioList(
         audioListData: MutableList<AudioWrapper>,
@@ -229,16 +199,48 @@ class AudioPlaybackControl(
         return audioListData
     }
 
-    override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-        val binder: AudioPlayerService.LocalBinder = service as AudioPlayerService.LocalBinder
-        audioPlayerService = binder.service
-        audioPlayerService?.setOnAudioCompletionListener(this)
-        audioPlayerService?.setOnAudioRunningListener(this)
-        audioPlayerService?.playAudio(audioUrl)
-        serviceBound = true
+    fun nextRepeatMode() {
+        when (_repeatMode.value) {
+            RepeatMode.DEFAULT -> {
+                _repeatMode.value = RepeatMode.REPEAT_ONE
+            }
+            RepeatMode.REPEAT_ONE -> {
+                _repeatMode.value = RepeatMode.REPEAT_PLAYLIST
+            }
+            RepeatMode.REPEAT_PLAYLIST -> {
+                _repeatMode.value = RepeatMode.DEFAULT
+            }
+            else -> {}
+        }
     }
 
-    override fun onServiceDisconnected(p0: ComponentName?) {
-        serviceBound = false
+    fun updateAudioProgress(progress: Int) {
+        audioPlayerService?.updateAudioProgress(progress)
+    }
+
+    override fun onAudioCompletion() {
+        when (_repeatMode.value) {
+            RepeatMode.DEFAULT -> {
+                if (_currentAudio.value != audiosList.last()) {
+                    nextAudio()
+                }
+            }
+            RepeatMode.REPEAT_ONE -> {
+                playAudio()
+            }
+            RepeatMode.REPEAT_PLAYLIST -> {
+                nextAudio()
+            }
+            else -> Unit
+        }
+    }
+
+    override fun onAudioRunning(duration: Int, currentProgress: Int) {
+        _currentAudioDuration.value = duration
+        _currentAudioProgress.value = currentProgress
+    }
+
+    fun clear(){
+        playbackScope.cancel()
     }
 }
