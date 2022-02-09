@@ -44,10 +44,11 @@ class LocalAudioSource(
                     val inputStream = context.assets.open("default_cover.jpg")
                     BitmapFactory.decodeStream(inputStream)
                 }
+            val imagePath = saveImageToExternalStorage(image)
+
             val title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
             val artist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
 
-            val imagePath = saveImageToExternalStorage(image)
             list.add(
                 AudioItem(
                     res.toLong(),

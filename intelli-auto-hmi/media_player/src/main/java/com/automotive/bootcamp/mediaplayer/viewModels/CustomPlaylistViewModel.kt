@@ -2,16 +2,18 @@ package com.automotive.bootcamp.mediaplayer.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.automotive.bootcamp.mediaplayer.domain.extensions.mapToPlaylistWrapper
 import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
 import com.automotive.bootcamp.mediaplayer.domain.useCases.ManageFavourite
 import com.automotive.bootcamp.mediaplayer.domain.useCases.ManagePlaylists
 import com.automotive.bootcamp.mediaplayer.domain.useCases.ManageRecent
+import com.automotive.bootcamp.mediaplayer.presentation.extensions.mapToPlaylistWrapper
 import com.automotive.bootcamp.mediaplayer.presentation.extensions.unwrap
+import com.automotive.bootcamp.mediaplayer.presentation.extensions.wrapAudio
 import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class CustomPlaylistViewModel(
@@ -28,8 +30,10 @@ class CustomPlaylistViewModel(
 
     init {
         viewModelScope.launch {
-            managePlaylists.getAllPlaylists().collect {
-                playlists = it
+            managePlaylists.getAllPlaylists().collect { list ->
+                playlists = list?.map { playlist ->
+                    playlist.mapToPlaylistWrapper()
+                }
             }
         }
     }
@@ -37,11 +41,15 @@ class CustomPlaylistViewModel(
     fun init(playlist: PlaylistWrapper?) {
         pid = playlist?.playlist?.id
         pid?.let {
-            customAudioFlow = managePlaylists.getPlaylistAudio(it)
+            customAudioFlow = managePlaylists.getPlaylistAudio(it).map { list ->
+                list?.map { audio ->
+                    audio.wrapAudio()
+                }
+            }
         }
     }
 
-    suspend fun updateAudioList(audio:List<AudioWrapper>?) {
+    suspend fun updateAudioList(audio: List<AudioWrapper>?) {
         customAudio = audio
         customAudio?.map {
             it.isFavourite = manageFavourite.hasAudio(it.audio.id)

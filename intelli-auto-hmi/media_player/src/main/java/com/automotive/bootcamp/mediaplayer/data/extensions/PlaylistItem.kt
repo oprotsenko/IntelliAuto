@@ -1,6 +1,5 @@
 package com.automotive.bootcamp.mediaplayer.data.extensions
 
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.PlaylistEntity
 import com.automotive.bootcamp.mediaplayer.data.models.PlaylistItem
 import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
 
@@ -11,8 +10,11 @@ fun PlaylistItem.mapToPlaylist() = Playlist(
         it.mapToAudio()
     })
 
-fun PlaylistItem.mapToEntity(): PlaylistEntity =
-    PlaylistEntity(
+fun Playlist.mapToPlaylistItem(): PlaylistItem =
+    PlaylistItem(
+        id = this.id,
         name = this.name,
-        pid = this.id
+        list = this.list?.map {
+            it.mapToAudioItem()
+        }
     )

@@ -12,3 +12,12 @@ fun AudioEntity.mapToAudioItem() : AudioItem =
         artist = this.artist,
         url = this.url
     )
+
+fun AudioItem.mapToAudioEntity() : AudioEntity =
+    AudioEntity(
+        aid = this.id,
+        cover = this.cover,
+        title = this.title,
+        artist = this.artist,
+        url = this.url
+    )

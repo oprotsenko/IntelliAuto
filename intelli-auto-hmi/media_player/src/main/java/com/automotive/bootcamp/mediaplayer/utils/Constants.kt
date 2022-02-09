@@ -4,6 +4,7 @@ const val BASE_URL = "https://storage.googleapis.com/automotive-media/"
 const val POSITION_BUNDLE_KEY = "position"
 const val PLAYLIST_BUNDLE_KEY = "playlist"
 const val CUSTOM_PLAYLIST_BUNDLE_KEY = "custom playlist"
+const val IS_FAVOURITE_BUNDLE_KEY = "is favourite"
 
 const val FRAGMENT_RESULT_KEY = "fragment result"
 const val PLAYLIST_NAME_KEY = "playlist name"

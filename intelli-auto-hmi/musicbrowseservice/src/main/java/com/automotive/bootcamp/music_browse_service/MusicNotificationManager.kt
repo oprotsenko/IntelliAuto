@@ -6,19 +6,19 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
+import com.automotive.bootcamp.music_browse_service.utils.NOTIFICATION_CHANNEL_ID
+import com.automotive.bootcamp.music_browse_service.utils.NOTIFICATION_ID
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 
-const val NOW_PLAYING_CHANNEL_ID = "com.automotive.bootcamp.music_browse_service.NOW_PLAYING"
-const val NOW_PLAYING_NOTIFICATION_ID = 0xb339
-
-internal class AudioNotificationManager(
+class MusicNotificationManager(
     private val context: Context,
     sessionToken: MediaSessionCompat.Token,
-    notificationListener: PlayerNotificationManager.NotificationListener
+    notificationListener: PlayerNotificationManager.NotificationListener,
+    private val newSongCallback: () -> Unit
 ) {
 
     private val notificationManager: PlayerNotificationManager
@@ -26,18 +26,19 @@ internal class AudioNotificationManager(
     init {
         val mediaController = MediaControllerCompat(context, sessionToken)
 
-        val builder = PlayerNotificationManager.Builder(context, NOW_PLAYING_NOTIFICATION_ID, NOW_PLAYING_CHANNEL_ID)
-        with (builder) {
-            setMediaDescriptionAdapter(DescriptionAdapter(mediaController))
-            setNotificationListener(notificationListener)
-            setChannelNameResourceId(R.string.notification_channel)
-            setChannelDescriptionResourceId(R.string.notification_channel_description)
-        }
-        notificationManager = builder.build()
-        notificationManager.setMediaSessionToken(sessionToken)
-        notificationManager.setSmallIcon(R.drawable.ic_notification)
-        notificationManager.setUseRewindAction(false)
-        notificationManager.setUseFastForwardAction(false)
+        notificationManager = PlayerNotificationManager.Builder(
+            context,
+            NOTIFICATION_ID,
+            NOTIFICATION_CHANNEL_ID
+        )
+            .setChannelNameResourceId(R.string.notification_channel)
+            .setChannelDescriptionResourceId(R.string.notification_channel_description)
+            .setMediaDescriptionAdapter(DescriptionAdapter(mediaController))
+            .setNotificationListener(notificationListener)
+            .build().apply {
+                setSmallIcon(R.drawable.ic_album)
+                setMediaSessionToken(sessionToken)
+            }
     }
 
     fun showNotification(player: Player) {

@@ -14,7 +14,7 @@ import com.automotive.bootcamp.mediaplayer.utils.DEFAULT_COVER
 import java.io.*
 import java.util.*
 
-class ResourcesMediaSource(
+class ResourcesAudioSource(
     private val retriever: MediaMetadataRetriever,
     private val context: Context
 ) : LocalMediaSource {
