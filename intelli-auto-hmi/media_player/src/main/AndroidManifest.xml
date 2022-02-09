@@ -9,9 +9,10 @@
         <service
             android:enabled="true"
             android:name=".utils.basicService.AudioPlayerService"/>
-<!--        <service android:name=".service.MusicService"-->
+<!--        <service android:name="com.automotive.bootcamp.music_service.service.MusicService"-->
 <!--            android:label="@string/service_name"-->
 <!--            android:exported="false">-->
+<!--            android:exported="true">-->
 <!--            <intent-filter>-->
 <!--                <action android:name="android.media.browse.MediaBrowserService"/>-->
 <!--            </intent-filter>-->

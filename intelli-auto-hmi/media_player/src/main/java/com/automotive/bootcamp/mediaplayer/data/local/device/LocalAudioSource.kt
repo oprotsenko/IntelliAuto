@@ -8,7 +8,7 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
-import com.automotive.bootcamp.mediaplayer.data.local.LocalAudioSource
+import com.automotive.bootcamp.mediaplayer.data.local.LocalMediaSource
 import com.automotive.bootcamp.mediaplayer.data.models.AudioItem
 import com.automotive.bootcamp.mediaplayer.utils.DEFAULT_COVER
 import com.automotive.bootcamp.mediaplayer.utils.PICTURES_DIRECTORY_NAME
@@ -20,7 +20,7 @@ class LocalAudioSource(
     private val contentResolver: ContentResolver,
     private val retriever: MediaMetadataRetriever,
     private val context: Context
-) : LocalAudioSource {
+) : LocalMediaSource {
 
     override suspend fun retrieveLocalAudio(): List<AudioItem> {
         val list = mutableListOf<AudioItem>()

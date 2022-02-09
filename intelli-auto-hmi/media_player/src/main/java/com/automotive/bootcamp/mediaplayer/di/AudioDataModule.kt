@@ -5,9 +5,11 @@ import android.media.MediaMetadataRetriever
 import com.automotive.bootcamp.mediaplayer.data.*
 import com.automotive.bootcamp.mediaplayer.data.cache.CacheAudioSource
 import com.automotive.bootcamp.mediaplayer.data.cache.room.RoomAudioSource
-import com.automotive.bootcamp.mediaplayer.data.local.LocalAudioSource
-import com.automotive.bootcamp.mediaplayer.data.local.resources.ResourcesAudioSource
+import com.automotive.bootcamp.mediaplayer.data.local.LocalMediaSource
+import com.automotive.bootcamp.mediaplayer.data.local.resources.ResourcesMediaSource
+
 import com.automotive.bootcamp.mediaplayer.domain.*
+
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import org.koin.dsl.module
@@ -20,7 +22,7 @@ val dataModule = module {
     single { providePlaylistMediaRepository(get(), get()) }
     single { provideLocalAudioSource(get(), get()) }
     single { provideCacheAudioSource(get()) }
-    single { ResourcesAudioSource(get(), get()) }
+    single { ResourcesMediaSource(get(), get()) }
 
     factory { provideDispatcher() }
 }
@@ -28,7 +30,7 @@ val dataModule = module {
 fun provideDispatcher(): CoroutineDispatcher = Dispatchers.IO
 
 fun provideLocalMediaRepository(
-    localMusic: LocalAudioSource,
+    localMusic: LocalMediaSource,
     dispatcher: CoroutineDispatcher
 ): LocalMediaRepository =
     LocalAudioRepository(localMusic, dispatcher)
@@ -71,8 +73,8 @@ To retrieve audio from raw folder
  */
 fun provideLocalAudioSource(
     retriever: MediaMetadataRetriever, context: Context
-): LocalAudioSource =
-    ResourcesAudioSource(retriever, context)
+): LocalMediaSource =
+    ResourcesMediaSource(retriever, context)
 
 fun provideCacheAudioSource(context: Context): CacheAudioSource =
     RoomAudioSource(context)

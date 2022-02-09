@@ -1,11 +1,11 @@
 package com.automotive.bootcamp.mediaplayer.data
 
-import com.automotive.bootcamp.mediaplayer.utils.RECENT_PLAYLIST_NAME
 import com.automotive.bootcamp.mediaplayer.data.cache.CacheAudioSource
 import com.automotive.bootcamp.mediaplayer.data.models.AudioPlaylistItemCrossRef
 import com.automotive.bootcamp.mediaplayer.data.models.EmbeddedPlaylistItem
 import com.automotive.bootcamp.mediaplayer.data.models.PlaylistItem
 import com.automotive.bootcamp.mediaplayer.domain.RecentMediaRepository
+import com.automotive.bootcamp.mediaplayer.utils.RECENT_PLAYLIST_NAME
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
@@ -13,15 +13,16 @@ import kotlinx.coroutines.flow.flowOn
 class RecentAudioRepository(
     private val cacheAudioSource: CacheAudioSource,
     private val dispatcher: CoroutineDispatcher
-): RecentMediaRepository {
+) : RecentMediaRepository {
     private var pid: Long? = null
 
+    private val job = Job()
+    private val repositoryScope = CoroutineScope(Dispatchers.Main + job)
+
     init {
-        runBlocking {
-            launch(dispatcher)
-            {
-                pid = getEmbeddedPlaylist()?.id
-            }
+        repositoryScope.launch(dispatcher)
+        {
+            pid = getEmbeddedPlaylist()?.id
         }
     }
 
@@ -39,13 +40,13 @@ class RecentAudioRepository(
         }
     }
 
-    override suspend fun hasAudio(aid: Long): Boolean =
-        withContext(dispatcher) {
+    override suspend fun hasAudio(aid: Long): Boolean {
+        return withContext(dispatcher) {
             pid?.let {
                 cacheAudioSource.playlistHasAudio(it, aid)
             }
-            false
-        }
+        } ?: false
+    }
 
     override fun getPlaylist(): Flow<PlaylistItem?>? {
         pid?.let {

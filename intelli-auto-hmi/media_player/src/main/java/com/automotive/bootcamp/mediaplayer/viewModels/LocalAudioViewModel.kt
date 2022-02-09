@@ -1,6 +1,5 @@
 package com.automotive.bootcamp.mediaplayer.viewModels
 
-import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,10 +11,7 @@ import com.automotive.bootcamp.mediaplayer.domain.useCases.*
 import com.automotive.bootcamp.mediaplayer.presentation.extensions.unwrap
 import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
-import com.automotive.bootcamp.mediaplayer.service.ChildLoadedListener
-import com.automotive.bootcamp.mediaplayer.service.StartChildLoadingListener
-import com.automotive.bootcamp.mediaplayer.utils.LOCAL_ROOT_ID
-import com.automotive.bootcamp.mediaplayer.utils.ROOT_ID_BUNDLE_KEY
+//import com.automotive.bootcamp.music_service.service.utils.LOCAL_ROOT_ID
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -24,16 +20,18 @@ class LocalAudioViewModel(
     private val manageFavourite: ManageFavourite,
     private val manageRecent: ManageRecent,
     private val managePlaylists: ManagePlaylists,
-    private val mediaServiceControl: MediaServiceControl,
-) : ViewModel(), ChildLoadedListener, StartChildLoadingListener {
+//    private val mediaServiceControl: MediaServiceControl,
+) : ViewModel()
+   // , ChildLoadedListener, StartChildLoadingListener
+{
     val localAudioData by lazy { MutableLiveData<List<AudioWrapper>>() }
     var playlists: List<PlaylistWrapper>? = listOf()
     var dynamicallyAddAudioPosition: Int = 0
 
     init {
-//        viewModelScope.launch {
-//            retrieveMusic()
-//        }
+        viewModelScope.launch {
+            retrieveMusic()
+        }
         viewModelScope.launch {
             managePlaylists.getAllPlaylists().collect {
                 playlists = it
@@ -41,31 +39,32 @@ class LocalAudioViewModel(
         }
 
         // new
-        mediaServiceControl.setStartChildLoadingListener(this)
-        mediaServiceControl.setChildLoadedListener(this)
-        mediaServiceControl.subscribe(LOCAL_ROOT_ID)
+//        mediaServiceControl.setStartChildLoadingListener(this)
+//        mediaServiceControl.setChildLoadedListener(this)
+//        mediaServiceControl.subscribe(LOCAL_ROOT_ID)
         //
     }
 
     // new
-    override fun onStartChildLoading(audios: Resource<List<AudioWrapper>>) {
-        localAudioData.postValue(audios.data)
-    }
-
-    override fun onChildLoaded(audios: Resource<List<AudioWrapper>>) {
-        viewModelScope.launch {
-            audios.data?.map {
-                it.isFavourite = manageFavourite.hasAudio(it.audio.id)
-                it.isRecent = manageRecent.hasAudio(it.audio.id)
-            }
-            localAudioData.postValue(audios.data)
-        }
-    }
-
-    override fun onCleared() {
-        mediaServiceControl.unsubscribe()
-        super.onCleared()
-    }
+//    override fun onStartChildLoading(audios: Resource<List<AudioWrapper>>) {
+//        localAudioData.postValue(audios.data)
+//    }
+//
+//    override fun onChildLoaded(audios: Resource<List<AudioWrapper>>) {
+//        viewModelScope.launch {
+//            audios.data?.map {
+//                it.isFavourite = manageFavourite.hasAudio(it.audio.id)
+//                it.isRecent = manageRecent.hasAudio(it.audio.id)
+//            }
+//
+//            localAudioData.postValue(audios.data)
+//        }
+//    }
+//
+//    override fun onCleared() {
+////        mediaServiceControl.unsubscribe()
+//        super.onCleared()
+//    }
     //
 
     private suspend fun retrieveMusic() {
@@ -131,7 +130,4 @@ class LocalAudioViewModel(
             }
         }
     }
-
-
-
 }

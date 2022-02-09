@@ -20,7 +20,6 @@ class MediaPlayerApp : Application() {
                     dataModule,
                     remoteModule,
                     retrofitModule,
-                    serviceModule
                 )
             )
         }
