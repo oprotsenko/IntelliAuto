@@ -1,4 +1,4 @@
-package com.automotive.bootcamp.mediaplayer
+package com.automotive.bootcamp.music_browse_service
 
 import android.content.ComponentName
 import android.content.Context
@@ -9,9 +9,9 @@ import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.automotive.bootcamp.common.utils.Event
-import com.automotive.bootcamp.common.utils.Resource
-import com.automotive.bootcamp.mediaplayer.utils.NETWORK_ERROR
+import com.automotive.bootcamp.music_browse_service.utils.Event
+import com.automotive.bootcamp.music_browse_service.utils.NETWORK_ERROR
+import com.automotive.bootcamp.music_browse_service.utils.Resource
 
 class MusicServiceConnection(
     context: Context
@@ -33,7 +33,7 @@ class MusicServiceConnection(
         context,
         ComponentName(
             context,
-            "MusicService::class.java"
+            MyMusicService::class.java
         ),
         mediaBrowserConnectionCallback,
         null

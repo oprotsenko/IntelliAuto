@@ -2,6 +2,9 @@ package com.automotive.bootcamp.mediaplayer.presentation
 
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
+import androidx.lifecycle.viewModelScope
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.automotive.bootcamp.common.base.BaseFragment
 import com.automotive.bootcamp.common.utils.AutoFitGridLayoutManager
 import com.automotive.bootcamp.common.utils.GRID_RECYCLE_COLUMN_WIDTH
@@ -11,6 +14,7 @@ import com.automotive.bootcamp.mediaplayer.presentation.adapters.AudioRecyclerVi
 import com.automotive.bootcamp.mediaplayer.utils.FRAGMENT_RESULT_KEY
 import com.automotive.bootcamp.mediaplayer.utils.PLAYLIST_NAME_KEY
 import com.automotive.bootcamp.mediaplayer.viewModels.LocalAudioViewModel
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class LocalAudioFragment :
@@ -34,6 +38,11 @@ class LocalAudioFragment :
     }
 
     override fun initView() {
+        viewModel.apply {
+            viewModelScope.launch {
+                retrieveMusic()
+            }
+        }
         binding.tvSelectedPlaylistName.text = resources.getString(R.string.local_music)
     }
 
@@ -45,8 +54,10 @@ class LocalAudioFragment :
             parentFragmentManager.setFragmentResultListener(
                 FRAGMENT_RESULT_KEY, viewLifecycleOwner, { _, bundle ->
                     val playlistName = bundle.getString(PLAYLIST_NAME_KEY)
-                    playlistName?.let { viewModel.apply {
-                        createPlaylist(playlistName, dynamicallyAddAudioPosition) }
+                    playlistName?.let {
+                        viewModel.apply {
+                            createPlaylist(playlistName, dynamicallyAddAudioPosition)
+                        }
                     }
                 })
         }

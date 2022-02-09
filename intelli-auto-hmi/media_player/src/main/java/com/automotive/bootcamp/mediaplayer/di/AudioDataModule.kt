@@ -3,10 +3,10 @@ package com.automotive.bootcamp.mediaplayer.di
 import android.content.Context
 import android.media.MediaMetadataRetriever
 import com.automotive.bootcamp.mediaplayer.data.*
-import com.automotive.bootcamp.mediaplayer.data.cache.CacheAudioSource
+import com.automotive.bootcamp.mediaplayer.data.cache.CacheMediaSource
 import com.automotive.bootcamp.mediaplayer.data.cache.room.RoomAudioSource
 import com.automotive.bootcamp.mediaplayer.data.local.LocalMediaSource
-import com.automotive.bootcamp.mediaplayer.data.local.resources.ResourcesMediaSource
+import com.automotive.bootcamp.mediaplayer.data.local.resources.ResourcesAudioSource
 
 import com.automotive.bootcamp.mediaplayer.domain.*
 
@@ -22,7 +22,7 @@ val dataModule = module {
     single { providePlaylistMediaRepository(get(), get()) }
     single { provideLocalAudioSource(get(), get()) }
     single { provideCacheAudioSource(get()) }
-    single { ResourcesMediaSource(get(), get()) }
+    single { ResourcesAudioSource(get(), get()) }
 
     factory { provideDispatcher() }
 }
@@ -36,25 +36,25 @@ fun provideLocalMediaRepository(
     LocalAudioRepository(localMusic, dispatcher)
 
 fun provideCacheMediaRepository(
-    cacheSource: CacheAudioSource,
+    cacheSource: CacheMediaSource,
     dispatcher: CoroutineDispatcher
 ): CacheMediaRepository =
     CacheAudioRepository(cacheSource, dispatcher)
 
 fun provideRecentMediaRepository(
-    cacheSource: CacheAudioSource,
+    cacheSource: CacheMediaSource,
     dispatcher: CoroutineDispatcher
 ): RecentMediaRepository =
     RecentAudioRepository(cacheSource, dispatcher)
 
 fun provideFavouriteMediaRepository(
-    cacheSource: CacheAudioSource,
+    cacheSource: CacheMediaSource,
     dispatcher: CoroutineDispatcher
 ): FavouriteMediaRepository =
     FavouriteAudioRepository(cacheSource, dispatcher)
 
 fun providePlaylistMediaRepository(
-    cacheSource: CacheAudioSource,
+    cacheSource: CacheMediaSource,
     dispatcher: CoroutineDispatcher
 ): PlaylistMediaRepository =
     PlaylistRepository(cacheSource, dispatcher)
@@ -74,7 +74,7 @@ To retrieve audio from raw folder
 fun provideLocalAudioSource(
     retriever: MediaMetadataRetriever, context: Context
 ): LocalMediaSource =
-    ResourcesMediaSource(retriever, context)
+    ResourcesAudioSource(retriever, context)
 
-fun provideCacheAudioSource(context: Context): CacheAudioSource =
+fun provideCacheAudioSource(context: Context): CacheMediaSource =
     RoomAudioSource(context)

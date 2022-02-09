@@ -6,7 +6,7 @@ import com.automotive.bootcamp.mediaplayer.data.models.EmbeddedPlaylistItem
 import com.automotive.bootcamp.mediaplayer.data.models.PlaylistItem
 import kotlinx.coroutines.flow.Flow
 
-interface CacheAudioSource {
+interface CacheMediaSource {
     suspend fun insertAudio(audio: AudioItem): Long
     suspend fun insertAudios(audios: List<AudioItem>): List<Long>
     suspend fun playlistExists(pid: Long): Boolean

@@ -1,10 +1,10 @@
 package com.automotive.bootcamp.mediaplayer.data.extensions
 
-import com.automotive.bootcamp.mediaplayer.data.cache.room.entities.relations.AudioPlaylistCrossRefEntity
 import com.automotive.bootcamp.mediaplayer.data.models.AudioPlaylistItemCrossRef
+import com.automotive.bootcamp.mediaplayer.domain.models.AudioPlaylistCrossRef
 
-fun AudioPlaylistItemCrossRef.mapToEntity() : AudioPlaylistCrossRefEntity =
-    AudioPlaylistCrossRefEntity(
-        aid = aid,
-        pid = pid
+fun AudioPlaylistCrossRef.mapToAudioPlaylistItemCrossRef(): AudioPlaylistItemCrossRef =
+    AudioPlaylistItemCrossRef(
+        aid = this.aid,
+        pid = this.pid,
     )

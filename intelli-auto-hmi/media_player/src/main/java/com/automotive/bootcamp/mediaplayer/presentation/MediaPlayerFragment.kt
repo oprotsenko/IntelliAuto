@@ -1,38 +1,33 @@
 package com.automotive.bootcamp.mediaplayer.presentation
 
+import androidx.fragment.app.Fragment
 import com.automotive.bootcamp.common.base.BaseFragment
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.FragmentMediaPlayerBinding
 
 class MediaPlayerFragment :
     BaseFragment<FragmentMediaPlayerBinding>(FragmentMediaPlayerBinding::inflate) {
+    private var localAudioFragment = LocalAudioFragment()
+    private var onlineAudioFragment = OnlineAudioFragment()
+    private var recentAudioFragment = RecentAudioFragment()
+    private var favouriteAudioFragment = FavouriteAudioFragment()
 
     override fun setListeners() {
         binding.apply {
             bLocalMusic.setOnClickListener {
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.mediaPlayerServiceContainer, LocalAudioFragment())
-                    .addToBackStack(null).commit()
+                navigateTo(localAudioFragment)
             }
             bOnlineMusic.setOnClickListener {
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.mediaPlayerServiceContainer, OnlineAudioFragment())
-                    .addToBackStack(null).commit()
+                navigateTo(onlineAudioFragment)
             }
             bRecentMusic.setOnClickListener {
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.mediaPlayerServiceContainer, RecentAudioFragment())
-                    .addToBackStack(null).commit()
+                navigateTo(recentAudioFragment)
             }
             bPlaylists.setOnClickListener {
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.mediaPlayerServiceContainer, PlaylistsFragment())
-                    .addToBackStack(null).commit()
+                navigateTo(PlaylistsFragment())
             }
             bFavourite.setOnClickListener {
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.mediaPlayerServiceContainer, FavouriteAudioFragment())
-                    .addToBackStack(null).commit()
+                navigateTo(favouriteAudioFragment)
             }
             bSearch.setOnClickListener {
 
@@ -41,5 +36,12 @@ class MediaPlayerFragment :
 
             }
         }
+    }
+
+    private fun navigateTo(fragment: Fragment) {
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.mediaPlayerServiceContainer, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 }

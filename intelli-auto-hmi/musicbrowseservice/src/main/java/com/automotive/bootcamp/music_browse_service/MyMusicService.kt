@@ -1,12 +1,14 @@
 package com.automotive.bootcamp.music_browse_service
 
 import android.app.PendingIntent
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat.MediaItem
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.MediaMetadataCompat
-import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_TITLE
+import android.support.v4.media.MediaMetadataCompat.*
 import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import androidx.media.MediaBrowserServiceCompat
 import com.automotive.bootcamp.music_browse_service.callbacks.MusicPlaybackPreparer
@@ -30,7 +32,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class MyMusicService : MediaBrowserServiceCompat() {
-    private lateinit var notificationManager: AudioNotificationManager
+    private lateinit var notificationManager: MusicNotificationManager
 
     private lateinit var mediaSession: MediaSessionCompat
     private lateinit var sessionConnector: MediaSessionConnector
@@ -67,12 +69,16 @@ class MyMusicService : MediaBrowserServiceCompat() {
         )
     }
 
-    private val metadata = MediaMetadataCompat.Builder()
-        .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, "title").build()
+    companion object {
+        var currentAudioDuration = 0L
+            private set
+    }
 
     override fun onCreate() {
         super.onCreate()
-
+        serviceScope.launch {
+            musicSource.load()
+        }
         // Build a PendingIntent that can be used to launch the UI.
         val sessionActivityPendingIntent =
             packageManager?.getLaunchIntentForPackage(packageName)?.let { sessionIntent ->
@@ -81,23 +87,30 @@ class MyMusicService : MediaBrowserServiceCompat() {
 
         Log.d("serviceTAG", "onCreate")
 
-        mediaSession = MediaSessionCompat(this, "MyMusicService")
-        mediaSession.setMetadata(metadata)
-        mediaSession.setFlags(
-            MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or
-                    MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS
-        )
+        mediaSession = MediaSessionCompat(this, "MyMusicService").apply {
+            setSessionActivity(sessionActivityPendingIntent)
+            isActive = true
+        }
+        val playbackState = PlaybackStateCompat.Builder()
+            .setActions(
+                PlaybackStateCompat.ACTION_PLAY_PAUSE
+                        or PlaybackStateCompat.ACTION_SKIP_TO_NEXT
+                        or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
+            )
+        mediaSession.setPlaybackState(playbackState.build())
 
         sessionToken = mediaSession.sessionToken
 
-        notificationManager = AudioNotificationManager(
+        notificationManager = MusicNotificationManager(
             this,
             mediaSession.sessionToken,
             MusicPlayerNotificationListener(this)
-        )
+        ) {
+            currentAudioDuration = exoPlayer.duration
+        }
 
         val musicPlaybackPreparer = MusicPlaybackPreparer(musicSource) {
-            Log.d("MyMusicService", it?.description?.title.toString())
+            Log.d("serviceTAG", it?.description?.title.toString())
 
             curPlayingSong = it
             preparePlayer(
@@ -112,10 +125,6 @@ class MyMusicService : MediaBrowserServiceCompat() {
         sessionConnector.setQueueNavigator(AudioQueueNavigator())
 
         notificationManager.showNotification(exoPlayer)
-
-        serviceScope.launch {
-            musicSource.load()
-        }
     }
 
     private inner class AudioQueueNavigator : TimelineQueueNavigator(mediaSession) {
@@ -131,13 +140,17 @@ class MyMusicService : MediaBrowserServiceCompat() {
     ) {
         val curSongIndex = if (curPlayingSong == null) 0 else songs.indexOf(itemToPlay)
 
-        Log.d("MyMusicService", "preparePlayer -> $curSongIndex")
+        Log.d("serviceTAG", "preparePlayer -> $curSongIndex")
 
         exoPlayer.prepare(musicSource.asMediaSource(dataSourceFactory))
         exoPlayer.seekTo(curSongIndex, 0L)
         exoPlayer.playWhenReady = playNow
     }
 
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        exoPlayer.stop()
+    }
     override fun onDestroy() {
         mediaSession.run {
             isActive = false
@@ -160,7 +173,7 @@ class MyMusicService : MediaBrowserServiceCompat() {
     override fun onLoadChildren(parentId: String, result: Result<MutableList<MediaItem>>) {
         Log.d("serviceTAG", "onLoadChildren " + parentId)
         val resultSent = musicSource.whenReady { initialized ->
-            if (initialized) {
+            if (initialized && tree[parentId]?.isNotEmpty() == true) {
                 Log.d("serviceTAG", "songs count " + tree[parentId]?.size)
                 val treeItem = tree[parentId]?.map {
                     Log.d("serviceTAG", "children item " + it.getString(METADATA_KEY_TITLE))
@@ -169,6 +182,7 @@ class MyMusicService : MediaBrowserServiceCompat() {
                             .setTitle(it.getString(MediaMetadataCompat.METADATA_KEY_TITLE))
                             .setMediaId(it.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID))
                             .setDescription(it.getString(MediaMetadataCompat.METADATA_KEY_TITLE))
+//                            .setIconUri(localIconUri)
                             .build(), it.getLong(METADATA_KEY_FLAGS).toInt()
                     )
                 }?.toMutableList()

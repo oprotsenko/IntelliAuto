@@ -3,10 +3,11 @@ package com.automotive.bootcamp.mediaplayer.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.automotive.bootcamp.mediaplayer.domain.extensions.mapToPlaylistWrapper
 import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
 import com.automotive.bootcamp.mediaplayer.domain.useCases.*
+import com.automotive.bootcamp.mediaplayer.presentation.extensions.mapToPlaylistWrapper
 import com.automotive.bootcamp.mediaplayer.presentation.extensions.unwrap
+import com.automotive.bootcamp.mediaplayer.presentation.extensions.wrapAudio
 import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
 import kotlinx.coroutines.flow.collect
@@ -25,23 +26,24 @@ class OnlineAudioViewModel(
     init {
         viewModelScope.apply {
             launch {
-                managePlaylists.getAllPlaylists().collect {
-                    playlists = it
-                }
-            }
-            launch {
                 retrieveAudio()
+                managePlaylists.getAllPlaylists().collect { list ->
+                    playlists = list?.map { playlist ->
+                        playlist.mapToPlaylistWrapper()
+                    }
+                }
             }
         }
     }
 
-    private suspend fun retrieveAudio() {
+    suspend fun retrieveAudio() {
         val list = retrieveOnlineAudio.retrieveOnlineMusic()?.toMutableList()
-        list?.map {
-            it.isFavourite = manageFavourite.hasAudio(it.audio.id)
-            it.isRecent = manageRecent.hasAudio(it.audio.id)
-        }
-        onlineAudioData.value = list
+        onlineAudioData.postValue(list?.map { audio ->
+            audio.wrapAudio(
+                isFavourite = manageFavourite.hasAudio(audio.id),
+                isRecent = manageRecent.hasAudio(audio.id)
+            )
+        })
     }
 
     fun setIsFavourite(position: Int) {

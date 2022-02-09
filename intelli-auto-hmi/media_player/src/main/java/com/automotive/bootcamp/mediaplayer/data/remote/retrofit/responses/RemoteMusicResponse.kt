@@ -22,7 +22,7 @@ data class AudioResponse(
 
 fun AudioResponse.mapToAudioItem() =
     AudioItem(
-        id = this.artist.hashCode().toLong(),
+        id = this.source.hashCode().toLong(),
         cover = BASE_URL + this.image,
         title = this.title,
         artist = this.artist,

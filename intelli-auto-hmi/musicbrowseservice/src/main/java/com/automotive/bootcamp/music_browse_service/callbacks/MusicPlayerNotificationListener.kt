@@ -34,28 +34,3 @@ class MusicPlayerNotificationListener(
         }
     }
 }
-
-//private inner class PlayerNotificationListener :
-//    PlayerNotificationManager.NotificationListener {
-//    override fun onNotificationPosted(
-//        notificationId: Int,
-//        notification: Notification,
-//        ongoing: Boolean
-//    ) {
-//        if (ongoing && !isForegroundService) {
-//            ContextCompat.startForegroundService(
-//                applicationContext,
-//                Intent(applicationContext, this@MyMusicService.javaClass)
-//            )
-//
-//            startForeground(notificationId, notification)
-//            isForegroundService = true
-//        }
-//    }
-//
-//    override fun onNotificationCancelled(notificationId: Int, dismissedByUser: Boolean) {
-//        stopForeground(true)
-//        isForegroundService = false
-//        stopSelf()
-//    }
-//}

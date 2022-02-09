@@ -1,22 +1,29 @@
 package com.automotive.bootcamp.mediaplayer.data
 
-import com.automotive.bootcamp.mediaplayer.data.cache.CacheAudioSource
-import com.automotive.bootcamp.mediaplayer.data.models.AudioItem
+import com.automotive.bootcamp.mediaplayer.data.cache.CacheMediaSource
+import com.automotive.bootcamp.mediaplayer.data.extensions.mapToAudioItem
+import com.automotive.bootcamp.mediaplayer.data.extensions.mapToPlaylist
 import com.automotive.bootcamp.mediaplayer.domain.CacheMediaRepository
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
+import com.automotive.bootcamp.mediaplayer.domain.models.Audio
+import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class CacheAudioRepository(
-    private val cacheAudioSource: CacheAudioSource,
+    private val cacheMediaSource: CacheMediaSource,
     private val dispatcher: CoroutineDispatcher
 ) : CacheMediaRepository {
-    override suspend fun addAudio(audio: AudioItem): Long =
+
+    override suspend fun addAudios(audios: List<Audio>): List<Long> =
         withContext(dispatcher) {
-            cacheAudioSource.insertAudio(audio)
+            cacheMediaSource.insertAudios(audios.map {
+                it.mapToAudioItem()
+            })
         }
 
-    override suspend fun addAudios(audios: List<AudioItem>): List<Long> =
-        withContext(dispatcher) {
-            cacheAudioSource.insertAudios(audios)
+    override fun getAudios(pid: Long): Flow<Playlist?> =
+        cacheMediaSource.getPlaylist(pid).map { playlistItem ->
+            playlistItem?.mapToPlaylist()
         }
 }

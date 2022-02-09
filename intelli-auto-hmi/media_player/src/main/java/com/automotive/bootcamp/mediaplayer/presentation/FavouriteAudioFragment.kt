@@ -3,6 +3,7 @@ package com.automotive.bootcamp.mediaplayer.presentation
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.viewModelScope
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.automotive.bootcamp.common.base.BaseFragment
 import com.automotive.bootcamp.common.utils.AutoFitGridLayoutManager
 import com.automotive.bootcamp.common.utils.GRID_RECYCLE_COLUMN_WIDTH
