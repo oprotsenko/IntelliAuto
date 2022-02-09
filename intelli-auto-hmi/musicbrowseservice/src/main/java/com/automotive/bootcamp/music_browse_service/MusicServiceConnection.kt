@@ -33,7 +33,7 @@ class MusicServiceConnection(
         context,
         ComponentName(
             context,
-            MyMusicService::class.java
+            MusicService::class.java
         ),
         mediaBrowserConnectionCallback,
         null

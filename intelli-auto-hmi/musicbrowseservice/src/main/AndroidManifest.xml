@@ -27,7 +27,7 @@
          MediaBrowser (for browsing) and MediaController (for playback control)
         -->
         <service
-            android:name=".MyMusicService"
+            android:name=".MusicService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

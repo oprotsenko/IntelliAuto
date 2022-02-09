@@ -9,7 +9,6 @@
         android:required="true" />
 
     <application
-        android:name=".ServiceApp"
         android:allowBackup="true"
         android:appCategory="audio"
         android:icon="@mipmap/ic_launcher"

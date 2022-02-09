@@ -1,10 +1,9 @@
-package com.automotive.bootcamp.music_browse_service.callbacks
+package com.automotive.bootcamp.music_service.service
 
 import android.app.Notification
 import android.content.Intent
 import androidx.core.content.ContextCompat
-import com.automotive.bootcamp.music_browse_service.MusicService
-import com.automotive.bootcamp.music_browse_service.utils.NOTIFICATION_ID
+import com.automotive.bootcamp.music_service.utils.NOTIFICATION_ID
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 
 class MusicPlayerNotificationListener(
