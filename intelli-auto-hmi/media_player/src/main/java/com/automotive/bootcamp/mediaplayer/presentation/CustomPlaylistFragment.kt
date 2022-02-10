@@ -138,6 +138,9 @@ class CustomPlaylistFragment :
     private fun playAudio(position: Int) {
         val playlist = viewModel.getAudioList()
         if (playlist != null) {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.playbackControlsPanel, QuickPlaybackControlsFragment())
+                .commit()
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(
                     R.id.fullScreenContainer,
@@ -145,6 +148,7 @@ class CustomPlaylistFragment :
                 )
                 .addToBackStack(null)
                 .commit()
+
         }
     }
 

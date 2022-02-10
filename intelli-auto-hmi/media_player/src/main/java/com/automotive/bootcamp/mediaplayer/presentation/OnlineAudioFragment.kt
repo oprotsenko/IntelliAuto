@@ -53,8 +53,10 @@ class OnlineAudioFragment :
             parentFragmentManager.setFragmentResultListener(
                 FRAGMENT_RESULT_KEY, viewLifecycleOwner, { _, bundle ->
                     val playlistName = bundle.getString(PLAYLIST_NAME_KEY)
-                    playlistName?.let { viewModel.apply {
-                        createPlaylist(playlistName, dynamicallyAddAudioPosition) }
+                    playlistName?.let {
+                        viewModel.apply {
+                            createPlaylist(playlistName, dynamicallyAddAudioPosition)
+                        }
                     }
                 })
 
@@ -131,6 +133,9 @@ class OnlineAudioFragment :
                     NowPlayingFragment.newInstance(playlist, position)
                 )
                 .addToBackStack(null)
+                .commit()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.playbackControlsPanel, QuickPlaybackControlsFragment())
                 .commit()
         }
     }

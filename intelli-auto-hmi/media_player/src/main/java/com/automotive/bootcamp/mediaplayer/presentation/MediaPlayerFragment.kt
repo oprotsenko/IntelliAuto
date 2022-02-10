@@ -1,5 +1,9 @@
 package com.automotive.bootcamp.mediaplayer.presentation
 
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.automotive.bootcamp.common.base.BaseFragment
 import com.automotive.bootcamp.mediaplayer.R
@@ -15,19 +19,19 @@ class MediaPlayerFragment :
     override fun setListeners() {
         binding.apply {
             bLocalMusic.setOnClickListener {
-                navigateTo(localAudioFragment)
+                setContainerView(localAudioFragment)
             }
             bOnlineMusic.setOnClickListener {
-                navigateTo(onlineAudioFragment)
+                setContainerView(onlineAudioFragment)
             }
             bRecentMusic.setOnClickListener {
-                navigateTo(recentAudioFragment)
+                setContainerView(recentAudioFragment)
             }
             bPlaylists.setOnClickListener {
-                navigateTo(PlaylistsFragment())
+                setContainerView(PlaylistsFragment())
             }
             bFavourite.setOnClickListener {
-                navigateTo(favouriteAudioFragment)
+                setContainerView(favouriteAudioFragment)
             }
             bSearch.setOnClickListener {
 
@@ -38,7 +42,7 @@ class MediaPlayerFragment :
         }
     }
 
-    private fun navigateTo(fragment: Fragment) {
+    private fun setContainerView(fragment: Fragment) {
         parentFragmentManager.beginTransaction()
             .replace(R.id.mediaPlayerServiceContainer, fragment)
             .addToBackStack(null)

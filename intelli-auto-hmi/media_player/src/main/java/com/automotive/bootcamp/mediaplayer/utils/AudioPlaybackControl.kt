@@ -1,30 +1,29 @@
-package com.automotive.bootcamp.mediaplayer.domain.useCases
+package com.automotive.bootcamp.mediaplayer.utils
 
-import android.content.*
-import android.os.IBinder
+import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.automotive.bootcamp.mediaplayer.domain.models.Audio
+import com.automotive.bootcamp.mediaplayer.domain.useCases.AddRecent
+import com.automotive.bootcamp.mediaplayer.domain.useCases.RetrieveRecentAudio
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
-import com.automotive.bootcamp.mediaplayer.utils.basicService.AudioPlayerService
 import com.automotive.bootcamp.mediaplayer.utils.enums.RepeatMode
-import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.AudioCompletionListener
-import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.AudioRunningListener
+import com.automotive.bootcamp.mediaplayer.utils.player.ExoAudioPlayer
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 
 class AudioPlaybackControl(
-    private val context: Context,
+    context: Context,
     private val addRecent: AddRecent,
     retrieveRecentAudio: RetrieveRecentAudio
-) : AudioCompletionListener, AudioRunningListener, ServiceConnection {
+) : AudioCompletionListener, AudioRunningListener {
+
     private val job = Job()
     private val playbackScope = CoroutineScope(Dispatchers.IO + job)
 
-    private var audioPlayerService: AudioPlayerService? = null
-    private var serviceBound = false
-
+    private val audioPlayer = ExoAudioPlayer(context)
     private var audiosList = mutableListOf<Audio>()
     private var originalAudiosList = mutableListOf<Audio>()
     private val recentAudiosFlow: Flow<List<Audio>?>? = retrieveRecentAudio.retrieveRecentAudio()
@@ -57,6 +56,11 @@ class AudioPlaybackControl(
 
     private var position: Int = 0
 
+    init {
+        audioPlayer.setOnAudioCompletionListener(this)
+        audioPlayer.setOnAudioRunningListener(this)
+    }
+
     fun init(playlist: PlaylistWrapper, position: Int) {
         playbackScope.launch {
             recentAudiosFlow?.collect {
@@ -67,7 +71,6 @@ class AudioPlaybackControl(
         this.position = position
 
         val audioList = playlist.playlist.list
-
         this.audiosList.clear()
         if (audioList != null) {
             this.audiosList.addAll(audioList)
@@ -85,7 +88,7 @@ class AudioPlaybackControl(
 
     fun playAudio() {
         _currentAudio.value?.let {
-            playAudioWithService(it.url)
+            audioPlayer.playAudio(it.url)
             addToRecent()
             _isPlaying.value = true
         }
@@ -99,35 +102,9 @@ class AudioPlaybackControl(
         }
     }
 
-    private fun playAudioWithService(audioUrl: String?) {
-        if (serviceBound) {
-            audioPlayerService?.playAudio(audioUrl)
-        } else {
-            context.let {
-                Intent(it, AudioPlayerService::class.java).also { intent ->
-                    it.startService(intent)
-                    it.bindService(intent, this, Context.BIND_AUTO_CREATE)
-                }
-            }
-        }
-    }
-
-    override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-        val binder: AudioPlayerService.LocalBinder = service as AudioPlayerService.LocalBinder
-        audioPlayerService = binder.service
-        audioPlayerService?.setOnAudioCompletionListener(this)
-        audioPlayerService?.setOnAudioRunningListener(this)
-        audioPlayerService?.playAudio(_currentAudio.value?.url)
-        serviceBound = true
-    }
-
-    override fun onServiceDisconnected(p0: ComponentName?) {
-        serviceBound = false
-    }
-
     fun pauseAudio() {
         if (_isPlaying.value == true) {
-            audioPlayerService?.pauseAudio()
+            audioPlayer.pauseAudio()
             _isPlaying.value = false
         }
     }
@@ -205,12 +182,13 @@ class AudioPlaybackControl(
             RepeatMode.REPEAT_PLAYLIST -> {
                 _repeatMode.value = RepeatMode.DEFAULT
             }
-            else -> {}
+            else -> {
+            }
         }
     }
 
     fun updateAudioProgress(progress: Int) {
-        audioPlayerService?.updateAudioProgress(progress)
+        audioPlayer.updateAudioProgress(progress)
     }
 
     override fun onAudioCompletion() {
@@ -235,7 +213,7 @@ class AudioPlaybackControl(
         _currentAudioProgress.value = currentProgress
     }
 
-    fun clear(){
+    fun clear() {
         playbackScope.cancel()
     }
 }

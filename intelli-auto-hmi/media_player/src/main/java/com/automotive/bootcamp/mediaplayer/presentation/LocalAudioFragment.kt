@@ -134,6 +134,9 @@ class LocalAudioFragment :
                 )
                 .addToBackStack(null)
                 .commit()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.playbackControlsPanel, QuickPlaybackControlsFragment())
+                .commit()
         }
     }
 }

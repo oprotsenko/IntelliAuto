@@ -2,4 +2,5 @@
 <resources>
     <item name="fullScreenContainer" type="id"/>
     <item name="featureContainer" type="id"/>
+    <item name="playbackControlsPanel" type="id"/>
 </resources>

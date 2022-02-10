@@ -108,7 +108,7 @@ class LocalAudioViewModel(
                 wrapper.unwrap()
             }
         }
-        return list?.let { Playlist(name = "name", list = it).mapToPlaylistWrapper() }
+        return list?.let { Playlist(name = "local", list = it).mapToPlaylistWrapper() }
     }
 
     fun createPlaylist(playlistName: String, position: Int) {

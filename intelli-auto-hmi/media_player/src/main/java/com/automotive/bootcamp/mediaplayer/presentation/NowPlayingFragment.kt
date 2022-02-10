@@ -1,9 +1,17 @@
 package com.automotive.bootcamp.mediaplayer.presentation
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
+import android.util.Log
 import android.view.View
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.automotive.bootcamp.common.base.BaseFragment
 import com.automotive.bootcamp.common.extensions.loadImage
 import com.automotive.bootcamp.mediaplayer.R
@@ -11,25 +19,34 @@ import com.automotive.bootcamp.mediaplayer.databinding.FragmentNowPlayingBinding
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
 import com.automotive.bootcamp.mediaplayer.utils.PLAYLIST_BUNDLE_KEY
 import com.automotive.bootcamp.mediaplayer.utils.POSITION_BUNDLE_KEY
+import com.automotive.bootcamp.mediaplayer.utils.basicService.AudioPlayerService
 import com.automotive.bootcamp.mediaplayer.utils.enums.RepeatMode
 import com.automotive.bootcamp.mediaplayer.utils.extensions.timeToString
-import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.NowPlayingViewModel
+import com.automotive.bootcamp.mediaplayer.viewModels.NowPlayingViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class NowPlayingFragment :
     BaseFragment<FragmentNowPlayingBinding>(FragmentNowPlayingBinding::inflate) {
 
-    private val nowPlayingViewModel: NowPlayingViewModel by viewModel()
+    var service: AudioPlayerService? = null
+    val bound = MutableLiveData(false)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val playlist: PlaylistWrapper? = arguments?.getParcelable(PLAYLIST_BUNDLE_KEY)
-        val position = arguments?.getInt(POSITION_BUNDLE_KEY)
-        if (playlist != null && position != null) {
-            nowPlayingViewModel.init(
-                playlist, position
-            )
-            nowPlayingViewModel.playAudio()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val connection = object : ServiceConnection {
+            override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
+                service = (binder as AudioPlayerService.LocalBinder).service
+                bound.value = true
+            }
+
+            override fun onServiceDisconnected(name: ComponentName?) {
+                bound.value = false
+            }
+        }
+
+        Intent(requireContext(), AudioPlayerService::class.java).also { intent ->
+            requireActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE)
+            requireActivity().startService(intent)
         }
     }
 
@@ -42,36 +59,37 @@ class NowPlayingFragment :
             }
 
             ibNowPlayingPlayPause.setOnClickListener {
-                if (nowPlayingViewModel.isPlaying.value == true) {
-                    nowPlayingViewModel.pauseAudio()
-                } else {
-                    nowPlayingViewModel.playAudio()
+                service?.apply {
+                    if (isPlaying.value == true) {
+                        pauseAudio()
+                    } else {
+                        playAudio()
+                    }
                 }
             }
 
             ibNowPlayingNext.setOnClickListener {
-                nowPlayingViewModel.nextAudio()
+                service?.nextAudio()
             }
 
             ibNowPlayingPrevious.setOnClickListener {
-                nowPlayingViewModel.previousAudio()
+                service?.previousAudio()
             }
 
             ibNowPlayingShuffle.setOnClickListener {
-                nowPlayingViewModel.shuffleAudio()
+                service?.shuffleAudio()
             }
 
             ibNowPlayingRepeat.setOnClickListener {
-                nowPlayingViewModel.nextRepeatMode()
+                service?.nextRepeatMode()
             }
 
             sbNowPlayingProgress.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
                 override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                     if (fromUser) {
-                        nowPlayingViewModel.updateAudioProgress(progress)
+                        service?.updateAudioProgress(progress)
                     }
                 }
-
                 override fun onStartTrackingTouch(seekBar: SeekBar) {}
                 override fun onStopTrackingTouch(seekBar: SeekBar) {}
             })
@@ -79,47 +97,59 @@ class NowPlayingFragment :
     }
 
     override fun setObservers() {
-        nowPlayingViewModel.currentAudio.observe(viewLifecycleOwner) {
-            binding.apply {
-                it.cover?.let{ url ->
-                    ivNowPlayingAudioArt.loadImage(url)
-                    ivNowPlayingBackground.loadImage(url)
+        bound.observe(viewLifecycleOwner) {
+            val playlist: PlaylistWrapper? = arguments?.getParcelable(PLAYLIST_BUNDLE_KEY)
+            val position = arguments?.getInt(POSITION_BUNDLE_KEY)
+
+            if (playlist != null && position != null && bound.value == true) {
+                service?.apply {
+                    init(playlist, position)
+                    playAudio()
                 }
-
-                tvNowPlayingSingerName.text = it.artist
-                tvNowPlayingAudioTitle.text = it.title
             }
-        }
 
-        nowPlayingViewModel.isPlaying.observe(viewLifecycleOwner) {
-            updatePlayPauseButtonView(it)
-        }
+            service?.currentAudio?.observe(viewLifecycleOwner) {
+                binding.apply {
+                    it.cover?.let { url ->
+                        ivNowPlayingAudioArt.loadImage(url)
+                        ivNowPlayingBackground.loadImage(url)
+                    }
 
-        nowPlayingViewModel.isShuffled.observe(viewLifecycleOwner) {
-            updateShuffleButtonView(it)
-        }
-
-        nowPlayingViewModel.repeatMode.observe(viewLifecycleOwner) {
-            updateRepeatButtonView(it)
-        }
-
-        nowPlayingViewModel.currentAudioDuration.observe(viewLifecycleOwner) {
-            binding.apply {
-                tvNowPlayingAudioDuration.text = it.timeToString()
-                sbNowPlayingProgress.max = it
+                    tvNowPlayingSingerName.text = it.artist
+                    tvNowPlayingAudioTitle.text = it.title
+                }
             }
-        }
+            service?.isPlaying?.observe(viewLifecycleOwner) {
+                updatePlayPauseButtonView(it)
+            }
 
-        nowPlayingViewModel.currentAudioProgress.observe(viewLifecycleOwner) {
-            binding.apply {
-                sbNowPlayingProgress.progress = it
-                tvNowPlayingProgress.text = it.timeToString()
+            service?.isShuffled?.observe(viewLifecycleOwner) {
+                updateShuffleButtonView(it)
+            }
+
+            service?.repeatMode?.observe(viewLifecycleOwner) {
+                updateRepeatButtonView(it)
+            }
+
+            service?.currentAudioDuration?.observe(viewLifecycleOwner) {
+                binding.apply {
+                    tvNowPlayingAudioDuration.text = it.timeToString()
+                    sbNowPlayingProgress.max = it
+                }
+            }
+
+            service?.currentAudioProgress?.observe(viewLifecycleOwner) {
+                binding.apply {
+                    sbNowPlayingProgress.progress = it
+                    tvNowPlayingProgress.text = it.timeToString()
+                }
             }
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        service?.clear()
         arguments = null
     }
 

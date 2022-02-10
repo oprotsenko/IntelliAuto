@@ -1,4 +1,4 @@
-package com.automotive.bootcamp.mediaplayer.utils
+package com.automotive.bootcamp.mediaplayer.utils.player
 
 import android.content.Context
 import android.media.MediaPlayer
@@ -6,11 +6,10 @@ import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import com.automotive.bootcamp.mediaplayer.utils.AudioCompletionListener
+import com.automotive.bootcamp.mediaplayer.utils.AudioRunningListener
 import com.automotive.bootcamp.mediaplayer.utils.extensions.currentSeconds
 import com.automotive.bootcamp.mediaplayer.utils.extensions.seconds
-import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.AudioCompletionListener
-import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.AudioRunningListener
-import java.util.concurrent.TimeUnit
 
 class DefaultAudioPlayer(private val context: Context) : AudioPlayer,
     MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener {
@@ -52,6 +51,7 @@ class DefaultAudioPlayer(private val context: Context) : AudioPlayer,
     }
 
     override fun playAudio(url: String?) {
+        Log.d("MediaPlayerFragment", "player play " + url)
         if (lastAudioUrl != url) {
             player.apply {
                 reset()
