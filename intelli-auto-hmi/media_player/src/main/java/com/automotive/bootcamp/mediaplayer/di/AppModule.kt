@@ -21,6 +21,7 @@ val appModule = module {
     viewModel { CustomPlaylistViewModel(get(), get(), get()) }
     viewModel { NowPlayingViewModel(get()) }
     viewModel { QuickPlaybackControlsViewModel(get()) }
+    viewModel { MediaPlayerViewModel() }
 //    single { AudioPlayerService() }
 
     single { AudioPlaybackControl(get(), get(), get()) }

@@ -2,6 +2,7 @@ package com.automotive.bootcamp.mediaplayer.presentation
 
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.viewModelScope
 import com.automotive.bootcamp.common.base.BaseFragment
 import com.automotive.bootcamp.common.utils.AutoFitGridLayoutManager
@@ -11,6 +12,7 @@ import com.automotive.bootcamp.mediaplayer.utils.PLAYLIST_NAME_KEY
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.FragmentAudiosListBinding
 import com.automotive.bootcamp.mediaplayer.presentation.adapters.AudioRecyclerViewAdapter
+import com.automotive.bootcamp.mediaplayer.viewModels.MediaPlayerViewModel
 import com.automotive.bootcamp.mediaplayer.viewModels.RecentAudioViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -21,6 +23,8 @@ class RecentAudioFragment :
     MediaItemClickListener, OnItemClickListener {
 
     private val viewModel: RecentAudioViewModel by viewModel()
+    private val mediaPlayerViewModel: MediaPlayerViewModel by activityViewModels()
+
     private val audioAdapter: AudioRecyclerViewAdapter by lazy {
         AudioRecyclerViewAdapter(
             onMediaItemClickListener = this,
@@ -57,6 +61,9 @@ class RecentAudioFragment :
                         }
                     }
                 })
+        }
+        mediaPlayerViewModel.searchQuery.observe(viewLifecycleOwner){
+            audioAdapter.filter(it)
         }
     }
 

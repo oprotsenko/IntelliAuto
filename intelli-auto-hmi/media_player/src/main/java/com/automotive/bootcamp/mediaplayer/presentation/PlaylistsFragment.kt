@@ -2,6 +2,7 @@ package com.automotive.bootcamp.mediaplayer.presentation
 
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
+import androidx.fragment.app.activityViewModels
 import com.automotive.bootcamp.common.base.BaseFragment
 import com.automotive.bootcamp.common.extensions.hideKeyboard
 import com.automotive.bootcamp.common.utils.AutoFitGridLayoutManager
@@ -9,6 +10,7 @@ import com.automotive.bootcamp.common.utils.GRID_RECYCLE_COLUMN_WIDTH
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.FragmentAudiosListBinding
 import com.automotive.bootcamp.mediaplayer.presentation.adapters.PlaylistRecyclerViewAdapter
+import com.automotive.bootcamp.mediaplayer.viewModels.MediaPlayerViewModel
 import com.automotive.bootcamp.mediaplayer.viewModels.PlaylistsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -17,7 +19,9 @@ class PlaylistsFragment :
     MediaItemClickListener, OnItemClickListener {
 
     private val viewModel: PlaylistsViewModel by viewModel()
-    private val audioAdapter: PlaylistRecyclerViewAdapter by lazy {
+    private val mediaPlayerViewModel: MediaPlayerViewModel by activityViewModels()
+
+    private val playlistAdapter: PlaylistRecyclerViewAdapter by lazy {
         PlaylistRecyclerViewAdapter(
             onMediaItemClickListener = this,
             onItemClickListener = this,
@@ -27,7 +31,7 @@ class PlaylistsFragment :
     override fun initRecyclerView() {
         binding.rvAlbums.apply {
             layoutManager = AutoFitGridLayoutManager(requireContext(), GRID_RECYCLE_COLUMN_WIDTH)
-            adapter = audioAdapter
+            adapter = playlistAdapter
             itemAnimator?.changeDuration = 0
         }
     }
@@ -39,7 +43,7 @@ class PlaylistsFragment :
     override fun setObservers() {
         viewModel.apply {
             playlistsData.observe(viewLifecycleOwner) {
-                audioAdapter.submitList(it)
+                playlistAdapter.submitList(it)
             }
 
             selectedPlaylist.observe(viewLifecycleOwner) {
@@ -64,6 +68,10 @@ class PlaylistsFragment :
                     }
                 }
             }
+        }
+
+        mediaPlayerViewModel.searchQuery.observe(viewLifecycleOwner){
+            playlistAdapter.filter(it)
         }
     }
 

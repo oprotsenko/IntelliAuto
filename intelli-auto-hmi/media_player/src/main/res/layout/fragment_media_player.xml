@@ -70,16 +70,17 @@
             app:layout_constraintTop_toTopOf="@+id/bPlaylists"
             tools:textColor="#fff" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/bSearch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableTop="@drawable/ic_search_clickable"
-            android:textSize="0sp"
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/svField"
+            android:layout_width="120dp"
+            android:layout_height="15dp"
+            android:icon="@drawable/ic_search"
+            android:actionViewClass="android.widget.SearchView"
             app:layout_constraintBottom_toBottomOf="@+id/bSettings"
             app:layout_constraintEnd_toEndOf="@+id/bSettings"
             app:layout_constraintEnd_toStartOf="@+id/bSettings"
-            app:layout_constraintTop_toTopOf="@+id/bSettings" />
+            app:layout_constraintTop_toTopOf="@+id/bSettings" >
+        </androidx.appcompat.widget.SearchView>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/bSettings"

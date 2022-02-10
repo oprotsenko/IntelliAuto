@@ -10,7 +10,9 @@ import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.ItemPlaylistBinding
 import com.automotive.bootcamp.mediaplayer.presentation.MediaItemClickListener
 import com.automotive.bootcamp.mediaplayer.presentation.OnItemClickListener
+import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
+import java.util.*
 
 class PlaylistRecyclerViewAdapter(
     private val onMediaItemClickListener: MediaItemClickListener,
@@ -19,6 +21,33 @@ class PlaylistRecyclerViewAdapter(
     ListAdapter<PlaylistWrapper, PlaylistRecyclerViewAdapter.PlaylistViewHolder>(
         PlaylistDiffCallBack()
     ) {
+    private var unfilteredList: List<PlaylistWrapper>? = null
+    private val locale = Locale.getDefault()
+
+    override fun submitList(list: List<PlaylistWrapper>?) {
+        super.submitList(list)
+
+        list?.let {
+            unfilteredList = it
+        }
+    }
+
+    fun filter(query: String?) {
+        val list = mutableListOf<PlaylistWrapper>()
+
+        unfilteredList?.let {
+            if (!query.isNullOrEmpty()) {
+                val lcQuery = query.lowercase(locale)
+                list.addAll(it.filter { playlist ->
+                    playlist.playlistName.lowercase(locale).contains(lcQuery)
+                })
+            } else {
+                list.addAll(it)
+            }
+        }
+
+        super.submitList(list)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistViewHolder {
         val view =

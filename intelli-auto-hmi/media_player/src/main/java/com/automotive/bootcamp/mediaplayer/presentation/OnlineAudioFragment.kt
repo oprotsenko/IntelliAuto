@@ -2,7 +2,7 @@ package com.automotive.bootcamp.mediaplayer.presentation
 
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
-import androidx.lifecycle.asLiveData
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.viewModelScope
 import com.automotive.bootcamp.common.base.BaseFragment
 import com.automotive.bootcamp.common.utils.AutoFitGridLayoutManager
@@ -12,6 +12,7 @@ import com.automotive.bootcamp.mediaplayer.utils.PLAYLIST_NAME_KEY
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.FragmentAudiosListBinding
 import com.automotive.bootcamp.mediaplayer.presentation.adapters.AudioRecyclerViewAdapter
+import com.automotive.bootcamp.mediaplayer.viewModels.MediaPlayerViewModel
 import com.automotive.bootcamp.mediaplayer.viewModels.OnlineAudioViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -21,6 +22,8 @@ class OnlineAudioFragment :
     MediaItemClickListener, OnItemClickListener {
 
     private val viewModel: OnlineAudioViewModel by viewModel()
+    private val mediaPlayerViewModel: MediaPlayerViewModel by activityViewModels()
+
     private val audioAdapter: AudioRecyclerViewAdapter by lazy {
         AudioRecyclerViewAdapter(
             onMediaItemClickListener = this,
@@ -59,7 +62,9 @@ class OnlineAudioFragment :
                         }
                     }
                 })
-
+        }
+        mediaPlayerViewModel.searchQuery.observe(viewLifecycleOwner){
+            audioAdapter.filter(it)
         }
     }
 
