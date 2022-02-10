@@ -16,6 +16,11 @@ class MediaPlayerFragment :
     private var recentAudioFragment = RecentAudioFragment()
     private var favouriteAudioFragment = FavouriteAudioFragment()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContainerView(localAudioFragment)
+    }
+
     override fun setListeners() {
         binding.apply {
             bLocalMusic.setOnClickListener {

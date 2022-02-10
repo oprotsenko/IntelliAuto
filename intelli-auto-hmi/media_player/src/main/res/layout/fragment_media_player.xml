@@ -94,7 +94,6 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/mediaPlayerServiceContainer"
-        android:name="com.automotive.bootcamp.mediaplayer.presentation.LocalAudioFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout="@layout/fragment_audios_list" />
