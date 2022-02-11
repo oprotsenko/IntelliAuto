@@ -32,6 +32,10 @@
                 <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
         </service>
+        <provider
+            android:name=".utils.AlbumArtContentProvider"
+            android:authorities="com.automotive.bootcamp.music_service"
+            android:exported="true" />
     </application>
 
 </manifest>

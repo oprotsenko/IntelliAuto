@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
+import android.support.v4.media.MediaMetadataCompat
 import android.util.Log
 import com.automotive.bootcamp.music_service.R
 import java.io.File
@@ -44,6 +45,7 @@ class LocalAudioSource(
                     BitmapFactory.decodeStream(inputStream)
                 }
             val imagePath = saveImageToExternalStorage(image)
+            Log.d("serviceTAG", "cover url " + imagePath)
 
             val title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
             val artist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
