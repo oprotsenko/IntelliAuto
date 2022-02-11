@@ -15,7 +15,11 @@ class MediaPlayerFragment :
     private var recentAudioFragment = RecentAudioFragment()
     private var favouriteAudioFragment = FavouriteAudioFragment()
 
-    private val mediaPlayerViewModel: MediaPlayerViewModel by activityViewModels()
+    private val mediaPlayerViewModel: MediaPlayerViewModel by activityViewModels()?
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContainerView(localAudioFragment)
+    }
 
     override fun setListeners() {
         binding.apply {
@@ -33,8 +37,7 @@ class MediaPlayerFragment :
             }
             bFavourite.setOnClickListener {
                 setContainerView(favouriteAudioFragment)
-            }
-
+			}
             svField.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     return false
