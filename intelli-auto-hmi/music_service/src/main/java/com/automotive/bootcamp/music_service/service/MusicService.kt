@@ -16,6 +16,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.media.MediaBrowserServiceCompat
+import androidx.media.utils.MediaConstants.DESCRIPTION_EXTRAS_KEY_CONTENT_STYLE_PLAYABLE
+import androidx.media.utils.MediaConstants.DESCRIPTION_EXTRAS_VALUE_CONTENT_STYLE_GRID_ITEM
 import com.automotive.bootcamp.music_service.R
 import com.automotive.bootcamp.music_service.data.ServiceSources
 import com.automotive.bootcamp.music_service.utils.BROWSABLE_ROOT_ID
@@ -61,13 +63,14 @@ class MusicService : MediaBrowserServiceCompat() {
             addListener(playerListener)
         }
     }
-    private val dataSourceFactory by lazy {
-        DefaultDataSource.Factory(this)
-    }
+//    private val dataSourceFactory by lazy {
+//        DefaultDataSource.Factory(this)
+//    }
 
     private var curPlayingSong: MediaMetadataCompat? = null
     private var currentPlaylistItems: List<MediaMetadataCompat> = emptyList()
     private var currentMediaItemIndex: Int = 0
+    private var currentRoot: String? = null
 
     var isForegroundService = false
 
@@ -138,9 +141,11 @@ class MusicService : MediaBrowserServiceCompat() {
     ): BrowserRoot {
         Log.d("serviceTAG", "onGetRoot")
         val rootExtras = Bundle().apply {
-//            putBoolean(CONTENT_STYLE_SUPPORTED, true)
+            putInt(
+                DESCRIPTION_EXTRAS_KEY_CONTENT_STYLE_PLAYABLE,
+                DESCRIPTION_EXTRAS_VALUE_CONTENT_STYLE_GRID_ITEM)
         }
-        return BrowserRoot(BROWSABLE_ROOT_ID, null)
+        return BrowserRoot(BROWSABLE_ROOT_ID, rootExtras)
     }
 
     override fun onLoadChildren(
@@ -148,6 +153,7 @@ class MusicService : MediaBrowserServiceCompat() {
         result: Result<MutableList<MediaBrowserCompat.MediaItem>>
     ) {
         Log.d("serviceTAG", "onLoadChildren " + parentId)
+        currentRoot = parentId
         val resultSent = musicSource.whenReady { initialized ->
             if (initialized && tree[parentId]?.isNotEmpty() == true) {
                 Log.d("serviceTAG", "songs count " + tree[parentId]?.size)
@@ -236,7 +242,10 @@ class MusicService : MediaBrowserServiceCompat() {
 
     private inner class AudioQueueNavigator : TimelineQueueNavigator(mediaSession) {
         override fun getMediaDescription(player: Player, windowIndex: Int): MediaDescriptionCompat {
-            return musicSource.music[windowIndex].description
+            val currentList = musicSource.filter {
+                it.getString(METADATA_KEY_ALBUM) == currentRoot
+            }
+            return currentList[windowIndex].description
         }
     }
 
@@ -290,7 +299,6 @@ class MusicService : MediaBrowserServiceCompat() {
                 it.getString(METADATA_KEY_ALBUM) == item.getString(
                     METADATA_KEY_ALBUM
                 )
-            }
-                .sortedBy { it.getLong(METADATA_KEY_TRACK_NUMBER).toInt() }
+            }.sortedBy { it.getLong(METADATA_KEY_TRACK_NUMBER).toInt() }
     }
 }

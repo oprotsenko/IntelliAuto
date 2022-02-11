@@ -38,7 +38,7 @@ class ServiceSources(
     }
 
     private suspend fun retrieveRemoteAudio() {
-        val audios = remoteSource.load()?.mapToMediaMetadataCompat(REMOTE_ROOT_ID)
+        val audios = remoteSource.load()?.mapToMediaMetadataCompat(REMOTE_ROOT_ID, true)
         audios?.forEach {
             Log.d("serviceTAG", "cover path " + it.getString(METADATA_KEY_ART_URI))
             music.add(it)
@@ -46,20 +46,23 @@ class ServiceSources(
     }
 
     private fun retrieveLocalAudio() {
-        val audios = localSource.retrieveLocalAudio().mapToMediaMetadataCompat(LOCAL_ROOT_ID)
+        val audios = localSource.retrieveLocalAudio().mapToMediaMetadataCompat(LOCAL_ROOT_ID, false)
         audios.forEach {
             music.add(it)
         }
     }
 
-    private fun List<AudioItem>.mapToMediaMetadataCompat(rootId: String): List<MediaMetadataCompat> =
+    private fun List<AudioItem>.mapToMediaMetadataCompat(
+        rootId: String,
+        isRemote: Boolean
+    ): List<MediaMetadataCompat> =
         this.map { audio ->
-            val imageUri = AlbumArtContentProvider.mapUri(Uri.parse(audio.cover))
+            val imageUri = AlbumArtContentProvider.mapUri(Uri.parse(audio.cover), isRemote)
             Builder()
                 .putString(METADATA_KEY_MEDIA_ID, audio.id.toString())
                 .putString(METADATA_KEY_ARTIST, audio.artist)
                 .putString(METADATA_KEY_TITLE, audio.title)
-                .putString(METADATA_KEY_ART_URI, audio.cover)
+                .putString(METADATA_KEY_ART_URI, imageUri.toString())
                 .putString(METADATA_KEY_MEDIA_URI, audio.url)
                 .putString(METADATA_KEY_DISPLAY_TITLE, audio.title)
                 .putString(METADATA_KEY_DISPLAY_SUBTITLE, audio.artist)
@@ -69,15 +72,15 @@ class ServiceSources(
                 .build()
         }
 
-    fun asMediaSource(dataSourceFactory: DefaultDataSource.Factory): ConcatenatingMediaSource {
-        val concatenatingMediaSource = ConcatenatingMediaSource()
-        music.forEach { song ->
-            val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
-                .createMediaSource(song.getString(METADATA_KEY_MEDIA_URI).toUri())
-            concatenatingMediaSource.addMediaSource(mediaSource)
-        }
-        return concatenatingMediaSource
-    }
+//    fun asMediaSource(dataSourceFactory: DefaultDataSource.Factory): ConcatenatingMediaSource {
+//        val concatenatingMediaSource = ConcatenatingMediaSource()
+//        music.forEach { song ->
+//            val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
+//                .createMediaSource(song.getString(METADATA_KEY_MEDIA_URI).toUri())
+//            concatenatingMediaSource.addMediaSource(mediaSource)
+//        }
+//        return concatenatingMediaSource
+//    }
 
     override fun iterator(): Iterator<MediaMetadataCompat> = music.iterator()
 }

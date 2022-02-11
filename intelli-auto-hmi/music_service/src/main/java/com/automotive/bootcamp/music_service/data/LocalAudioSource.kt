@@ -64,11 +64,7 @@ class LocalAudioSource(
     }
 
     private fun saveImageToExternalStorage(bitmap: Bitmap): String? {
-        val directory = context.getDir("Pictures_serv", Context.MODE_PRIVATE)
-        if (!directory.exists()) {
-            directory.mkdir()
-        }
-        val file = File(directory, "${UUID.randomUUID()}.jpg")
+        val file = File(context.cacheDir, "${UUID.randomUUID()}.jpg")
         try {
             val fos = FileOutputStream(file)
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
