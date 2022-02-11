@@ -95,7 +95,7 @@ class CustomPlaylistViewModel(
                 wrapper.unwrap()
             }
         }
-        return list?.let { Playlist(name = "name", list = it).mapToPlaylistWrapper() }
+        return list?.let { Playlist(name = "custom", list = it).mapToPlaylistWrapper() }
     }
 
     fun createPlaylist(playlistName: String, position: Int) {

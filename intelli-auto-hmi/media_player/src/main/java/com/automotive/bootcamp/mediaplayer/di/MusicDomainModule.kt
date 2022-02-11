@@ -1,10 +1,11 @@
 package com.automotive.bootcamp.mediaplayer.di
 
 import com.automotive.bootcamp.mediaplayer.domain.useCases.*
+import com.automotive.bootcamp.mediaplayer.utils.AudioPlaybackControl
 import org.koin.dsl.module
 
 val domainModule = module {
-    factory { AudioPlaybackControl(get()) }
+
 //    factory { MediaServiceControl(get()) }
 
     single { ManageFavourite(get(), get()) }

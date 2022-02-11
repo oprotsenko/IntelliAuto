@@ -1,11 +1,11 @@
-package com.automotive.bootcamp.mediaplayer.utils
+package com.automotive.bootcamp.mediaplayer.utils.player
 
 import android.content.Context
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
-import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.AudioCompletionListener
-import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.AudioRunningListener
+import com.automotive.bootcamp.mediaplayer.utils.AudioCompletionListener
+import com.automotive.bootcamp.mediaplayer.utils.AudioRunningListener
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player

@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="?attr/colorPrimary"
     tools:context=".presentation.MainActivity">
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -33,12 +34,10 @@
         android:background="?attr/colorPrimaryVariant">
 
         <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/playbackControlsPanel"
-            android:name="com.automotive.bootcamp.mediaplayer.presentation.QuickPlaybackControlsFragment"
+            android:id="@id/playbackControlsPanel"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2"
-            tools:layout="@layout/fragment_playback_controls" />
+            android:layout_weight="2" />
 
         <View
             android:layout_width="1dp"

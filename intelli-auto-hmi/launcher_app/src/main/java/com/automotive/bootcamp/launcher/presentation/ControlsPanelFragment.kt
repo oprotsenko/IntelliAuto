@@ -24,6 +24,8 @@ class ControlsPanelFragment :
             ibMusic.setOnClickListener {
 //                checkPermission()
                 if (hasPermissions()) {
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.playbackControlsPanel, WelcomeFragment()).commit()
                     parentFragmentManager.beginTransaction().addToBackStack(null)
                         .replace(R.id.featureContainer, MediaPlayerFragment()).commit()
                 } else {

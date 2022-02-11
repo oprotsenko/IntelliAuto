@@ -11,6 +11,7 @@ import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
 import com.automotive.bootcamp.mediaplayer.utils.FAVOURITE_PLAYLIST_NAME
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
@@ -21,11 +22,10 @@ class FavouriteAudioRepository(
     private var pid: Long? = null
 
     private val job = Job()
-    private val repositoryScope = CoroutineScope(Dispatchers.Main + job)
+    private val repositoryScope = CoroutineScope(dispatcher + job)
 
     init {
-        repositoryScope.launch(dispatcher)
-        {
+        repositoryScope.launch {
             pid = getEmbeddedPlaylist()?.id
         }
     }

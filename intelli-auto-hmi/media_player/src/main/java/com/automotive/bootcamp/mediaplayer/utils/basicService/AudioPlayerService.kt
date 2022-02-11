@@ -4,14 +4,22 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
-import com.automotive.bootcamp.mediaplayer.utils.AudioPlayer
-import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.AudioCompletionListener
-import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.AudioRunningListener
-import org.koin.android.ext.android.get
+import android.util.Log
+import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
+import com.automotive.bootcamp.mediaplayer.utils.AudioPlaybackControl
+import org.koin.android.ext.android.inject
 
 class AudioPlayerService : Service() {
     private val iBinder = LocalBinder()
-    private val audioPlayer: AudioPlayer = get()
+
+    private val playbackControl: AudioPlaybackControl by inject()
+
+    val currentAudio = playbackControl.currentAudio
+    val isPlaying = playbackControl.isPlaying
+    val isShuffled = playbackControl.isShuffled
+    val repeatMode = playbackControl.repeatMode
+    val currentAudioDuration = playbackControl.currentAudioDuration
+    val currentAudioProgress = playbackControl.currentAudioProgress
 
     inner class LocalBinder : Binder() {
         val service: AudioPlayerService
@@ -22,28 +30,39 @@ class AudioPlayerService : Service() {
         return iBinder
     }
 
-    override fun onDestroy() {
-        audioPlayer.stop()
-        super.onDestroy()
+    fun init(playlist: PlaylistWrapper, position: Int) {
+        playbackControl.init(playlist, position)
     }
 
-    fun setOnAudioCompletionListener(audioCompletionListener: AudioCompletionListener) {
-        audioPlayer.setOnAudioCompletionListener(audioCompletionListener)
-    }
-
-    fun setOnAudioRunningListener(audioRunningListener: AudioRunningListener) {
-        audioPlayer.setOnAudioRunningListener(audioRunningListener)
-    }
-
-    fun playAudio(url: String?) {
-        audioPlayer.playAudio(url)
+    fun playAudio() {
+        playbackControl.playAudio()
     }
 
     fun pauseAudio() {
-        audioPlayer.pauseAudio()
+        playbackControl.pauseAudio()
+    }
+
+    fun nextAudio() {
+        playbackControl.nextAudio()
+    }
+
+    fun previousAudio() {
+        playbackControl.previousAudio()
+    }
+
+    fun shuffleAudio() {
+        playbackControl.shuffleAudio()
+    }
+
+    fun nextRepeatMode() {
+        playbackControl.nextRepeatMode()
     }
 
     fun updateAudioProgress(progress: Int) {
-        audioPlayer.updateAudioProgress(progress)
+        playbackControl.updateAudioProgress(progress)
+    }
+
+    fun clear(){
+        playbackControl.clear()
     }
 }

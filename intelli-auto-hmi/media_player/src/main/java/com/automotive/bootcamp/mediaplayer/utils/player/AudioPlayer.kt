@@ -1,7 +1,7 @@
-package com.automotive.bootcamp.mediaplayer.utils
+package com.automotive.bootcamp.mediaplayer.utils.player
 
-import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.AudioCompletionListener
-import com.automotive.bootcamp.mediaplayer.viewModels.nowPlaying.AudioRunningListener
+import com.automotive.bootcamp.mediaplayer.utils.AudioCompletionListener
+import com.automotive.bootcamp.mediaplayer.utils.AudioRunningListener
 
 interface AudioPlayer {
     fun setOnAudioCompletionListener(audioCompletionListener: AudioCompletionListener)
