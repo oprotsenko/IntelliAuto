@@ -1,9 +1,9 @@
 package com.automotive.bootcamp.mediaplayer.utils
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
 import com.automotive.bootcamp.mediaplayer.domain.models.Audio
 import com.automotive.bootcamp.mediaplayer.domain.useCases.AddRecent
 import com.automotive.bootcamp.mediaplayer.domain.useCases.RetrieveRecentAudio
@@ -11,8 +11,6 @@ import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
 import com.automotive.bootcamp.mediaplayer.utils.enums.RepeatMode
 import com.automotive.bootcamp.mediaplayer.utils.player.ExoAudioPlayer
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 
 class AudioPlaybackControl(
     context: Context,
@@ -26,8 +24,8 @@ class AudioPlaybackControl(
     private val audioPlayer = ExoAudioPlayer(context)
     private var audiosList = mutableListOf<Audio>()
     private var originalAudiosList = mutableListOf<Audio>()
-    private val recentAudiosFlow: Flow<List<Audio>?>? = retrieveRecentAudio.retrieveRecentAudio()
-    private var recentAudios: List<Audio>? = null
+    private val recentAudios: LiveData<List<Audio>?>? = retrieveRecentAudio.retrieveRecentAudio()?.asLiveData()
+//    private var recentAudios: List<Audio>? = null
 
     private val _isPlaying by lazy { MutableLiveData<Boolean>() }
     private val _isShuffled by lazy { MutableLiveData<Boolean>() }
@@ -63,9 +61,9 @@ class AudioPlaybackControl(
 
     fun init(playlist: PlaylistWrapper, position: Int) {
         playbackScope.launch {
-            recentAudiosFlow?.collect {
-                recentAudios = it
-            }
+//            recentAudiosFlow?.collect {
+//                recentAudios = it
+//            }
         }
 
         this.position = position
@@ -97,7 +95,7 @@ class AudioPlaybackControl(
     private fun addToRecent() {
         playbackScope.launch {
             _currentAudio.value?.let {
-                addRecent.execute(it.id, recentAudios)
+                addRecent.execute(it.id, recentAudios?.value)
             }
         }
     }

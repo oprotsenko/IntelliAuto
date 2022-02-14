@@ -8,6 +8,7 @@ const val IS_FAVOURITE_BUNDLE_KEY = "is favourite"
 
 const val FRAGMENT_RESULT_KEY = "fragment result"
 const val PLAYLIST_NAME_KEY = "playlist name"
+const val QUICK_FRAGMENT_TAG = "quick fragment tag"
 
 const val DATABASE_NAME = "audio_db"
 const val DATABASE_VERSION = 1

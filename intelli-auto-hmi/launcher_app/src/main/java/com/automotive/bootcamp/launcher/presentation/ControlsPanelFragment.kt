@@ -5,15 +5,22 @@ import android.content.pm.PackageManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.automotive.bootcamp.common.base.BaseFragment
 import com.automotive.bootcamp.common.utils.SUCCESS_CODE
 import com.automotive.bootcamp.launcher.R
 import com.automotive.bootcamp.launcher.databinding.FragmentControlsPanelBinding
 import com.automotive.bootcamp.mediaplayer.presentation.MediaPlayerFragment
+import com.automotive.bootcamp.mediaplayer.presentation.QuickPlaybackControlsFragment
+import com.automotive.bootcamp.mediaplayer.utils.QUICK_FRAGMENT_TAG
 
 class ControlsPanelFragment :
     BaseFragment<FragmentControlsPanelBinding>(FragmentControlsPanelBinding::inflate) {
+
+    private val welcomeFragment = WelcomeFragment()
+
+    //    private val quickPlaybackControlsFragment = QuickPlaybackControlsFragment()
+    private val mediaPlayerFragment = MediaPlayerFragment()
+    private val settingsFragment = SettingsFragment()
 
     private val permissions = arrayOf(
         Manifest.permission.READ_EXTERNAL_STORAGE
@@ -25,22 +32,22 @@ class ControlsPanelFragment :
 //                checkPermission()
                 if (hasPermissions()) {
                     parentFragmentManager.beginTransaction()
-                        .replace(R.id.playbackControlsPanel, WelcomeFragment()).commit()
-                    parentFragmentManager.beginTransaction().addToBackStack(null)
-                        .replace(R.id.featureContainer, MediaPlayerFragment()).commit()
+                        .replace(R.id.playbackControlsPanel, QuickPlaybackControlsFragment())
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.featureContainer, mediaPlayerFragment).commit()
                 } else {
                     requestStoragePermissions();
                 }
             }
 
             ibClimate.setOnClickListener {
-                parentFragmentManager.beginTransaction().addToBackStack(null)
-                    .replace(R.id.featureContainer, WelcomeFragment()).commit()
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.featureContainer, welcomeFragment).commit()
             }
 
             ibSettings.setOnClickListener {
-                parentFragmentManager.beginTransaction().addToBackStack(null)
-                    .replace(R.id.featureContainer, WelcomeFragment()).commit()
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.featureContainer, settingsFragment).commit()
             }
         }
     }

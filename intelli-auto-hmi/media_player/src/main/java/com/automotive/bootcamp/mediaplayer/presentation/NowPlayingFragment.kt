@@ -6,11 +6,8 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
-import android.view.View
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.automotive.bootcamp.common.base.BaseFragment
 import com.automotive.bootcamp.common.extensions.loadImage
@@ -22,8 +19,6 @@ import com.automotive.bootcamp.mediaplayer.utils.POSITION_BUNDLE_KEY
 import com.automotive.bootcamp.mediaplayer.utils.basicService.AudioPlayerService
 import com.automotive.bootcamp.mediaplayer.utils.enums.RepeatMode
 import com.automotive.bootcamp.mediaplayer.utils.extensions.timeToString
-import com.automotive.bootcamp.mediaplayer.viewModels.NowPlayingViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class NowPlayingFragment :
     BaseFragment<FragmentNowPlayingBinding>(FragmentNowPlayingBinding::inflate) {

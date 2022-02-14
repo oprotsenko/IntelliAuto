@@ -11,6 +11,7 @@ import com.automotive.bootcamp.mediaplayer.utils.PLAYLIST_NAME_KEY
 import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.FragmentAudiosListBinding
 import com.automotive.bootcamp.mediaplayer.presentation.adapters.AudioRecyclerViewAdapter
+import com.automotive.bootcamp.mediaplayer.utils.QUICK_FRAGMENT_TAG
 import com.automotive.bootcamp.mediaplayer.viewModels.RecentAudioViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -132,7 +133,7 @@ class RecentAudioFragment :
                 .addToBackStack(null)
                 .commit()
             parentFragmentManager.beginTransaction()
-                .replace(R.id.playbackControlsPanel, QuickPlaybackControlsFragment())
+                .replace(R.id.playbackControlsPanel, QuickPlaybackControlsFragment(), QUICK_FRAGMENT_TAG)
                 .commit()
         }
     }
