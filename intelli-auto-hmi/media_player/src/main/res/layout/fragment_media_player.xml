@@ -72,15 +72,20 @@
 
         <androidx.appcompat.widget.SearchView
             android:id="@+id/svField"
-            android:layout_width="120dp"
-            android:layout_height="15dp"
-            android:icon="@drawable/ic_search"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/margin"
+            android:layout_marginEnd="@dimen/margin"
+            android:layout_marginBottom="@dimen/margin"
+            android:layout_marginTop="@dimen/margin"
+            app:iconifiedByDefault="false"
+            app:queryHint="Search here"
             android:actionViewClass="android.widget.SearchView"
-            app:layout_constraintBottom_toBottomOf="@+id/bSettings"
-            app:layout_constraintEnd_toEndOf="@+id/bSettings"
+            android:background="@color/design_default_color_secondary"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/bSettings"
-            app:layout_constraintTop_toTopOf="@+id/bSettings" >
-        </androidx.appcompat.widget.SearchView>
+            app:layout_constraintStart_toEndOf="@+id/bFavourite" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/bSettings"

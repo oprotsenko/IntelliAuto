@@ -7,6 +7,7 @@ import android.os.IBinder
 import android.util.Log
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
 import com.automotive.bootcamp.mediaplayer.utils.AudioPlaybackControl
+import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
 
 class AudioPlayerService : Service() {
@@ -30,8 +31,8 @@ class AudioPlayerService : Service() {
         return iBinder
     }
 
-    fun init(playlist: PlaylistWrapper, position: Int) {
-        playbackControl.init(playlist, position)
+    fun init(playlist: PlaylistWrapper, id: Long) {
+        playbackControl.init(playlist, id)
     }
 
     fun playAudio() {
@@ -62,7 +63,8 @@ class AudioPlayerService : Service() {
         playbackControl.updateAudioProgress(progress)
     }
 
-    fun clear(){
-        playbackControl.clear()
+    override fun onDestroy() {
+        super.onDestroy()
+        playbackControl.onServiceDestroy()
     }
 }

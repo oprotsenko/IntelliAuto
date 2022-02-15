@@ -6,25 +6,21 @@ import android.media.MediaMetadataRetriever
 import com.automotive.bootcamp.mediaplayer.utils.AudioPlaybackControl
 import com.automotive.bootcamp.mediaplayer.utils.player.AudioPlayer
 import com.automotive.bootcamp.mediaplayer.utils.player.ExoAudioPlayer
-import com.automotive.bootcamp.mediaplayer.utils.basicService.AudioPlayerService
 import com.automotive.bootcamp.mediaplayer.viewModels.*
-import com.automotive.bootcamp.mediaplayer.viewModels.NowPlayingViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
+    viewModel { MediaPlayerViewModel() }
     viewModel { PlaylistsViewModel(get(), get()) }
     viewModel { FavouriteAudioViewModel(get(), get(), get(), get()) }
     viewModel { RecentAudioViewModel(get(), get(), get(), get()) }
     viewModel { LocalAudioViewModel(get(), get(), get(), get()) }
     viewModel { OnlineAudioViewModel(get(), get(), get(), get()) }
     viewModel { CustomPlaylistViewModel(get(), get(), get()) }
-    viewModel { NowPlayingViewModel(get()) }
-    viewModel { QuickPlaybackControlsViewModel(get()) }
-    viewModel { MediaPlayerViewModel() }
 //    single { AudioPlayerService() }
 
-    single { AudioPlaybackControl(get(), get(), get()) }
+    single { AudioPlaybackControl(get(), get()) }
     single { MediaMetadataRetriever() }
     single { provideAudioPlayer(get()) }
     single { getContentResolver(get()) }

@@ -21,7 +21,7 @@ class OnlineAudioViewModel(
 ) : ViewModel() {
     val onlineAudioData by lazy { MutableLiveData<List<AudioWrapper>>() }
     var playlists: List<PlaylistWrapper>? = listOf()
-    var dynamicallyAddAudioPosition: Int = 0
+    var dynamicallyAddAudioId: Long = 0
 
     init {
         viewModelScope.apply {
@@ -46,27 +46,26 @@ class OnlineAudioViewModel(
         })
     }
 
-    fun setIsFavourite(position: Int) {
+    fun setIsFavourite(aid: Long) {
         viewModelScope.launch {
-            onlineAudioData.value?.let {
-                val aid = it[position].audio.id
-                if (manageFavourite.hasAudio(aid)) {
-                    manageFavourite.removeFavourite(aid)
-                } else {
-                    manageFavourite.addFavourite(aid)
-                }
+            if (manageFavourite.hasAudio(aid)) {
+                manageFavourite.removeFavourite(aid)
+            } else {
+                manageFavourite.addFavourite(aid)
             }
             retrieveAudio()
         }
     }
 
-    fun removeFromRecent(position: Int) {
+    fun removeFromRecent(aid: Long) {
         viewModelScope.launch {
-            onlineAudioData.value?.let {
-                manageRecent.removeAudio(it[position].audio.id)
-                retrieveAudio()
-            }
+            manageRecent.removeAudio(aid)
+            retrieveAudio()
         }
+    }
+
+    fun isRecent(aid: Long): Boolean? {
+        return onlineAudioData.value?.first { it.audio.id == aid }?.isRecent
     }
 
     fun getAudioList(): PlaylistWrapper? {
@@ -78,23 +77,20 @@ class OnlineAudioViewModel(
         return list?.let { Playlist(name = "online", list = it).mapToPlaylistWrapper() }
     }
 
-    fun createPlaylist(playlistName: String, position: Int) {
+    fun createPlaylist(playlistName: String, aid: Long) {
         viewModelScope.launch {
-            addToPlaylist(managePlaylists.createPlaylist(playlistName), position)
+            addToPlaylist(managePlaylists.createPlaylist(playlistName), aid)
         }
     }
 
-    fun addToPlaylist(pid: Long, position: Int) {
-        onlineAudioData.value?.let {
-            val aid = it[position].audio.id
-            viewModelScope.launch {
-                if (pid == manageFavourite.getId()) {
-                    if (!manageFavourite.hasAudio(aid)) {
-                        manageFavourite.addFavourite(aid)
-                    }
-                } else {
-                    managePlaylists.addToPlaylist(aid, pid)
+    fun addToPlaylist(pid: Long, aid: Long) {
+        viewModelScope.launch {
+            if (pid == manageFavourite.getId()) {
+                if (!manageFavourite.hasAudio(aid)) {
+                    manageFavourite.addFavourite(aid)
                 }
+            } else {
+                managePlaylists.addToPlaylist(aid, pid)
             }
         }
     }

@@ -1,5 +1,9 @@
 package com.automotive.bootcamp.mediaplayer.presentation
 
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -15,10 +19,17 @@ class MediaPlayerFragment :
     private var recentAudioFragment = RecentAudioFragment()
     private var favouriteAudioFragment = FavouriteAudioFragment()
 
-    private val mediaPlayerViewModel: MediaPlayerViewModel by activityViewModels()?
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    private val mediaPlayerViewModel: MediaPlayerViewModel by activityViewModels()
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val view = super.onCreateView(inflater, container, savedInstanceState)
         setContainerView(localAudioFragment)
+
+        return view
     }
 
     override fun setListeners() {
@@ -56,6 +67,9 @@ class MediaPlayerFragment :
     }
 
     private fun setContainerView(fragment: Fragment) {
+        binding.svField.setQuery("", false)
+        binding.svField.isIconified = true
+
         parentFragmentManager.beginTransaction()
             .replace(R.id.mediaPlayerServiceContainer, fragment)
             .addToBackStack(null)

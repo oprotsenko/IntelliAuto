@@ -65,7 +65,7 @@ class CustomPlaylistFragment :
                     val playlistName = bundle.getString(PLAYLIST_NAME_KEY)
                     playlistName?.let {
                         viewModel.apply {
-                            createPlaylist(playlistName, dynamicallyAddAudioPosition)
+                            createPlaylist(playlistName, dynamicallyAddAudioId)
                         }
                     }
                 })
@@ -75,15 +75,15 @@ class CustomPlaylistFragment :
         }
     }
 
-    override fun onMediaClick(position: Int) {
-        playAudio(position)
+    override fun onMediaClick(id: Long) {
+        playAudio(id)
     }
 
-    override fun onItemClick(view: View, position: Int) {
+    override fun onItemClick(view: View, id: Long) {
         val popupMenu = PopupMenu(requireContext(), view)
         popupMenu.apply {
             inflate(R.menu.audio_popup_menu)
-            if (viewModel.customAudio?.get(position)?.isRecent == false) {
+            if (viewModel.isRecent(id) == false) {
                 menu.findItem(R.id.audioRemoveRecent).apply {
                     isVisible = false
                 }
@@ -92,7 +92,7 @@ class CustomPlaylistFragment :
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.audioPlay -> {
-                        playAudio(position)
+                        playAudio(id)
                         return@setOnMenuItemClickListener true
                     }
                     R.id.audioAddToPlaylist -> {
@@ -104,7 +104,7 @@ class CustomPlaylistFragment :
                                     i,
                                     playlists[i].playlistName
                                 ).setOnMenuItemClickListener submenu@{
-                                    viewModel.addToPlaylist(playlists[i].playlist.id, position)
+                                    viewModel.addToPlaylist(playlists[i].playlist.id, id)
                                     return@submenu true
                                 }
                                 show()
@@ -113,7 +113,7 @@ class CustomPlaylistFragment :
                         return@setOnMenuItemClickListener true
                     }
                     R.id.audioCreatePlaylist -> {
-                        viewModel.dynamicallyAddAudioPosition = position
+                        viewModel.dynamicallyAddAudioId = id
                         val enterNameDialog = EnterNameDialog()
                         enterNameDialog.show(
                             parentFragmentManager, null
@@ -121,15 +121,15 @@ class CustomPlaylistFragment :
                         return@setOnMenuItemClickListener true
                     }
                     R.id.audioRemoveRecent -> {
-                        viewModel.removeFromRecent(position)
+                        viewModel.removeFromRecent(id)
                         return@setOnMenuItemClickListener true
                     }
                     R.id.audioAddRemoveFavourite -> {
-                        viewModel.setIsFavourite(position)
+                        viewModel.setIsFavourite(id)
                         return@setOnMenuItemClickListener true
                     }
                     R.id.audioRemoveCurrent -> {
-                        viewModel.removeFromCurrentPlaylist(position)
+                        viewModel.removeFromCurrentPlaylist(id)
                         return@setOnMenuItemClickListener true
                     }
                     else -> {
@@ -141,7 +141,7 @@ class CustomPlaylistFragment :
         }
     }
 
-    private fun playAudio(position: Int) {
+    private fun playAudio(id: Long) {
         val playlist = viewModel.getAudioList()
         if (playlist != null) {
             parentFragmentManager.beginTransaction()
@@ -150,7 +150,7 @@ class CustomPlaylistFragment :
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(
                     R.id.fullScreenContainer,
-                    NowPlayingFragment.newInstance(playlist, position)
+                    NowPlayingFragment.newInstance(playlist, id)
                 )
                 .addToBackStack(null)
                 .commit()

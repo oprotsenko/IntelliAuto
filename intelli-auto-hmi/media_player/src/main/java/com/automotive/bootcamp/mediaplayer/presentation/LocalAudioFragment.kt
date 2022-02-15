@@ -59,7 +59,7 @@ class LocalAudioFragment :
                     val playlistName = bundle.getString(PLAYLIST_NAME_KEY)
                     playlistName?.let {
                         viewModel.apply {
-                            createPlaylist(playlistName, dynamicallyAddAudioPosition)
+                            createPlaylist(playlistName, dynamicallyAddAudioId)
                         }
                     }
                 })
@@ -69,15 +69,15 @@ class LocalAudioFragment :
         }
     }
 
-    override fun onMediaClick(position: Int) {
-        playAudio(position)
+    override fun onMediaClick( id: Long) {
+        playAudio(id)
     }
 
-    override fun onItemClick(view: View, position: Int) {
+    override fun onItemClick(view: View, id: Long) {
         val popupMenu = PopupMenu(requireContext(), view)
         popupMenu.apply {
             inflate(R.menu.audio_popup_menu)
-            if (viewModel.localAudioData.value?.get(position)?.isRecent == false) {
+            if (viewModel.isRecent(id) == false) {
                 menu.findItem(R.id.audioRemoveRecent).apply {
                     isVisible = false
                 }
@@ -85,7 +85,7 @@ class LocalAudioFragment :
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.audioPlay -> {
-                        playAudio(position)
+                        playAudio(id)
                         return@setOnMenuItemClickListener true
                     }
                     R.id.audioAddToPlaylist -> {
@@ -97,7 +97,7 @@ class LocalAudioFragment :
                                     i,
                                     playlists[i].playlistName
                                 ).setOnMenuItemClickListener submenu@{
-                                    viewModel.addToPlaylist(playlists[i].playlist.id, position)
+                                    viewModel.addToPlaylist(playlists[i].playlist.id, id)
                                     return@submenu true
                                 }
                                 show()
@@ -106,7 +106,7 @@ class LocalAudioFragment :
                         return@setOnMenuItemClickListener true
                     }
                     R.id.audioCreatePlaylist -> {
-                        viewModel.dynamicallyAddAudioPosition = position
+                        viewModel.dynamicallyAddAudioId = id
                         val enterNameDialog = EnterNameDialog()
                         enterNameDialog.show(
                             parentFragmentManager, null
@@ -114,11 +114,11 @@ class LocalAudioFragment :
                         return@setOnMenuItemClickListener true
                     }
                     R.id.audioRemoveRecent -> {
-                        viewModel.removeFromRecent(position)
+                        viewModel.removeFromRecent(id)
                         return@setOnMenuItemClickListener true
                     }
                     R.id.audioAddRemoveFavourite -> {
-                        viewModel.setIsFavourite(position)
+                        viewModel.setIsFavourite(id)
                         return@setOnMenuItemClickListener true
                     }
                     else -> {
@@ -130,13 +130,13 @@ class LocalAudioFragment :
         }
     }
 
-    private fun playAudio(position: Int) {
+    private fun playAudio(id: Long) {
         val playlist = viewModel.getAudioList()
         if (playlist != null) {
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(
                     R.id.fullScreenContainer,
-                    NowPlayingFragment.newInstance(playlist, position)
+                    NowPlayingFragment.newInstance(playlist, id)
                 )
                 .addToBackStack(null)
                 .commit()

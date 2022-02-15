@@ -51,13 +51,10 @@ class RecentAudioRepository(
         } ?: false
     }
 
-    override fun getPlaylist(): Flow<Playlist?>? {
-        pid?.let {
-            return cacheMediaSource.getPlaylist(it).flowOn(dispatcher)?.map { playlistItem ->
-                playlistItem?.mapToPlaylist()
-            }
+    override fun getPlaylist(): Flow<Playlist?> {
+        return cacheMediaSource.getPlaylist(pid).flowOn(dispatcher).map { playlistItem ->
+            playlistItem?.mapToPlaylist()
         }
-        return null
     }
 
     override suspend fun getSize(): Int? =

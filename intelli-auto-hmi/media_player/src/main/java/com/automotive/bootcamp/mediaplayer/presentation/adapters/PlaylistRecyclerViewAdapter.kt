@@ -10,7 +10,6 @@ import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.ItemPlaylistBinding
 import com.automotive.bootcamp.mediaplayer.presentation.MediaItemClickListener
 import com.automotive.bootcamp.mediaplayer.presentation.OnItemClickListener
-import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
 import java.util.*
 
@@ -25,9 +24,13 @@ class PlaylistRecyclerViewAdapter(
     private val locale = Locale.getDefault()
 
     override fun submitList(list: List<PlaylistWrapper>?) {
-        super.submitList(list)
+        val playlistsWithAudios = list?.filter { playlistWrapped ->
+            playlistWrapped.playlist.list?.isNotEmpty() == true
+        }
 
-        list?.let {
+        super.submitList(playlistsWithAudios)
+
+        playlistsWithAudios?.let {
             unfilteredList = it
         }
     }
@@ -57,13 +60,13 @@ class PlaylistRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
         with(holder) {
-            bind(getItem(bindingAdapterPosition))
-            binding.apply {
-                root.setOnClickListener {
-                    onMediaItemClickListener.onMediaClick(bindingAdapterPosition)
+            getItem(bindingAdapterPosition).run {
+                bind(this)
+                binding.root.setOnClickListener {
+                    onMediaItemClickListener.onMediaClick(this.playlist.id)
                 }
                 popupMenu.setOnClickListener {
-                    onItemClickListener.onItemClick(popupMenu, bindingAdapterPosition)
+                    onItemClickListener.onItemClick(popupMenu, this.playlist.id)
                 }
             }
         }

@@ -40,11 +40,6 @@ class QuickPlaybackControlsFragment :
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        service?.clear()
-    }
-
     override fun setObservers() {
         bound.observe(viewLifecycleOwner) {
             service?.currentAudio?.observe(viewLifecycleOwner) {

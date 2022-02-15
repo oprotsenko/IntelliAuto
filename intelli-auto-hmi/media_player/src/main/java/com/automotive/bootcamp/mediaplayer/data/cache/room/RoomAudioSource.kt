@@ -22,7 +22,6 @@ class RoomAudioSource(context: Context) : CacheMediaSource {
     override suspend fun playlistExists(pid: Long): Boolean =
         dao.playlistExists(pid)
 
-
     override suspend fun playlistHasAudio(pid: Long, aid: Long): Boolean =
         dao.playlistHasAudio(pid, aid) > 0
 
@@ -41,13 +40,19 @@ class RoomAudioSource(context: Context) : CacheMediaSource {
     override suspend fun deleteAudioFromPlaylist(crossRef: AudioPlaylistItemCrossRef) =
         dao.deleteAudioFromPlaylist(crossRef.mapToAudioPlaylistCrossRefEntity())
 
+    override suspend fun deleteAllAudiosFromPlaylist(pid: Long) =
+        dao.deleteAllAudiosFromPlaylist(pid)
+
+    override suspend fun isEmbeddedPlaylist(pid: Long): Boolean =
+        dao.isEmbeddedPlaylist(pid)
+
     override suspend fun getEmbeddedPlaylist(name: String): EmbeddedPlaylistItem? =
         dao.getEmbeddedPlaylist(name)?.mapToEmbeddedPlaylistItem()
 
     override suspend fun getPlaylistSize(pid: Long): Int =
         dao.getPlaylistSize(pid)
 
-    override fun getPlaylist(pid: Long): Flow<PlaylistItem?> =
+    override fun getPlaylist(pid: Long?): Flow<PlaylistItem?> =
         dao.getPlaylistWithAudios(pid).map { playlistWithAudios ->
             playlistWithAudios?.mapToPlaylistItem()
         }

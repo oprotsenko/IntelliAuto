@@ -1,33 +1,22 @@
 package com.automotive.bootcamp.mediaplayer.utils
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.automotive.bootcamp.mediaplayer.domain.models.Audio
 import com.automotive.bootcamp.mediaplayer.domain.useCases.AddRecent
-import com.automotive.bootcamp.mediaplayer.domain.useCases.RetrieveRecentAudio
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
 import com.automotive.bootcamp.mediaplayer.utils.enums.RepeatMode
 import com.automotive.bootcamp.mediaplayer.utils.player.ExoAudioPlayer
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 
 class AudioPlaybackControl(
     context: Context,
-    private val addRecent: AddRecent,
-    retrieveRecentAudio: RetrieveRecentAudio
+    private val addRecent: AddRecent
 ) : AudioCompletionListener, AudioRunningListener {
-
-    private val job = Job()
-    private val playbackScope = CoroutineScope(Dispatchers.IO + job)
 
     private val audioPlayer = ExoAudioPlayer(context)
     private var audiosList = mutableListOf<Audio>()
     private var originalAudiosList = mutableListOf<Audio>()
-    private val recentAudiosFlow: Flow<List<Audio>?>? = retrieveRecentAudio.retrieveRecentAudio()
-    private var recentAudios: List<Audio>? = null
 
     private val _isPlaying by lazy { MutableLiveData<Boolean>() }
     private val _isShuffled by lazy { MutableLiveData<Boolean>() }
@@ -61,27 +50,20 @@ class AudioPlaybackControl(
         audioPlayer.setOnAudioRunningListener(this)
     }
 
-    fun init(playlist: PlaylistWrapper, position: Int) {
-        playbackScope.launch {
-            recentAudiosFlow?.collect {
-                recentAudios = it
+    fun init(playlist: PlaylistWrapper, id: Long) {
+        playlist.playlist.list?.let {
+            audiosList.clear()
+            originalAudiosList.clear()
+            audiosList.addAll(it)
+            originalAudiosList.addAll(it)
+
+            _currentAudio.value = it.first { audio ->
+                audio.id == id
+            }.also { audio ->
+                position = it.indexOf(audio)
             }
         }
 
-        this.position = position
-
-        val audioList = playlist.playlist.list
-        this.audiosList.clear()
-        if (audioList != null) {
-            this.audiosList.addAll(audioList)
-        }
-
-        originalAudiosList.clear()
-        if (audioList != null) {
-            originalAudiosList.addAll(audioList)
-        }
-
-        _currentAudio.value = this.audiosList[position]
         _isShuffled.value = false
         _repeatMode.value = RepeatMode.DEFAULT
     }
@@ -89,16 +71,8 @@ class AudioPlaybackControl(
     fun playAudio() {
         _currentAudio.value?.let {
             audioPlayer.playAudio(it.url)
-            addToRecent()
+            addRecent.execute(it.id)
             _isPlaying.value = true
-        }
-    }
-
-    private fun addToRecent() {
-        playbackScope.launch {
-            _currentAudio.value?.let {
-                addRecent.execute(it.id, recentAudios)
-            }
         }
     }
 
@@ -213,7 +187,7 @@ class AudioPlaybackControl(
         _currentAudioProgress.value = currentProgress
     }
 
-    fun clear() {
-        playbackScope.cancel()
+    fun onServiceDestroy() {
+        addRecent.onServiceDestroy()
     }
 }

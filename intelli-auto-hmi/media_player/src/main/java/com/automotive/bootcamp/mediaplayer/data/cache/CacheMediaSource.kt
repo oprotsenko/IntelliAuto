@@ -16,8 +16,10 @@ interface CacheMediaSource {
     suspend fun insertAudioPlaylistCrossRef(crossRef: AudioPlaylistItemCrossRef)
     suspend fun deletePlaylist(pid: Long)
     suspend fun deleteAudioFromPlaylist(crossRef: AudioPlaylistItemCrossRef)
+    suspend fun deleteAllAudiosFromPlaylist(pid: Long)
+    suspend fun isEmbeddedPlaylist(pid: Long): Boolean
     suspend fun getEmbeddedPlaylist(name: String): EmbeddedPlaylistItem?
     suspend fun getPlaylistSize(pid: Long): Int
-    fun getPlaylist(pid: Long): Flow<PlaylistItem?>
+    fun getPlaylist(pid: Long?): Flow<PlaylistItem?>
     fun getAllPlaylists(): Flow<List<PlaylistItem>?>
 }

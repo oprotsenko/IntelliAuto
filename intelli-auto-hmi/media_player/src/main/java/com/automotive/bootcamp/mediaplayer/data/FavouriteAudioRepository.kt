@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.map
 class FavouriteAudioRepository(
     private val cacheMediaSource: CacheMediaSource,
     private val dispatcher: CoroutineDispatcher
-) : FavouriteMediaRepository{
+) : FavouriteMediaRepository {
     private var pid: Long? = null
 
     private val job = Job()
@@ -52,13 +52,10 @@ class FavouriteAudioRepository(
         } ?: false
     }
 
-    override fun getPlaylist(): Flow<Playlist?>? {
-        pid?.let {
-            return cacheMediaSource.getPlaylist(it).flowOn(dispatcher).map { playlistItem ->
-                playlistItem?.mapToPlaylist()
-            }
+    override fun getPlaylist(): Flow<Playlist?> {
+        return cacheMediaSource.getPlaylist(pid).flowOn(dispatcher).map { playlistItem ->
+            playlistItem?.mapToPlaylist()
         }
-        return null
     }
 
     override suspend fun getEmbeddedPlaylist(): EmbeddedPlaylist? =

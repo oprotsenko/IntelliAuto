@@ -21,14 +21,10 @@ class LocalAudioViewModel(
     private val manageFavourite: ManageFavourite,
     private val manageRecent: ManageRecent,
     private val managePlaylists: ManagePlaylists,
-//    private val mediaServiceControl: MediaServiceControl,
-) : ViewModel()
-//    , ChildLoadedListener, StartChildLoadingListener
-{
-
+) : ViewModel() {
     val localAudioData by lazy { MutableLiveData<List<AudioWrapper>>() }
     var playlists: List<PlaylistWrapper>? = listOf()
-    var dynamicallyAddAudioPosition: Int = 0
+    var dynamicallyAddAudioId: Long = 0
 
     init {
         viewModelScope.launch {
@@ -39,35 +35,7 @@ class LocalAudioViewModel(
                 }
             }
         }
-
-        // new
-//        mediaServiceControl.setStartChildLoadingListener(this)
-//        mediaServiceControl.setChildLoadedListener(this)
-//        mediaServiceControl.subscribe(LOCAL_ROOT_ID)
-        //
     }
-
-    // new
-//    override fun onStartChildLoading(audios: Resource<List<AudioWrapper>>) {
-//        localAudioData.postValue(audios.data)
-//    }
-//
-//    override fun onChildLoaded(audios: Resource<List<AudioWrapper>>) {
-//        viewModelScope.launch {
-//            audios.data?.map {
-//                it.isFavourite = manageFavourite.hasAudio(it.audio.id)
-//                it.isRecent = manageRecent.hasAudio(it.audio.id)
-//            }
-//
-//            localAudioData.postValue(audios.data)
-//        }
-//    }
-//
-//    override fun onCleared() {
-//        mediaServiceControl.unsubscribe()
-//        super.onCleared()
-//    }
-
 
     suspend fun retrieveMusic() {
         val list = retrieveLocalAudio.retrieveLocalMusic().toMutableList()
@@ -79,27 +47,26 @@ class LocalAudioViewModel(
         })
     }
 
-    fun setIsFavourite(position: Int) {
+    fun setIsFavourite(aid: Long) {
         viewModelScope.launch {
-            localAudioData.value?.let {
-                val aid = it[position].audio.id
-                if (manageFavourite.hasAudio(aid)) {
-                    manageFavourite.removeFavourite(aid)
-                } else {
-                    manageFavourite.addFavourite(aid)
-                }
+            if (manageFavourite.hasAudio(aid)) {
+                manageFavourite.removeFavourite(aid)
+            } else {
+                manageFavourite.addFavourite(aid)
             }
             retrieveMusic()
         }
     }
 
-    fun removeFromRecent(position: Int) {
+    fun removeFromRecent(aid: Long) {
         viewModelScope.launch {
-            localAudioData.value?.let {
-                manageRecent.removeAudio(it[position].audio.id)
-                retrieveMusic()
-            }
+            manageRecent.removeAudio(aid)
+            retrieveMusic()
         }
+    }
+
+    fun isRecent(aid: Long): Boolean? {
+        return localAudioData.value?.first { it.audio.id == aid }?.isRecent
     }
 
     fun getAudioList(): PlaylistWrapper? {
@@ -111,23 +78,20 @@ class LocalAudioViewModel(
         return list?.let { Playlist(name = "local", list = it).mapToPlaylistWrapper() }
     }
 
-    fun createPlaylist(playlistName: String, position: Int) {
+    fun createPlaylist(playlistName: String, aid: Long) {
         viewModelScope.launch {
-            addToPlaylist(managePlaylists.createPlaylist(playlistName), position)
+            addToPlaylist(managePlaylists.createPlaylist(playlistName), aid)
         }
     }
 
-    fun addToPlaylist(pid: Long, position: Int) {
-        localAudioData.value?.let {
-            val aid = it[position].audio.id
-            viewModelScope.launch {
-                if (pid == manageFavourite.getId()) {
-                    if (!manageFavourite.hasAudio(aid)) {
-                        manageFavourite.addFavourite(aid)
-                    }
-                } else {
-                    managePlaylists.addToPlaylist(aid, pid)
+    fun addToPlaylist(pid: Long, aid: Long) {
+        viewModelScope.launch {
+            if (pid == manageFavourite.getId()) {
+                if (!manageFavourite.hasAudio(aid)) {
+                    manageFavourite.addFavourite(aid)
                 }
+            } else {
+                managePlaylists.addToPlaylist(aid, pid)
             }
         }
     }

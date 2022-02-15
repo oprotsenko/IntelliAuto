@@ -1,39 +1,55 @@
 package com.automotive.bootcamp.mediaplayer.domain.useCases
 
-import com.automotive.bootcamp.mediaplayer.domain.PlaylistMediaRepository
 import com.automotive.bootcamp.mediaplayer.domain.RecentMediaRepository
 import com.automotive.bootcamp.mediaplayer.domain.models.Audio
-import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
 import com.automotive.bootcamp.mediaplayer.utils.RECENT_PLAYLIST_CAPACITY
-import com.automotive.bootcamp.mediaplayer.utils.RECENT_PLAYLIST_NAME
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.collect
 
 class AddRecent(
     private val recentAudioRepository: RecentMediaRepository,
-    private val playlistRepository: PlaylistMediaRepository,
+    retrieveRecent: RetrieveRecentAudio,
+    dispatcher: CoroutineDispatcher
 ) {
-    suspend fun execute(aid: Long, recentAudios: List<Audio>?) {
-        tryCreatePlaylist()
-        if (recentAudioRepository.hasAudio(aid)) {
-            recentAudioRepository.removeAudio(aid)
+    private val addRecentJob = Job()
+    private val addRecentScope = CoroutineScope(dispatcher + addRecentJob)
+
+    private var recentAudiosFlow = retrieveRecent.retrieveRecentAudio()
+    private var recentAudios: List<Audio>? = null
+    private val channel: Channel<Unit> = Channel(0)
+
+    init {
+        addRecentScope.launch {
+            recentAudiosFlow.collect {
+                recentAudios = it
+                channel.trySend(Unit)
+            }
         }
-        checkPlaylistCapacity(recentAudios)
-        recentAudioRepository.addAudio(aid)
     }
 
-    private suspend fun checkPlaylistCapacity(recentAudios: List<Audio>?) {
+    fun execute(aid: Long) {
+        addRecentScope.launch {
+            if (recentAudioRepository.hasAudio(aid)) {
+                recentAudioRepository.removeAudio(aid)
+                channel.receive()
+            }
+
+            checkPlaylistCapacity()
+            recentAudioRepository.addAudio(aid)
+        }
+    }
+
+    private suspend fun checkPlaylistCapacity() {
         recentAudios?.let { audios ->
             if (audios.size >= RECENT_PLAYLIST_CAPACITY) {
-                val aid = audios.minOf { it.id }
+                val aid = audios.first().id
                 recentAudioRepository.removeAudio(aid)
             }
         }
     }
 
-    private suspend fun tryCreatePlaylist() {
-        if (recentAudioRepository.getEmbeddedPlaylist() == null) {
-            val recentPlaylist = Playlist(name = RECENT_PLAYLIST_NAME, list = null)
-            val recentPlaylistId = playlistRepository.addPlaylist(recentPlaylist)
-            recentAudioRepository.addEmbeddedPlaylist(recentPlaylistId)
-        }
+    fun onServiceDestroy() {
+        addRecentScope.cancel()
     }
 }

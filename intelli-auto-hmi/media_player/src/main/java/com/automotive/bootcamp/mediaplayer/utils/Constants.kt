@@ -2,6 +2,7 @@ package com.automotive.bootcamp.mediaplayer.utils
 
 const val BASE_URL = "https://storage.googleapis.com/automotive-media/"
 const val POSITION_BUNDLE_KEY = "position"
+const val ID_BUNDLE_KEY = "id"
 const val PLAYLIST_BUNDLE_KEY = "playlist"
 const val CUSTOM_PLAYLIST_BUNDLE_KEY = "custom playlist"
 const val IS_FAVOURITE_BUNDLE_KEY = "is favourite"

@@ -24,8 +24,8 @@ class RecentAudioViewModel(
     private val manageRecent: ManageRecent,
     private val managePlaylists: ManagePlaylists
 ) : ViewModel() {
-    val recentAudioFlow: Flow<List<AudioWrapper>?>? =
-        retrieveRecentAudio.retrieveRecentAudio()?.map { list ->
+    val recentAudioFlow: Flow<List<AudioWrapper>?> =
+        retrieveRecentAudio.retrieveRecentAudio().map { list ->
             list?.map { audio ->
                 audio.wrapAudio()
             }
@@ -33,7 +33,7 @@ class RecentAudioViewModel(
 
     var recentAudio: List<AudioWrapper>? = listOf()
     var playlists: List<PlaylistWrapper>? = listOf()
-    var dynamicallyAddAudioPosition: Int = 0
+    var dynamicallyAddAudioId: Long = 0
 
     init {
         viewModelScope.launch {
@@ -45,7 +45,7 @@ class RecentAudioViewModel(
         }
     }
 
-    suspend fun updateAudioList(audio:List<AudioWrapper>?) {
+    suspend fun updateAudioList(audio: List<AudioWrapper>?) {
         recentAudio = audio
         recentAudio?.map {
             it.isFavourite = manageFavourite.hasAudio(it.audio.id)
@@ -53,25 +53,24 @@ class RecentAudioViewModel(
         }
     }
 
-    fun setIsFavourite(position: Int) {
+    fun setIsFavourite(aid: Long) {
         viewModelScope.launch {
-            recentAudio?.let {
-                val aid = it[position].audio.id
-                if (manageFavourite.hasAudio(aid)) {
-                    manageFavourite.removeFavourite(aid)
-                } else {
-                    manageFavourite.addFavourite(aid)
-                }
+            if (manageFavourite.hasAudio(aid)) {
+                manageFavourite.removeFavourite(aid)
+            } else {
+                manageFavourite.addFavourite(aid)
             }
         }
     }
 
-    fun removeFromRecent(position: Int) {
-        recentAudio?.let {
-            viewModelScope.launch {
-                manageRecent.removeAudio(it[position].audio.id)
-            }
+    fun removeFromRecent(aid: Long) {
+        viewModelScope.launch {
+            manageRecent.removeAudio(aid)
         }
+    }
+
+    fun isRecent(aid: Long): Boolean? {
+        return recentAudio?.first { it.audio.id == aid }?.isRecent
     }
 
     fun getAudioList(): PlaylistWrapper? {
@@ -85,23 +84,20 @@ class RecentAudioViewModel(
         }
     }
 
-    fun createPlaylist(playlistName: String, position: Int) {
+    fun createPlaylist(playlistName: String, aid: Long) {
         viewModelScope.launch {
-            addToPlaylist(managePlaylists.createPlaylist(playlistName), position)
+            addToPlaylist(managePlaylists.createPlaylist(playlistName), aid)
         }
     }
 
-    fun addToPlaylist(pid: Long, position: Int) {
-        recentAudio?.let {
-            val aid = it[position].audio.id
-            viewModelScope.launch {
-                if (pid == manageFavourite.getId()) {
-                    if (!manageFavourite.hasAudio(aid)) {
-                        manageFavourite.addFavourite(aid)
-                    }
-                } else {
-                    managePlaylists.addToPlaylist(aid, pid)
+    fun addToPlaylist(pid: Long, aid: Long) {
+        viewModelScope.launch {
+            if (pid == manageFavourite.getId()) {
+                if (!manageFavourite.hasAudio(aid)) {
+                    manageFavourite.addFavourite(aid)
                 }
+            } else {
+                managePlaylists.addToPlaylist(aid, pid)
             }
         }
     }

@@ -20,15 +20,17 @@ class PlaylistsViewModel(
     val selectedPlaylist by lazy { MutableLiveData<PlaylistWrapper>() }
     val createPlaylistView by lazy { MutableLiveData<Boolean>() }
 
-    fun openPlaylist(position: Int) {
-        selectedPlaylist.value = playlistsData.value?.get(position)
+    fun openPlaylist(pid: Long) {
+        playlistsData.value?.first{
+            it.playlist.id == pid
+        }.run {
+            selectedPlaylist.value = this
+        }
     }
 
-    fun removePlaylist(position: Int) {
+    fun removePlaylist(pid: Long) {
         viewModelScope.launch {
-            playlistsData.value?.let {
-                deletePlaylist.deletePlaylist(it[position].playlist.id)
-            }
+            deletePlaylist.deletePlaylist(pid)
         }
     }
 

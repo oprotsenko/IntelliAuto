@@ -51,7 +51,6 @@ class DefaultAudioPlayer(private val context: Context) : AudioPlayer,
     }
 
     override fun playAudio(url: String?) {
-        Log.d("MediaPlayerFragment", "player play " + url)
         if (lastAudioUrl != url) {
             player.apply {
                 reset()

@@ -28,8 +28,15 @@ interface AudioDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAudioToPlaylist(crossRefEntity: AudioPlaylistCrossRefEntity)
 
+    @Transaction
     @Delete
     suspend fun deleteAudioFromPlaylist(crossRefEntity: AudioPlaylistCrossRefEntity)
+
+    @Query("DELETE FROM audio_playlist_cross_ref WHERE pid = :pid")
+    suspend fun deleteAllAudiosFromPlaylist(pid: Long)
+
+    @Query("SELECT EXISTS (SELECT 1 FROM embedded_playlists WHERE pid = :pid)")
+    suspend fun isEmbeddedPlaylist(pid: Long): Boolean
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertEmbeddedPlaylist(playlist: EmbeddedPlaylistEntity)
@@ -47,7 +54,7 @@ interface AudioDao {
 
     @Transaction
     @Query("SELECT * FROM playlists WHERE pid = :pid")
-    fun getPlaylistWithAudios(pid: Long): Flow<PlaylistWithAudios?>
+    fun getPlaylistWithAudios(pid: Long?): Flow<PlaylistWithAudios?>
 
     @Transaction
     @Query("SELECT * FROM playlists")

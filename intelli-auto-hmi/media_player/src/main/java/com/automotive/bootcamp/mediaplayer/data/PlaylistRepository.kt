@@ -16,7 +16,7 @@ import kotlinx.coroutines.withContext
 class PlaylistRepository(
     private val cacheMediaSource: CacheMediaSource,
     private val dispatcher: CoroutineDispatcher
-) : PlaylistMediaRepository{
+) : PlaylistMediaRepository {
     override suspend fun playlistExists(pid: Long): Boolean =
         withContext(dispatcher) {
             cacheMediaSource.playlistExists(pid)
@@ -33,12 +33,17 @@ class PlaylistRepository(
         }
 
     override suspend fun removePlaylist(pid: Long) = withContext(dispatcher) {
-        cacheMediaSource.deletePlaylist(pid)
+        if (cacheMediaSource.isEmbeddedPlaylist(pid)) {
+            cacheMediaSource.deleteAllAudiosFromPlaylist(pid)
+        } else {
+            cacheMediaSource.deletePlaylist(pid)
+        }
     }
 
-    override suspend fun addAudioToPlaylist(crossRef: AudioPlaylistCrossRef) = withContext(dispatcher) {
-        cacheMediaSource.insertAudioPlaylistCrossRef(crossRef.mapToAudioPlaylistItemCrossRef())
-    }
+    override suspend fun addAudioToPlaylist(crossRef: AudioPlaylistCrossRef) =
+        withContext(dispatcher) {
+            cacheMediaSource.insertAudioPlaylistCrossRef(crossRef.mapToAudioPlaylistItemCrossRef())
+        }
 
     override suspend fun removeAudioFromPlaylist(crossRef: AudioPlaylistCrossRef) =
         withContext(dispatcher) {

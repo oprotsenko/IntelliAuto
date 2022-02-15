@@ -93,22 +93,22 @@ class PlaylistsFragment :
         }
     }
 
-    override fun onMediaClick(position: Int) {
-        viewModel.openPlaylist(position)
+    override fun onMediaClick(id: Long) {
+        viewModel.openPlaylist(id)
     }
 
-    override fun onItemClick(view: View, position: Int) {
+    override fun onItemClick(view: View, id: Long) {
         val popupMenu = PopupMenu(requireContext(), view)
         popupMenu.apply {
             inflate(R.menu.playlist_popup_menu)
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.playlistPlay -> {
-                        viewModel.openPlaylist(position)
+                        viewModel.openPlaylist(id)
                         return@setOnMenuItemClickListener true
                     }
                     R.id.playlistRemovePlaylist -> {
-                        viewModel.removePlaylist(position)
+                        viewModel.removePlaylist(id)
                         return@setOnMenuItemClickListener false
                     }
                     else -> {

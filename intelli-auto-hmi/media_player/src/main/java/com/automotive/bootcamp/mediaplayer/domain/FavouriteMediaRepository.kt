@@ -8,7 +8,7 @@ interface FavouriteMediaRepository {
     suspend fun addAudio(aid: Long)
     suspend fun removeAudio(aid: Long)
     suspend fun hasAudio(aid: Long): Boolean
-    fun getPlaylist(): Flow<Playlist?>?
+    fun getPlaylist(): Flow<Playlist?>
     suspend fun getEmbeddedPlaylist(): EmbeddedPlaylist?
     suspend fun addEmbeddedPlaylist(pid: Long)
 }

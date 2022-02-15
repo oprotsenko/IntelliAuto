@@ -1,6 +1,5 @@
 package com.automotive.bootcamp.mediaplayer.presentation.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -64,12 +63,14 @@ class AudioRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: AudioViewHolder, position: Int) {
         with(holder) {
-            bind(getItem(bindingAdapterPosition))
-            binding.root.setOnClickListener {
-                onMediaItemClickListener.onMediaClick(bindingAdapterPosition)
-            }
-            popupMenu.setOnClickListener {
-                onItemClickListener.onItemClick(popupMenu, bindingAdapterPosition)
+            getItem(bindingAdapterPosition).run {
+                bind(this)
+                binding.root.setOnClickListener {
+                    onMediaItemClickListener.onMediaClick(this.audio.id)
+                }
+                popupMenu.setOnClickListener {
+                    onItemClickListener.onItemClick(popupMenu, this.audio.id)
+                }
             }
         }
     }

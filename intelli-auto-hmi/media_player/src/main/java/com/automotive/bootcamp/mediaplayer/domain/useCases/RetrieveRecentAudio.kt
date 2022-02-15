@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class RetrieveRecentAudio(private val recentAudioRepository: RecentMediaRepository) {
-    fun retrieveRecentAudio(): Flow<List<Audio>?>? {
-        return recentAudioRepository.getPlaylist()?.map { playlist ->
+    fun retrieveRecentAudio(): Flow<List<Audio>?> {
+        return recentAudioRepository.getPlaylist().map { playlist ->
             playlist?.list
         }
     }
