@@ -25,12 +25,12 @@ class BrowseTree(
             albumChildren += mediaItem
         }
 
-        val albumsMetadata = Builder().apply {
-            putString(METADATA_KEY_MEDIA_ID, ALBUMS_ROOT_ID)
-            putString(METADATA_KEY_TITLE, ALBUMS_ROOT_ID)
-            putLong(METADATA_KEY_FLAGS, FLAG_BROWSABLE.toLong())
-        }.build()
-
+//        val albumsMetadata = Builder().apply {
+//            putString(METADATA_KEY_MEDIA_ID, ALBUMS_ROOT_ID)
+//            putString(METADATA_KEY_TITLE, ALBUMS_ROOT_ID)
+//            putLong(METADATA_KEY_FLAGS, FLAG_BROWSABLE.toLong())
+//        }.build()
+//
         val recentMetadata = Builder().apply {
             putString(METADATA_KEY_MEDIA_ID, RECENT_ROOT_ID)
             putString(METADATA_KEY_TITLE, RECENT_ROOT_ID)
@@ -42,17 +42,25 @@ class BrowseTree(
             putString(METADATA_KEY_TITLE, FAVOURITE_ROOT_ID)
             putLong(METADATA_KEY_FLAGS, FLAG_BROWSABLE.toLong())
         }.build()
-
+//
         val rootList = mediaIdToChildren[BROWSABLE_ROOT_ID] ?: mutableListOf()
-        rootList += albumsMetadata
-
-        val albums = mediaIdToChildren[ALBUMS_ROOT_ID] ?: mutableListOf()
-        albums += recentMetadata
-        albums += favouriteMetadata
-        mediaIdToChildren[ALBUMS_ROOT_ID] = albums
+        rootList += recentMetadata
+        rootList += favouriteMetadata
+        mediaIdToChildren[BROWSABLE_ROOT_ID] = rootList
+//
+//        val albums = mediaIdToChildren[ALBUMS_ROOT_ID] ?: mutableListOf()
+//        albums += recentMetadata
+//        albums += favouriteMetadata
+//        mediaIdToChildren[ALBUMS_ROOT_ID] = albums
     }
 
     operator fun get(mediaId: String) = mediaIdToChildren[mediaId]
+
+    fun addMetadata(mediaId: String, children: MediaMetadataCompat) {
+        val newChildren = mediaIdToChildren[mediaId] ?: mutableListOf()
+        newChildren += children
+        mediaIdToChildren[mediaId] = newChildren
+    }
 
     private fun buildAlbumRoot(mediaItem: MediaMetadataCompat): MutableList<MediaMetadataCompat> {
         val albumMetadata = Builder().apply {

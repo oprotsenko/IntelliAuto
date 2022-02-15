@@ -44,6 +44,7 @@ class ServiceSources : AbstractMusicSource(), KoinComponent {
         Log.d("serviceTAG", "playlists loaded")
         val list = playlists.mapToMediaMetadataCompat()
         list.forEach {
+            Log.d("serviceTAGA", "playlist " + it.getString(METADATA_KEY_MEDIA_ID))
             sourceList.add(it)
         }
     }
