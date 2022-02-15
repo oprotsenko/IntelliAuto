@@ -150,7 +150,6 @@ class NowPlayingFragment :
 
     override fun onDestroy() {
         super.onDestroy()
-        service?.clear()
         arguments = null
     }
 
