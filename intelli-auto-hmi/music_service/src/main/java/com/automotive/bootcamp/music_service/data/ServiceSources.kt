@@ -9,8 +9,13 @@ import com.automotive.bootcamp.music_service.data.models.AudioItem
 import com.automotive.bootcamp.music_service.data.models.PlaylistItem
 import com.automotive.bootcamp.music_service.data.remote.RemoteAudioSource
 import com.automotive.bootcamp.music_service.utils.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -20,11 +25,24 @@ class ServiceSources : AbstractMusicSource(), KoinComponent {
     private val remoteSource: RemoteAudioSource by inject()
     private val cacheRepository: CacheMediaRepository by inject()
 
+    private val sourcesJob = Job()
+    private val sourcesScope = CoroutineScope(Dispatchers.Main + sourcesJob)
+
+    private val allPlaylistsFlow = cacheRepository.getAllPlaylists()
+    private var allPlaylists: List<PlaylistItem>? = null
+
     val sourceList = mutableListOf<MediaMetadataCompat>()
 
     init {
         Log.d("serviceTAG", "state initializing ")
         state = State.INITIALIZING
+
+        sourcesScope.launch {
+            allPlaylistsFlow.collect {
+                allPlaylists = it
+                Log.d("serviceTAG", "allPlaylists collect ")
+            }
+        }
     }
 
     override fun iterator(): Iterator<MediaMetadataCompat> = sourceList.iterator()
@@ -40,9 +58,8 @@ class ServiceSources : AbstractMusicSource(), KoinComponent {
     }
 
     private fun retrieveCacheAudio() {
-        val playlists = cacheRepository.getAllPlaylists()
-        Log.d("serviceTAG", "playlists loaded")
-        val list = playlists.mapToMediaMetadataCompat()
+        Log.d("serviceTAG", "playlists loaded -> ${allPlaylists?.size}")
+        val list = allPlaylists.mapToMediaMetadataCompat()
         list.forEach {
             Log.d("serviceTAGA", "playlist " + it.getString(METADATA_KEY_MEDIA_ID))
             sourceList.add(it)
@@ -87,19 +104,14 @@ class ServiceSources : AbstractMusicSource(), KoinComponent {
                 .build()
         }
 
-    private fun Flow<List<PlaylistItem>?>.mapToMediaMetadataCompat(): List<MediaMetadataCompat> {
+    private fun List<PlaylistItem>?.mapToMediaMetadataCompat(): List<MediaMetadataCompat> {
         Log.d("serviceTAG", "map playlist")
         val mediaMetadata = mutableListOf<MediaMetadataCompat>()
-        this.map { list ->
-            list?.map { playlistItem ->
-                mediaMetadata.add(playlistItem.mapPlaylistToMediaMetadataCompat())
-            }
+        this?.map { playlistItem ->
+            mediaMetadata.add(playlistItem.mapPlaylistToMediaMetadataCompat())
         }
-        this.map { list ->
-            var metadataList: List<MediaMetadataCompat>? = null
-            list?.map { playlistItem ->
-                metadataList = playlistItem.list?.mapToMediaMetadataCompat(playlistItem.name)
-            }
+        this?.map { playlistItem ->
+            val metadataList = playlistItem.list?.mapToMediaMetadataCompat(playlistItem.name)
             metadataList?.forEach {
                 mediaMetadata.add(it)
             }

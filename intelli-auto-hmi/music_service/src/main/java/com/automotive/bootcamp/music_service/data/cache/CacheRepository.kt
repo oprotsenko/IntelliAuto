@@ -1,5 +1,6 @@
 package com.automotive.bootcamp.music_service.data.cache
 
+import android.util.Log
 import com.automotive.bootcamp.music_service.data.CacheMediaRepository
 import com.automotive.bootcamp.music_service.data.cache.room.RoomAudioSource
 import com.automotive.bootcamp.music_service.data.models.AudioItem
@@ -38,7 +39,9 @@ class CacheRepository(private val cacheAudioSource: RoomAudioSource) : CacheMedi
         pidRecent?.let {
             if (!cacheAudioSource.playlistHasAudio(it, aid)) {
                 checkPlaylistCapacity()
-                cacheAudioSource.insertAudioPlaylistCrossRef(AudioPlaylistItemCrossRef(aid, it))
+                val count = cacheAudioSource.insertAudioPlaylistCrossRef(AudioPlaylistItemCrossRef(aid, it))
+
+                Log.d("CacheRepository", "addToRecent -> $count")
             }
         }
     }

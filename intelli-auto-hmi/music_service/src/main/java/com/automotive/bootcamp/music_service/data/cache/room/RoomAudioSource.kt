@@ -35,7 +35,7 @@ class RoomAudioSource(context: Context) : CacheMediaSource {
     override suspend fun deletePlaylist(pid: Long) =
         dao.deletePlaylist(pid)
 
-    override suspend fun insertAudioPlaylistCrossRef(crossRef: AudioPlaylistItemCrossRef) =
+    override suspend fun insertAudioPlaylistCrossRef(crossRef: AudioPlaylistItemCrossRef): Long =
         dao.insertAudioToPlaylist(crossRef.mapToAudioPlaylistCrossRefEntity())
 
     override suspend fun deleteAudioFromPlaylist(crossRef: AudioPlaylistItemCrossRef) =

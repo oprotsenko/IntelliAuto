@@ -26,7 +26,7 @@ interface AudioDao {
     suspend fun insertPlaylist(playlist: PlaylistEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAudioToPlaylist(crossRefEntity: AudioPlaylistCrossRefEntity)
+    suspend fun insertAudioToPlaylist(crossRefEntity: AudioPlaylistCrossRefEntity): Long
 
     @Delete
     suspend fun deleteAudioFromPlaylist(crossRefEntity: AudioPlaylistCrossRefEntity)
