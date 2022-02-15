@@ -1,6 +1,7 @@
 package com.automotive.bootcamp.mediaplayer.presentation
 
 import android.os.Bundle
+import android.view.View
 import androidx.fragment.app.Fragment
 import com.automotive.bootcamp.common.base.BaseFragment
 import com.automotive.bootcamp.mediaplayer.R
@@ -15,6 +16,11 @@ class MediaPlayerFragment :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContainerView(localAudioFragment)
+    }
+
+    override fun onStart() {
+        super.onStart()
         setContainerView(localAudioFragment)
     }
 

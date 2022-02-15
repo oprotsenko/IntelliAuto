@@ -1,13 +1,14 @@
-package com.automotive.bootcamp.music_service.data
+package com.automotive.bootcamp.music_service.data.local
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
-import android.support.v4.media.MediaMetadataCompat
 import android.util.Log
 import com.automotive.bootcamp.music_service.R
+import com.automotive.bootcamp.music_service.data.models.AudioItem
+import com.automotive.bootcamp.music_service.utils.DEFAULT_COVER
 import java.io.File
 import java.io.FileOutputStream
 import java.util.*
@@ -41,11 +42,10 @@ class LocalAudioSource(
             val image =
                 if (data != null) BitmapFactory.decodeByteArray(data, 0, data.size)
                 else {
-                    val inputStream = context.assets.open("default_cover.jpg")
+                    val inputStream = context.assets.open(DEFAULT_COVER)
                     BitmapFactory.decodeStream(inputStream)
                 }
             val imagePath = saveImageToExternalStorage(image)
-            Log.d("serviceTAG", "cover url " + imagePath)
 
             val title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
             val artist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)

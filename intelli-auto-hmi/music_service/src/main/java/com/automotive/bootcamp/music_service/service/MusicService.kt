@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.ResultReceiver
+import android.provider.MediaStore
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaBrowserCompat.MediaItem.FLAG_BROWSABLE
 import android.support.v4.media.MediaDescriptionCompat
@@ -15,40 +16,36 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import android.widget.Toast
 import androidx.core.net.toUri
+import androidx.lifecycle.LiveData
 import androidx.media.MediaBrowserServiceCompat
 import androidx.media.utils.MediaConstants.DESCRIPTION_EXTRAS_KEY_CONTENT_STYLE_PLAYABLE
 import androidx.media.utils.MediaConstants.DESCRIPTION_EXTRAS_VALUE_CONTENT_STYLE_GRID_ITEM
-import com.automotive.bootcamp.music_service.R
 import com.automotive.bootcamp.music_service.data.ServiceSources
-import com.automotive.bootcamp.music_service.utils.BROWSABLE_ROOT_ID
-import com.automotive.bootcamp.music_service.utils.METADATA_KEY_FLAGS
-import com.automotive.bootcamp.music_service.utils.NETWORK_ERROR
-import com.automotive.bootcamp.music_service.utils.toMediaItem
-import com.google.android.exoplayer2.*
+import com.automotive.bootcamp.music_service.data.models.AudioItem
+import com.automotive.bootcamp.music_service.utils.*
+import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.PlaybackException
+import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator
-import com.google.android.exoplayer2.source.ConcatenatingMediaSource
-import com.google.android.exoplayer2.upstream.BaseDataSource
-import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.upstream.DefaultDataSource
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.util.Util
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 
 class MusicService : MediaBrowserServiceCompat() {
 
-    //    private lateinit var notificationManager: AudioNotificationManager
+//    private lateinit var notificationManager: AudioNotificationManager
     private lateinit var mediaSession: MediaSessionCompat
     private lateinit var sessionConnector: MediaSessionConnector
 
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
 
-    private val musicSource = ServiceSources(this)
+    private val musicSource: ServiceSources by inject()
     private val tree by lazy { BrowseTree(musicSource) }
 
     private val playerListener = AudioPlayerEventListener()
@@ -63,9 +60,6 @@ class MusicService : MediaBrowserServiceCompat() {
             addListener(playerListener)
         }
     }
-//    private val dataSourceFactory by lazy {
-//        DefaultDataSource.Factory(this)
-//    }
 
     private var curPlayingSong: MediaMetadataCompat? = null
     private var currentPlaylistItems: List<MediaMetadataCompat> = emptyList()
@@ -74,10 +68,10 @@ class MusicService : MediaBrowserServiceCompat() {
 
     var isForegroundService = false
 
-//    companion object {
-//        var currentAudioDuration = 0L
-//            private set
-//    }
+    companion object {
+        var currentAudioDuration = 0L
+            private set
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -103,17 +97,13 @@ class MusicService : MediaBrowserServiceCompat() {
 //        ) {
 //            currentAudioDuration = exoPlayer.duration
 //        }
-//        val playbackState = PlaybackStateCompat.Builder()
-//            .setActions(
-//                PlaybackStateCompat.ACTION_PLAY_PAUSE
-//                        or PlaybackStateCompat.ACTION_SKIP_TO_NEXT
-//                        or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
-//            )
-//        mediaSession.setPlaybackState(playbackState.build())
 
+        val playbackPreparer = MusicPlaybackPreparer {
+            curPlayingSong = it
+        }
         sessionConnector = MediaSessionConnector(mediaSession)
         sessionConnector.setPlayer(exoPlayer)
-        sessionConnector.setPlaybackPreparer(MusicPlaybackPreparer())
+        sessionConnector.setPlaybackPreparer(playbackPreparer)
         sessionConnector.setQueueNavigator(AudioQueueNavigator())
 
 //        notificationManager.showNotification(exoPlayer)
@@ -143,7 +133,8 @@ class MusicService : MediaBrowserServiceCompat() {
         val rootExtras = Bundle().apply {
             putInt(
                 DESCRIPTION_EXTRAS_KEY_CONTENT_STYLE_PLAYABLE,
-                DESCRIPTION_EXTRAS_VALUE_CONTENT_STYLE_GRID_ITEM)
+                DESCRIPTION_EXTRAS_VALUE_CONTENT_STYLE_GRID_ITEM
+            )
         }
         return BrowserRoot(BROWSABLE_ROOT_ID, rootExtras)
     }
@@ -200,8 +191,7 @@ class MusicService : MediaBrowserServiceCompat() {
         var initialWindowIndex = if (itemToPlay == null) 0 else metadataList.indexOf(itemToPlay)
 
         currentPlaylistItems = metadataList
-//        exoPlayer.setMediaSource(musicSource.asMediaSource(dataSourceFactory))
-//        exoPlayer.stop()
+
         exoPlayer.setMediaItems(
             metadataList.map { it.toMediaItem() }, initialWindowIndex, playbackStartPositionMs
         )
@@ -231,7 +221,6 @@ class MusicService : MediaBrowserServiceCompat() {
         }
 
         override fun onPlayerError(error: PlaybackException) {
-            Log.e("serviceTAG", error.message.orEmpty())
             Toast.makeText(
                 applicationContext,
                 error.message,
@@ -249,7 +238,9 @@ class MusicService : MediaBrowserServiceCompat() {
         }
     }
 
-    private inner class MusicPlaybackPreparer : MediaSessionConnector.PlaybackPreparer {
+    private inner class MusicPlaybackPreparer(
+        private val playerPrepared: (MediaMetadataCompat?) -> Unit
+    ) : MediaSessionConnector.PlaybackPreparer {
         override fun onCommand(
             player: Player,
             command: String,
@@ -270,21 +261,29 @@ class MusicService : MediaBrowserServiceCompat() {
             extras: Bundle?
         ) {
             musicSource.whenReady {
-                val itemToPlay: MediaMetadataCompat? = musicSource.music.find { item ->
+                val itemToPlay: MediaMetadataCompat? = musicSource.sourceList.find { item ->
                     item.getString(METADATA_KEY_MEDIA_ID) == mediaId
                 }
                 if (itemToPlay == null) {
-                    Log.w("serviceTAG", "Content not found: MediaID=$mediaId")
+                    Toast.makeText(
+                        applicationContext,
+                        "No audio to play",
+                        Toast.LENGTH_LONG
+                    ).show()
                 } else {
-
+                    serviceScope.launch {
+                        musicSource.addToRecent(itemToPlay.getString(
+                            METADATA_KEY_MEDIA_ID).toLong())
+                        tree[RECENT_ROOT_ID]?.add(itemToPlay)
+                    }
                     val playbackStartPositionMs = 0L
-
                     preparePlaylist(
                         buildPlaylist(itemToPlay),
                         itemToPlay,
                         playWhenReady,
                         playbackStartPositionMs
                     )
+                    playerPrepared(itemToPlay)
                 }
             }
         }

@@ -26,7 +26,10 @@ class MusicPlayerNotificationListener(
         super.onNotificationPosted(notificationId, notification, ongoing)
         musicService.apply {
             if (ongoing && !isForegroundService) {
-                ContextCompat.startForegroundService(this, Intent(applicationContext, this::class.java))
+                ContextCompat.startForegroundService(
+                    this,
+                    Intent(applicationContext, this::class.java)
+                )
                 startForeground(NOTIFICATION_ID, notification)
                 isForegroundService = true
             }

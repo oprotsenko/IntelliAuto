@@ -15,7 +15,7 @@ fun MediaMetadataCompat.toMediaItem(): com.google.android.exoplayer2.MediaItem {
     }.build()
 }
 
-fun MediaMetadataCompat.toMediaItemMetadata(): com.google.android.exoplayer2.MediaMetadata {
+fun MediaMetadataCompat.toMediaItemMetadata(): MediaMetadata {
     return with(MediaMetadata.Builder()) {
         setTitle(this@toMediaItemMetadata.getString(METADATA_KEY_TITLE))
         setDisplayTitle(this@toMediaItemMetadata.getString(METADATA_KEY_TITLE))
@@ -23,8 +23,6 @@ fun MediaMetadataCompat.toMediaItemMetadata(): com.google.android.exoplayer2.Med
         setAlbumTitle(this@toMediaItemMetadata.getString(METADATA_KEY_ALBUM))
         setComposer(this@toMediaItemMetadata.getString(METADATA_KEY_COMPOSER))
         setTrackNumber(this@toMediaItemMetadata.getLong(METADATA_KEY_TRACK_NUMBER).toInt())
-//        setTotalTrackCount(trackCount.toInt())
-//        setDiscNumber(discNumber.toInt())
         setWriter(this@toMediaItemMetadata.getString(METADATA_KEY_WRITER))
         setArtworkUri(this@toMediaItemMetadata.getString(METADATA_KEY_ART_URI).toUri())
     }.build()

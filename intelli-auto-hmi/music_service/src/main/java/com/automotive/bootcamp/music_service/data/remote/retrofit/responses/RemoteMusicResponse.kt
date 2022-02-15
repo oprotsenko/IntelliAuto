@@ -1,6 +1,6 @@
 package com.automotive.bootcamp.music_service.data.remote.retrofit.responses
 
-import com.automotive.bootcamp.music_service.data.AudioItem
+import com.automotive.bootcamp.music_service.data.models.AudioItem
 import com.automotive.bootcamp.music_service.utils.BASE_URL
 
 data class RemoteMusicResponse(

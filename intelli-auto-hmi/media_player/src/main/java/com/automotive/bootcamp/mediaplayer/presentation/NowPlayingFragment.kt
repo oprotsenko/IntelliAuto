@@ -4,11 +4,15 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.lifecycle.MutableLiveData
+import androidx.media.MediaBrowserServiceCompat
 import com.automotive.bootcamp.common.base.BaseFragment
 import com.automotive.bootcamp.common.extensions.loadImage
 import com.automotive.bootcamp.mediaplayer.R
@@ -19,9 +23,12 @@ import com.automotive.bootcamp.mediaplayer.utils.POSITION_BUNDLE_KEY
 import com.automotive.bootcamp.mediaplayer.utils.basicService.AudioPlayerService
 import com.automotive.bootcamp.mediaplayer.utils.enums.RepeatMode
 import com.automotive.bootcamp.mediaplayer.utils.extensions.timeToString
+import com.automotive.bootcamp.mediaplayer.utils.serviceFinder.MediaAppDetails
+import java.util.ArrayList
 
 class NowPlayingFragment :
     BaseFragment<FragmentNowPlayingBinding>(FragmentNowPlayingBinding::inflate) {
+
 
     var service: AudioPlayerService? = null
     val bound = MutableLiveData(false)
@@ -85,6 +92,7 @@ class NowPlayingFragment :
                         service?.updateAudioProgress(progress)
                     }
                 }
+
                 override fun onStartTrackingTouch(seekBar: SeekBar) {}
                 override fun onStopTrackingTouch(seekBar: SeekBar) {}
             })

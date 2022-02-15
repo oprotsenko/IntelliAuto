@@ -6,7 +6,6 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
-import android.util.Log
 import com.automotive.bootcamp.music_service.R
 import com.automotive.bootcamp.music_service.utils.NOTIFICATION_CHANNEL_ID
 import com.automotive.bootcamp.music_service.utils.NOTIFICATION_ID
@@ -60,11 +59,6 @@ class AudioNotificationManager(
     ) : PlayerNotificationManager.MediaDescriptionAdapter {
 
         override fun getCurrentContentTitle(player: Player): CharSequence {
-            Log.d("AudioNotificationManager", mediaController.toString())
-            Log.d("AudioNotificationManager", mediaController.metadata.toString())
-            Log.d("AudioNotificationManager", mediaController.metadata.description.toString())
-            Log.d("AudioNotificationManager", mediaController.metadata.description.title.toString())
-
             return mediaController.metadata.description.title.toString()
         }
 

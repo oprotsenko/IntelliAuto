@@ -1,60 +1,74 @@
 package com.automotive.bootcamp.music_service.data
 
-import android.content.Context
 import android.media.browse.MediaBrowser
 import android.net.Uri
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.MediaMetadataCompat.*
 import android.util.Log
-import androidx.core.net.toUri
+import com.automotive.bootcamp.music_service.data.models.AudioItem
+import com.automotive.bootcamp.music_service.data.models.PlaylistItem
 import com.automotive.bootcamp.music_service.data.remote.RemoteAudioSource
-import com.automotive.bootcamp.music_service.utils.AlbumArtContentProvider
-import com.automotive.bootcamp.music_service.utils.LOCAL_ROOT_ID
-import com.automotive.bootcamp.music_service.utils.METADATA_KEY_FLAGS
-import com.automotive.bootcamp.music_service.utils.REMOTE_ROOT_ID
-import com.google.android.exoplayer2.source.ConcatenatingMediaSource
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.upstream.DefaultDataSource
+import com.automotive.bootcamp.music_service.utils.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class ServiceSources(
-    context: Context
-) : AbstractMusicSource() {
+class ServiceSources : AbstractMusicSource(), KoinComponent {
 
-    private val localSource = LocalAudioSource(context)
-    private val remoteSource = RemoteAudioSource()
+    private val localRepository: LocalMediaRepository by inject()
+    private val remoteSource: RemoteAudioSource by inject()
+    private val cacheRepository: CacheMediaRepository by inject()
 
-    val music = mutableListOf<MediaMetadataCompat>()
+    val sourceList = mutableListOf<MediaMetadataCompat>()
 
     init {
+        Log.d("serviceTAG", "state initializing ")
         state = State.INITIALIZING
     }
 
+    override fun iterator(): Iterator<MediaMetadataCompat> = sourceList.iterator()
+
     override suspend fun load() {
-        Log.d("serviceTAG", "loading")
         retrieveLocalAudio()
+        Log.d("serviceTAG", "local done")
         retrieveRemoteAudio()
+        Log.d("serviceTAG", "remote done")
+        retrieveCacheAudio()
+        Log.d("serviceTAG", "cache done")
         state = State.INITIALIZED
-        Log.d("serviceTAG", music.size.toString())
     }
 
-    private suspend fun retrieveRemoteAudio() {
-        val audios = remoteSource.load()?.mapToMediaMetadataCompat(REMOTE_ROOT_ID, true)
-        audios?.forEach {
-            Log.d("serviceTAG", "cover path " + it.getString(METADATA_KEY_ART_URI))
-            music.add(it)
+    private fun retrieveCacheAudio() {
+        val playlists = cacheRepository.getAllPlaylists()
+        Log.d("serviceTAG", "playlists loaded")
+        val list = playlists.mapToMediaMetadataCompat()
+        list.forEach {
+            sourceList.add(it)
         }
     }
 
-    private fun retrieveLocalAudio() {
-        val audios = localSource.retrieveLocalAudio().mapToMediaMetadataCompat(LOCAL_ROOT_ID, false)
-        audios.forEach {
-            music.add(it)
+    private suspend fun retrieveRemoteAudio() {
+        val audios = remoteSource.load()
+        audios?.let { cacheRepository.insertAudios(audios) }
+        val metadataCompat = audios?.mapToMediaMetadataCompat(REMOTE_ROOT_ID, true)
+        metadataCompat?.forEach {
+            sourceList.add(it)
+        }
+    }
+
+    private suspend fun retrieveLocalAudio() {
+        val audios = localRepository.retrieveLocalAudio()
+        cacheRepository.insertAudios(audios)
+        val metadataCompat = audios.mapToMediaMetadataCompat(LOCAL_ROOT_ID)
+        metadataCompat.forEach {
+            sourceList.add(it)
         }
     }
 
     private fun List<AudioItem>.mapToMediaMetadataCompat(
         rootId: String,
-        isRemote: Boolean
+        isRemote: Boolean = false
     ): List<MediaMetadataCompat> =
         this.map { audio ->
             val imageUri = AlbumArtContentProvider.mapUri(Uri.parse(audio.cover), isRemote)
@@ -72,15 +86,38 @@ class ServiceSources(
                 .build()
         }
 
-//    fun asMediaSource(dataSourceFactory: DefaultDataSource.Factory): ConcatenatingMediaSource {
-//        val concatenatingMediaSource = ConcatenatingMediaSource()
-//        music.forEach { song ->
-//            val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
-//                .createMediaSource(song.getString(METADATA_KEY_MEDIA_URI).toUri())
-//            concatenatingMediaSource.addMediaSource(mediaSource)
-//        }
-//        return concatenatingMediaSource
-//    }
+    private fun Flow<List<PlaylistItem>?>.mapToMediaMetadataCompat(): List<MediaMetadataCompat> {
+        Log.d("serviceTAG", "map playlist")
+        val mediaMetadata = mutableListOf<MediaMetadataCompat>()
+        this.map { list ->
+            list?.map { playlistItem ->
+                mediaMetadata.add(playlistItem.mapPlaylistToMediaMetadataCompat())
+            }
+        }
+        this.map { list ->
+            var metadataList: List<MediaMetadataCompat>? = null
+            list?.map { playlistItem ->
+                metadataList = playlistItem.list?.mapToMediaMetadataCompat(playlistItem.name)
+            }
+            metadataList?.forEach {
+                mediaMetadata.add(it)
+            }
+        }
+        return mediaMetadata
+    }
 
-    override fun iterator(): Iterator<MediaMetadataCompat> = music.iterator()
+    private fun PlaylistItem.mapPlaylistToMediaMetadataCompat(): MediaMetadataCompat =
+        Builder()
+            .putString(METADATA_KEY_MEDIA_ID, this.name)
+            .putString(METADATA_KEY_TITLE, this.name)
+            .putString(METADATA_KEY_ALBUM, ALBUMS_ROOT_ID)
+            .putLong(METADATA_KEY_FLAGS, MediaBrowser.MediaItem.FLAG_BROWSABLE.toLong())
+            .build()
+
+    suspend fun addToRecent(aid: Long) {
+        cacheRepository.addToRecent(aid)
+//        state = State.INITIALIZING
+//        sourceList.clear()
+//        load()
+    }
 }

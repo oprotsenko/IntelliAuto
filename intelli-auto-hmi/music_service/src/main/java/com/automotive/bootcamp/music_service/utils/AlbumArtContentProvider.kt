@@ -6,7 +6,6 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.net.Uri
 import android.os.ParcelFileDescriptor
-import android.util.Log
 import com.bumptech.glide.Glide
 import java.io.File
 import java.io.FileNotFoundException
@@ -20,41 +19,29 @@ class AlbumArtContentProvider : ContentProvider() {
     companion object {
         private val uriMap = mutableMapOf<Uri, Uri>()
 
-        fun mapUri(uri: Uri, isRemote: Boolean): Uri {
-            if (isRemote) {
-                Log.d("serviceTAG", uri.toString())
-                val path = uri.encodedPath
-                val contentUri = Uri.Builder()
-                    .scheme(ContentResolver.SCHEME_CONTENT)
-                    .authority("com.automotive.bootcamp.music_service")
-                    .path(path)
-                    .build()
-                uriMap[contentUri] = uri
-                return contentUri
+        fun mapUri(uri: Uri, isRemote: Boolean = false): Uri {
+            val path = if (isRemote) {
+                uri.encodedPath
             } else {
                 val path = uri.encodedPath
-                val imagePath = path?.substring(path.lastIndexOf('/').plus(1))
-                val contentUri = Uri.Builder()
-                    .scheme(ContentResolver.SCHEME_CONTENT)
-                    .authority("com.automotive.bootcamp.music_service")
-                    .path(imagePath)
-                    .build()
-                Log.d("serviceTAGA", "contentUri " + contentUri)
-                uriMap[contentUri] = uri
-                return contentUri
+                path?.substring(path.lastIndexOf('/').plus(1))
             }
+            val contentUri = Uri.Builder()
+                .scheme(ContentResolver.SCHEME_CONTENT)
+                .authority("com.automotive.bootcamp.music_service")
+                .path(path)
+                .build()
+            uriMap[contentUri] = uri
+            return contentUri
         }
     }
 
     override fun onCreate() = true
 
     override fun openFile(uri: Uri, mode: String): ParcelFileDescriptor? {
-        Log.d("serviceTAGA", "open file")
         val context = this.context ?: return null
         val remoteUri = uriMap[uri] ?: throw FileNotFoundException(uri.path)
-        Log.d("serviceTAGA", "remote uri " + remoteUri)
         var file = File(context.cacheDir, uri.path)
-        Log.d("serviceTAGA", "file " + file)
         if (!file.exists()) {
             // Use Glide to download the album art.
             val cacheFile = Glide.with(context)
@@ -65,7 +52,6 @@ class AlbumArtContentProvider : ContentProvider() {
 
             // Rename the file Glide created to match our own scheme.
             cacheFile.renameTo(file)
-
             file = cacheFile
         }
         return ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
