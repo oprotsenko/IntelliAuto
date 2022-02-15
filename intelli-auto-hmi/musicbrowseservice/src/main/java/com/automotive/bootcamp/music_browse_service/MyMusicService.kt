@@ -31,7 +31,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class MyMusicService : MediaBrowserServiceCompat() {
+class MusicService : MediaBrowserServiceCompat() {
     private lateinit var notificationManager: MusicNotificationManager
 
     private lateinit var mediaSession: MediaSessionCompat
@@ -139,7 +139,7 @@ class MyMusicService : MediaBrowserServiceCompat() {
         playNow: Boolean
     ) {
         val curSongIndex = if (curPlayingSong == null) 0 else songs.indexOf(itemToPlay)
-
+        mediaSession.setMetadata(itemToPlay)
         Log.d("serviceTAG", "preparePlayer -> $curSongIndex")
 
         exoPlayer.prepare(musicSource.asMediaSource(dataSourceFactory))

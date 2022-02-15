@@ -13,6 +13,7 @@ import com.automotive.bootcamp.mediaplayer.R
 import com.automotive.bootcamp.mediaplayer.databinding.FragmentAudiosListBinding
 import com.automotive.bootcamp.mediaplayer.presentation.adapters.AudioRecyclerViewAdapter
 import com.automotive.bootcamp.mediaplayer.viewModels.MediaPlayerViewModel
+import com.automotive.bootcamp.mediaplayer.utils.QUICK_FRAGMENT_TAG
 import com.automotive.bootcamp.mediaplayer.viewModels.OnlineAudioViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -140,7 +141,7 @@ class OnlineAudioFragment :
                 .addToBackStack(null)
                 .commit()
             parentFragmentManager.beginTransaction()
-                .replace(R.id.playbackControlsPanel, QuickPlaybackControlsFragment())
+                .replace(R.id.playbackControlsPanel, QuickPlaybackControlsFragment(), QUICK_FRAGMENT_TAG)
                 .commit()
         }
     }

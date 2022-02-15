@@ -5,7 +5,6 @@ import androidx.room.Junction
 import androidx.room.Relation
 import com.automotive.bootcamp.music_service.data.cache.room.entities.AudioEntity
 import com.automotive.bootcamp.music_service.data.cache.room.entities.PlaylistEntity
-import com.automotive.bootcamp.music_service.data.cache.room.entities.relations.AudioPlaylistCrossRefEntity
 
 data class PlaylistWithAudios(
     @Embedded val playlist: PlaylistEntity,

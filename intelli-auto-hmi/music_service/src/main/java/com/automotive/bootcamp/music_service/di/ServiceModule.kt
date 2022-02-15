@@ -1,34 +1,26 @@
 package com.automotive.bootcamp.music_service.di
 
-import android.content.Context
-import com.automotive.bootcamp.music_service.service.sources.MusicSourceService
-import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.audio.AudioAttributes
-import com.google.android.exoplayer2.upstream.DefaultDataSource
+import com.automotive.bootcamp.music_service.data.CacheMediaRepository
+import com.automotive.bootcamp.music_service.data.LocalMediaRepository
+import com.automotive.bootcamp.music_service.data.ServiceSources
+import com.automotive.bootcamp.music_service.data.cache.CacheRepository
+import com.automotive.bootcamp.music_service.data.cache.room.RoomAudioSource
+import com.automotive.bootcamp.music_service.data.local.LocalAudioSource
+import com.automotive.bootcamp.music_service.data.local.LocalRepository
+import com.automotive.bootcamp.music_service.data.remote.RemoteAudioSource
 import org.koin.dsl.module
 
 val serviceModule = module {
-   factory { MusicSourceService(get(), get(), get(), get(), get()) }
-    single { provideAudioAttributes() }
-    single { provideExoPlayer(get(), get()) }
-    single { provideDataSourceFactory(get()) }
-//    single { provideMusicServiceConnection(get()) }
+    single { LocalAudioSource(get()) }
+    single { RemoteAudioSource() }
+    single { ServiceSources() }
+    single { RoomAudioSource(get()) }
+    single { provideLocalMediaRepository(get()) }
+    single { provideCacheMediaRepository(get()) }
 }
 
-fun provideAudioAttributes(): AudioAttributes = AudioAttributes.Builder()
-    .setContentType(C.CONTENT_TYPE_MUSIC)
-    .setUsage(C.USAGE_MEDIA)
-    .build()
+fun provideLocalMediaRepository(localAudioSource: LocalAudioSource): LocalMediaRepository =
+    LocalRepository(localAudioSource)
 
-fun provideExoPlayer(context: Context, audioAttributes: AudioAttributes): ExoPlayer =
-    ExoPlayer.Builder(context).build().apply {
-        setAudioAttributes(audioAttributes, true)
-        setHandleAudioBecomingNoisy(true)
-    }
-
-fun provideDataSourceFactory(context: Context): DefaultDataSource.Factory =
-    DefaultDataSource.Factory(context)
-
-//fun provideMusicServiceConnection(context: Context): com.automotive.bootcamp.mediaplayer.MusicServiceConnection =
-//    com.automotive.bootcamp.mediaplayer.MusicServiceConnection(context)
+fun provideCacheMediaRepository(roomAudioSource: RoomAudioSource): CacheMediaRepository =
+    CacheRepository(roomAudioSource)

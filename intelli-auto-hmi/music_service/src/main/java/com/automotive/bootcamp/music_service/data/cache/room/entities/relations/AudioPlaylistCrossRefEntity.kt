@@ -6,7 +6,7 @@ import androidx.room.ForeignKey.CASCADE
 import com.automotive.bootcamp.music_service.data.cache.room.entities.PlaylistEntity
 
 @Entity(
-    tableName = "audio_playlist_cross_ref_SERV",
+    tableName = "audio_playlist_cross_ref",
     primaryKeys = ["aid","pid"],
     foreignKeys = [
         ForeignKey(entity = PlaylistEntity::class,

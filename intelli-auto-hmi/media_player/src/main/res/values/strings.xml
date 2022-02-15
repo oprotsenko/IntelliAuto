@@ -18,5 +18,6 @@
     <string name="add_custom_playlist">Add playlist</string>
     <string name="undo">Undo</string>
     <string name="playlist_name">Playlist name</string>
+    <string name="enable_night_mode">Enable night mode</string>
 
 </resources>

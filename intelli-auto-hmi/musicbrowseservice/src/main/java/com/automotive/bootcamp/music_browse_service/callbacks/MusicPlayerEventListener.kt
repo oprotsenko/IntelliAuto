@@ -2,12 +2,12 @@ package com.automotive.bootcamp.music_browse_service.callbacks
 
 import android.util.Log
 import android.widget.Toast
-import com.automotive.bootcamp.music_browse_service.MyMusicService
+import com.automotive.bootcamp.music_browse_service.MusicService
 import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
 
 class MusicPlayerEventListener(
-    private val musicService: MyMusicService
+    private val musicService: MusicService
 ) : Player.Listener {
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
         Log.d("serviceTAG", playbackState.toString())

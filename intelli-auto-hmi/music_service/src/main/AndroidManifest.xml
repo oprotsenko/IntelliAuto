@@ -3,6 +3,11 @@
     package="com.automotive.bootcamp.music_service">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <queries>
+        <package android:name="com.automotive.bootcamp.mediaplayer"/>
+    </queries>
 
     <uses-feature
         android:name="android.hardware.type.automotive"
@@ -27,12 +32,16 @@
          MediaBrowser (for browsing) and MediaController (for playback control)
         -->
         <service
-            android:name=".service.MusicService"
+            android:name="com.automotive.bootcamp.music_service.service.MusicService"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
         </service>
+        <provider
+            android:name="com.automotive.bootcamp.music_service.utils.AlbumArtContentProvider"
+            android:authorities="com.automotive.bootcamp.music_service"
+            android:exported="true" />
     </application>
 
 </manifest>

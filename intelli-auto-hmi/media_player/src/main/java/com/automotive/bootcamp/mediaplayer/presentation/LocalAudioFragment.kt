@@ -12,6 +12,7 @@ import com.automotive.bootcamp.mediaplayer.databinding.FragmentAudiosListBinding
 import com.automotive.bootcamp.mediaplayer.presentation.adapters.AudioRecyclerViewAdapter
 import com.automotive.bootcamp.mediaplayer.utils.FRAGMENT_RESULT_KEY
 import com.automotive.bootcamp.mediaplayer.utils.PLAYLIST_NAME_KEY
+import com.automotive.bootcamp.mediaplayer.utils.QUICK_FRAGMENT_TAG
 import com.automotive.bootcamp.mediaplayer.viewModels.LocalAudioViewModel
 import com.automotive.bootcamp.mediaplayer.viewModels.MediaPlayerViewModel
 import kotlinx.coroutines.launch
@@ -141,7 +142,7 @@ class LocalAudioFragment :
                 .addToBackStack(null)
                 .commit()
             parentFragmentManager.beginTransaction()
-                .replace(R.id.playbackControlsPanel, QuickPlaybackControlsFragment())
+                .replace(R.id.playbackControlsPanel, QuickPlaybackControlsFragment(), QUICK_FRAGMENT_TAG)
                 .commit()
         }
     }

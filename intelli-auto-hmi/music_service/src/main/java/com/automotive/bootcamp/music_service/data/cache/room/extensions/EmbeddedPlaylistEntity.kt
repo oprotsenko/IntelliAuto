@@ -8,3 +8,9 @@ fun EmbeddedPlaylistEntity.mapToEmbeddedPlaylistItem(): EmbeddedPlaylistItem =
         id = this.pid,
         name = this.name,
     )
+
+fun EmbeddedPlaylistItem.mapToEmbeddedPlaylistEntity(): EmbeddedPlaylistEntity =
+    EmbeddedPlaylistEntity(
+        pid = this.id,
+        name = this.name
+    )

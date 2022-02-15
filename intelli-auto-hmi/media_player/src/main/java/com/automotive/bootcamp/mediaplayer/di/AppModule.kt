@@ -9,6 +9,7 @@ import com.automotive.bootcamp.mediaplayer.utils.player.ExoAudioPlayer
 import com.automotive.bootcamp.mediaplayer.viewModels.*
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
+import kotlin.math.sin
 
 val appModule = module {
     viewModel { MediaPlayerViewModel() }

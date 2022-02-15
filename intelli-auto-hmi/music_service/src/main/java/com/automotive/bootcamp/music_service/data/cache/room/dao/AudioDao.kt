@@ -16,10 +16,10 @@ interface AudioDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAudios(audios: List<AudioEntity>): List<Long>
 
-    @Query("SELECT EXISTS (SELECT 1 FROM playlists_SERV WHERE pid = :pid)")
+    @Query("SELECT EXISTS (SELECT 1 FROM playlists WHERE pid = :pid)")
     suspend fun playlistExists(pid: Long): Boolean
 
-    @Query("SELECT EXISTS(SELECT 1 FROM audio_playlist_cross_ref_SERV WHERE pid = :pid AND aid = :aid)")
+    @Query("SELECT EXISTS(SELECT 1 FROM audio_playlist_cross_ref WHERE pid = :pid AND aid = :aid)")
     suspend fun playlistHasAudio(pid: Long, aid: Long): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -35,21 +35,21 @@ interface AudioDao {
     suspend fun insertEmbeddedPlaylist(playlist: EmbeddedPlaylistEntity)
 
     @Transaction
-    @Query("SELECT * FROM embedded_playlists_SERV WHERE name = :name")
+    @Query("SELECT * FROM embedded_playlists WHERE name = :name")
     suspend fun getEmbeddedPlaylist(name: String): EmbeddedPlaylistEntity?
 
-    @Query("DELETE FROM playlists_SERV WHERE pid = :pid")
+    @Query("DELETE FROM playlists WHERE pid = :pid")
     suspend fun deletePlaylist(pid: Long)
 
     @Transaction
-    @Query("SELECT COUNT(*) FROM audio_playlist_cross_ref_SERV WHERE pid = :pid")
+    @Query("SELECT COUNT(*) FROM audio_playlist_cross_ref WHERE pid = :pid")
     suspend fun getPlaylistSize(pid: Long): Int
 
     @Transaction
-    @Query("SELECT * FROM playlists_SERV WHERE pid = :pid")
+    @Query("SELECT * FROM playlists WHERE pid = :pid")
     fun getPlaylistWithAudios(pid: Long): Flow<PlaylistWithAudios?>
 
     @Transaction
-    @Query("SELECT * FROM playlists_SERV")
+    @Query("SELECT * FROM playlists")
     fun getAllPlaylistsWithAudios(): Flow<List<PlaylistWithAudios>?>
 }

@@ -3,12 +3,12 @@ package com.automotive.bootcamp.music_browse_service.callbacks
 import android.app.Notification
 import android.content.Intent
 import androidx.core.content.ContextCompat
-import com.automotive.bootcamp.music_browse_service.MyMusicService
+import com.automotive.bootcamp.music_browse_service.MusicService
 import com.automotive.bootcamp.music_browse_service.utils.NOTIFICATION_ID
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 
 class MusicPlayerNotificationListener(
-    private val musicService: MyMusicService
+    private val musicService: MusicService
 ) : PlayerNotificationManager.NotificationListener {
     override fun onNotificationCancelled(notificationId: Int, dismissedByUser: Boolean) {
         super.onNotificationCancelled(notificationId, dismissedByUser)

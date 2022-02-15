@@ -1,6 +1,7 @@
 package com.automotive.bootcamp.music_service.data.remote.retrofit.responses
 
 import com.automotive.bootcamp.music_service.data.models.AudioItem
+import com.automotive.bootcamp.music_service.utils.BASE_URL
 
 data class RemoteMusicResponse(
     val music: List<AudioResponse>
@@ -22,8 +23,8 @@ data class AudioResponse(
 fun AudioResponse.mapToAudioItem() =
     AudioItem(
         id = this.artist.hashCode().toLong(),
-        cover = "https://storage.googleapis.com/automotive-media/" + this.image,
+        cover = BASE_URL + this.image,
         title = this.title,
         artist = this.artist,
-        url = "https://storage.googleapis.com/automotive-media/" + this.source
+        url = BASE_URL + this.source
     )
