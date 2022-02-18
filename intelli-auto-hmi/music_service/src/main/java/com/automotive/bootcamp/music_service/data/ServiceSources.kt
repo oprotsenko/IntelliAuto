@@ -40,7 +40,7 @@ class ServiceSources : AbstractMusicSource(), KoinComponent {
         sourcesScope.launch {
             allPlaylistsFlow.collect {
                 allPlaylists = it
-                Log.d("serviceTAG", "allPlaylists collect ")
+                Log.d("allPlaylists", "allPlaylists collect " + it?.size)
             }
         }
     }
@@ -110,7 +110,7 @@ class ServiceSources : AbstractMusicSource(), KoinComponent {
         this?.map { playlistItem ->
             mediaMetadata.add(playlistItem.mapPlaylistToMediaMetadataCompat())
         }
-        this?.map { playlistItem ->
+        this?.forEach { playlistItem ->
             val metadataList = playlistItem.list?.mapToMediaMetadataCompat(playlistItem.name)
             metadataList?.forEach {
                 mediaMetadata.add(it)
@@ -129,8 +129,9 @@ class ServiceSources : AbstractMusicSource(), KoinComponent {
 
     suspend fun addToRecent(aid: Long) {
         cacheRepository.addToRecent(aid)
-//        state = State.INITIALIZING
-//        sourceList.clear()
-//        load()
+    }
+
+    suspend fun addToFavourite(aid: Long) {
+        cacheRepository.addToFavourite(aid)
     }
 }

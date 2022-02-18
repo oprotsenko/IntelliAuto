@@ -7,22 +7,36 @@ import com.automotive.bootcamp.music_service.data.models.AudioItem
 import com.automotive.bootcamp.music_service.data.models.AudioPlaylistItemCrossRef
 import com.automotive.bootcamp.music_service.data.models.EmbeddedPlaylistItem
 import com.automotive.bootcamp.music_service.data.models.PlaylistItem
+import com.automotive.bootcamp.music_service.utils.FAVOURITE_PLAYLIST_NAME
 import com.automotive.bootcamp.music_service.utils.RECENT_PLAYLIST_CAPACITY
 import com.automotive.bootcamp.music_service.utils.RECENT_PLAYLIST_NAME
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
 
 class CacheRepository(private val cacheAudioSource: RoomAudioSource) : CacheMediaRepository {
     private var pidRecent: Long? = null
+    private var pidFavourite: Long? = null
 
     private val job = Job()
-    private val repositoryScope = CoroutineScope(Dispatchers.Main + job)
+    private val repositoryScope = CoroutineScope(Dispatchers.IO + job)
 
     init {
         repositoryScope.launch {
-            pidRecent = getRecentPlaylist()?.id
+            if (getRecentPlaylist() == null) {
+                createRecentPlaylist()
+                Log.d("allPlaylists", "recent created " + pidRecent)
+            } else {
+                pidRecent = getRecentPlaylist()?.id
+                Log.d("allPlaylists", "recent exist " + pidRecent)
+            }
+            if (getFavouritePlaylist() == null) {
+                createFavouritePlaylist()
+                Log.d("allPlaylists", "favourite created " + pidFavourite)
+            } else {
+                pidFavourite = getFavouritePlaylist()?.id
+                Log.d("allPlaylists", "favourite exist " + pidFavourite)
+            }
         }
     }
 
@@ -40,23 +54,38 @@ class CacheRepository(private val cacheAudioSource: RoomAudioSource) : CacheMedi
             if (!cacheAudioSource.playlistHasAudio(it, aid)) {
                 checkPlaylistCapacity()
                 val count = cacheAudioSource.insertAudioPlaylistCrossRef(AudioPlaylistItemCrossRef(aid, it))
-
                 Log.d("CacheRepository", "addToRecent -> $count")
             }
         }
     }
 
-    override suspend fun getRecentAudios(): List<AudioItem>? {
-        var audios: List<AudioItem>? = null
-        pidRecent?.let {
-            val playlist = cacheAudioSource.getPlaylist(it)
-            val res = playlist.map { playlistItem ->
-                playlistItem?.list
-            }.toList()
-            audios = res[0]
+    override suspend fun addToFavourite(aid: Long) {
+        if (pidFavourite == null) {
+            createFavouritePlaylist()
         }
-        return audios
+        pidFavourite?.let { pid ->
+            Log.d("CacheRepository", "aid -> $pid")
+            if (!cacheAudioSource.playlistHasAudio(pid, aid)) {
+                val count = cacheAudioSource.insertAudioPlaylistCrossRef(AudioPlaylistItemCrossRef(aid, pid))
+                Log.d("CacheRepository", "addToFavourite -> $count")
+            } else {
+                val count = cacheAudioSource.deleteAudioFromPlaylist(AudioPlaylistItemCrossRef(aid, pid))
+                Log.d("CacheRepository", "deleteFromFavourite -> $count")
+            }
+        }
     }
+
+//    override suspend fun getRecentAudios(): List<AudioItem>? {
+//        var audios: List<AudioItem>? = null
+//        pidRecent?.let {
+//            val playlist = cacheAudioSource.getPlaylist(it)
+//            val res = playlist.map { playlistItem ->
+//                playlistItem?.list
+//            }.toList()
+//            audios = res[0]
+//        }
+//        return audios
+//    }
 
     private suspend fun checkPlaylistCapacity() {
         pidRecent?.let { pid ->
@@ -85,6 +114,17 @@ class CacheRepository(private val cacheAudioSource: RoomAudioSource) : CacheMedi
         pidRecent = recentPlaylistId
     }
 
+    private suspend fun createFavouritePlaylist() {
+        val favouritePlaylist = PlaylistItem(name = FAVOURITE_PLAYLIST_NAME, list = null)
+        val favouritePlaylistId = cacheAudioSource.insertPlaylist(favouritePlaylist)
+        val embeddedPlaylistItem = EmbeddedPlaylistItem(favouritePlaylistId, FAVOURITE_PLAYLIST_NAME)
+        cacheAudioSource.insertEmbeddedPlaylist(embeddedPlaylistItem)
+        pidFavourite = favouritePlaylistId
+    }
+
     private suspend fun getRecentPlaylist(): EmbeddedPlaylistItem? =
         cacheAudioSource.getEmbeddedPlaylist(RECENT_PLAYLIST_NAME)
+
+    private suspend fun getFavouritePlaylist(): EmbeddedPlaylistItem? =
+        cacheAudioSource.getEmbeddedPlaylist(FAVOURITE_PLAYLIST_NAME)
 }

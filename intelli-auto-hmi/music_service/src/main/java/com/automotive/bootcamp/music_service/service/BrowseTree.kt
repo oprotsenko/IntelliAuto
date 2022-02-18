@@ -31,22 +31,22 @@ class BrowseTree(
 //            putLong(METADATA_KEY_FLAGS, FLAG_BROWSABLE.toLong())
 //        }.build()
 //
-        val recentMetadata = Builder().apply {
-            putString(METADATA_KEY_MEDIA_ID, RECENT_ROOT_ID)
-            putString(METADATA_KEY_TITLE, RECENT_ROOT_ID)
-            putLong(METADATA_KEY_FLAGS, FLAG_BROWSABLE.toLong())
-        }.build()
-
-        val favouriteMetadata = Builder().apply {
-            putString(METADATA_KEY_MEDIA_ID, FAVOURITE_ROOT_ID)
-            putString(METADATA_KEY_TITLE, FAVOURITE_ROOT_ID)
-            putLong(METADATA_KEY_FLAGS, FLAG_BROWSABLE.toLong())
-        }.build()
+//        val recentMetadata = Builder().apply {
+//            putString(METADATA_KEY_MEDIA_ID, RECENT_ROOT_ID)
+//            putString(METADATA_KEY_TITLE, RECENT_ROOT_ID)
+//            putLong(METADATA_KEY_FLAGS, FLAG_BROWSABLE.toLong())
+//        }.build()
 //
-        val rootList = mediaIdToChildren[BROWSABLE_ROOT_ID] ?: mutableListOf()
-        rootList += recentMetadata
-        rootList += favouriteMetadata
-        mediaIdToChildren[BROWSABLE_ROOT_ID] = rootList
+//        val favouriteMetadata = Builder().apply {
+//            putString(METADATA_KEY_MEDIA_ID, FAVOURITE_ROOT_ID)
+//            putString(METADATA_KEY_TITLE, FAVOURITE_ROOT_ID)
+//            putLong(METADATA_KEY_FLAGS, FLAG_BROWSABLE.toLong())
+//        }.build()
+//
+//        val rootList = mediaIdToChildren[BROWSABLE_ROOT_ID] ?: mutableListOf()
+//        rootList += recentMetadata
+//        rootList += favouriteMetadata
+//        mediaIdToChildren[BROWSABLE_ROOT_ID] = rootList
 //
 //        val albums = mediaIdToChildren[ALBUMS_ROOT_ID] ?: mutableListOf()
 //        albums += recentMetadata

@@ -1,15 +1,8 @@
-package com.automotive.bootcamp.mediaplayer.utils.extensions
+package com.automotive.bootcamp.music_service.utils
 
 import java.math.BigInteger
 import java.nio.ByteBuffer
 import java.util.*
-
-fun Int.timeToString(): String{
-    val minutes = this / 60
-    val seconds = this % 60
-
-    return String.format("%d:%02d", minutes, seconds)
-}
 
 fun generateKey(): Long {
     var key: Long

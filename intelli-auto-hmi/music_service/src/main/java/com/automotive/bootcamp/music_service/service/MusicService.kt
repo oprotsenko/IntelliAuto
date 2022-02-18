@@ -20,8 +20,7 @@ import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.media.MediaBrowserServiceCompat
-import androidx.media.utils.MediaConstants.DESCRIPTION_EXTRAS_KEY_CONTENT_STYLE_PLAYABLE
-import androidx.media.utils.MediaConstants.DESCRIPTION_EXTRAS_VALUE_CONTENT_STYLE_GRID_ITEM
+import androidx.media.utils.MediaConstants.*
 import com.automotive.bootcamp.music_service.data.ServiceSources
 import com.automotive.bootcamp.music_service.data.models.AudioItem
 import com.automotive.bootcamp.music_service.utils.*
@@ -97,7 +96,6 @@ class MusicService : MediaBrowserServiceCompat() {
                 saveFavouriteAudio()
             }
         })
-        mediaSession.setRatingType(RATING_HEART)
         sessionToken = mediaSession.sessionToken
 //        notificationManager = AudioNotificationManager(
 //            this,
@@ -106,6 +104,7 @@ class MusicService : MediaBrowserServiceCompat() {
 //        ) {
 //            currentAudioDuration = exoPlayer.duration
 //        }
+        mediaSession.setRatingType(RATING_HEART)
 
         val playbackPreparer = MusicPlaybackPreparer {
             curPlayingSong = it
@@ -115,25 +114,23 @@ class MusicService : MediaBrowserServiceCompat() {
         sessionConnector.setPlaybackPreparer(playbackPreparer)
         sessionConnector.setQueueNavigator(AudioQueueNavigator())
 
-        sessionConnector.setRatingCallback(object : MediaSessionConnector.RatingCallback {
-            override fun onCommand(
-                player: Player,
-                command: String,
-                extras: Bundle?,
-                cb: ResultReceiver?
-            ): Boolean {
-                TODO("Not yet implemented")
-            }
-
-            override fun onSetRating(player: Player, rating: RatingCompat) {
-                saveFavouriteAudio()
-                rating.isRated
-            }
-
-            override fun onSetRating(player: Player, rating: RatingCompat, extras: Bundle?) {
-                TODO("Not yet implemented")
-            }
-        })
+//        sessionConnector.setRatingCallback(object : MediaSessionConnector.RatingCallback {
+//            override fun onCommand(
+//                player: Player,
+//                command: String,
+//                extras: Bundle?,
+//                cb: ResultReceiver?
+//            ): Boolean = false
+//
+//            override fun onSetRating(player: Player, rating: RatingCompat) {
+////                Log.d("favourite", curPlayingSong?.getString(METADATA_KEY_MEDIA_ID).orEmpty())
+//                saveFavouriteAudio()
+//            }
+//
+//            override fun onSetRating(player: Player, rating: RatingCompat, extras: Bundle?) {
+//                TODO("Not yet implemented")
+//            }
+//        })
 
 //        notificationManager.showNotification(exoPlayer)
     }
@@ -232,7 +229,7 @@ class MusicService : MediaBrowserServiceCompat() {
         val item = currentPlaylistItems[exoPlayer.currentMediaItemIndex]
         Log.d("curSong", "favouriteSong" + item.getString(METADATA_KEY_TITLE))
         serviceScope.launch {
-            musicSource.addToRecent(
+            musicSource.addToFavourite(
                 item.getString(
                     METADATA_KEY_MEDIA_ID
                 ).toLong()

@@ -8,5 +8,6 @@ interface CacheMediaRepository {
     fun getAllPlaylists(): Flow<List<PlaylistItem>?>
     suspend fun insertAudios(audios: List<AudioItem>): List<Long>
     suspend fun addToRecent(aid: Long)
-    suspend fun getRecentAudios(): List<AudioItem>?
+    suspend fun addToFavourite(aid: Long)
+//    suspend fun getRecentAudios(): List<AudioItem>?
 }
