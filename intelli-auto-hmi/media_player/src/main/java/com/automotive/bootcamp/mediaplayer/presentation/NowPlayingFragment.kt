@@ -33,6 +33,7 @@ class NowPlayingFragment :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         val connection = object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
                 service = (binder as AudioPlayerService.LocalBinder).service
@@ -102,11 +103,13 @@ class NowPlayingFragment :
             val playlist: PlaylistWrapper? = arguments?.getParcelable(PLAYLIST_BUNDLE_KEY)
             val id = arguments?.getLong(ID_BUNDLE_KEY)
 
-            if (playlist != null && id!= null && bound.value == true) {
+            if (playlist != null && id != null && bound.value == true) {
                 service?.apply {
                     init(playlist, id)
                     playAudio()
                 }
+
+                arguments = null
             }
 
             service?.currentAudio?.observe(viewLifecycleOwner) {
