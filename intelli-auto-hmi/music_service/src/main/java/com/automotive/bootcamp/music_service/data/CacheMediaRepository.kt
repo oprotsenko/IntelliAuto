@@ -9,5 +9,5 @@ interface CacheMediaRepository {
     suspend fun insertAudios(audios: List<AudioItem>): List<Long>
     suspend fun addToRecent(aid: Long)
     suspend fun addToFavourite(aid: Long)
-//    suspend fun getRecentAudios(): List<AudioItem>?
+    suspend fun isFavourite(aid: Long): Boolean
 }

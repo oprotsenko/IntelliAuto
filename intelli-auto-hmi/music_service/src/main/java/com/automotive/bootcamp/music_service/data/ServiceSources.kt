@@ -4,6 +4,7 @@ import android.media.browse.MediaBrowser
 import android.net.Uri
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.MediaMetadataCompat.*
+import android.support.v4.media.RatingCompat
 import android.util.Log
 import com.automotive.bootcamp.music_service.data.models.AudioItem
 import com.automotive.bootcamp.music_service.data.models.PlaylistItem
@@ -57,7 +58,7 @@ class ServiceSources : AbstractMusicSource(), KoinComponent {
         state = State.INITIALIZED
     }
 
-    private fun retrieveCacheAudio() {
+    private suspend fun retrieveCacheAudio() {
         Log.d("serviceTAG", "playlists loaded -> ${allPlaylists?.size}")
         val list = allPlaylists.mapToMediaMetadataCompat()
         list.forEach {
@@ -84,11 +85,13 @@ class ServiceSources : AbstractMusicSource(), KoinComponent {
         }
     }
 
-    private fun List<AudioItem>.mapToMediaMetadataCompat(
+    private suspend fun List<AudioItem>.mapToMediaMetadataCompat(
         rootId: String,
         isRemote: Boolean = false
     ): List<MediaMetadataCompat> =
         this.map { audio ->
+            val rating = cacheRepository.isFavourite(audio.id)
+            Log.d("rating", "${audio.id} ->>> $rating")
             val imageUri = AlbumArtContentProvider.mapUri(Uri.parse(audio.cover), isRemote)
             Builder()
                 .putString(METADATA_KEY_MEDIA_ID, audio.id.toString())
@@ -101,10 +104,11 @@ class ServiceSources : AbstractMusicSource(), KoinComponent {
                 .putString(METADATA_KEY_DISPLAY_ICON_URI, imageUri.toString())
                 .putLong(METADATA_KEY_FLAGS, MediaBrowser.MediaItem.FLAG_PLAYABLE.toLong())
                 .putString(METADATA_KEY_ALBUM, rootId)
+                .putRating(METADATA_KEY_RATING, RatingCompat.newHeartRating(rating))
                 .build()
         }
 
-    private fun List<PlaylistItem>?.mapToMediaMetadataCompat(): List<MediaMetadataCompat> {
+    private suspend fun List<PlaylistItem>?.mapToMediaMetadataCompat(): List<MediaMetadataCompat> {
         Log.d("serviceTAG", "map playlist")
         val mediaMetadata = mutableListOf<MediaMetadataCompat>()
         this?.map { playlistItem ->

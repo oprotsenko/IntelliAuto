@@ -2,6 +2,7 @@ package com.automotive.bootcamp.music_service.service
 
 import android.app.PendingIntent
 import android.content.Intent
+import android.media.browse.MediaBrowser
 import android.net.Uri
 import android.os.Bundle
 import android.os.ResultReceiver
@@ -12,17 +13,17 @@ import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.MediaMetadataCompat.*
 import android.support.v4.media.RatingCompat
-import android.support.v4.media.RatingCompat.RATING_HEART
+import android.support.v4.media.RatingCompat.*
+import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import android.widget.Toast
 import androidx.core.net.toUri
-import androidx.lifecycle.LiveData
 import androidx.media.MediaBrowserServiceCompat
-import androidx.media.utils.MediaConstants.*
+import androidx.media.utils.MediaConstants.DESCRIPTION_EXTRAS_KEY_CONTENT_STYLE_PLAYABLE
+import androidx.media.utils.MediaConstants.DESCRIPTION_EXTRAS_VALUE_CONTENT_STYLE_GRID_ITEM
 import com.automotive.bootcamp.music_service.data.ServiceSources
-import com.automotive.bootcamp.music_service.data.models.AudioItem
 import com.automotive.bootcamp.music_service.utils.*
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
@@ -31,6 +32,7 @@ import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator
+import com.google.android.exoplayer2.upstream.ParsingLoadable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -91,11 +93,16 @@ class MusicService : MediaBrowserServiceCompat() {
             isActive = true
         }
 
-        mediaSession.setCallback(object : MediaSessionCompat.Callback() {
+        val callbacks = object : MediaSessionCompat.Callback() {
             override fun onSetRating(rating: RatingCompat?) {
-                saveFavouriteAudio()
+                Log.d("rating", "mediassesion callback")
             }
-        })
+        }
+        mediaSession.setCallback(callbacks)
+        mediaSession.setRatingType(RATING_HEART)
+        mediaSession.setRepeatMode(PlaybackStateCompat.REPEAT_MODE_ALL)
+//        mediaSession.setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_NONE)
+
         sessionToken = mediaSession.sessionToken
 //        notificationManager = AudioNotificationManager(
 //            this,
@@ -104,7 +111,6 @@ class MusicService : MediaBrowserServiceCompat() {
 //        ) {
 //            currentAudioDuration = exoPlayer.duration
 //        }
-        mediaSession.setRatingType(RATING_HEART)
 
         val playbackPreparer = MusicPlaybackPreparer {
             curPlayingSong = it
@@ -113,24 +119,50 @@ class MusicService : MediaBrowserServiceCompat() {
         sessionConnector.setPlayer(exoPlayer)
         sessionConnector.setPlaybackPreparer(playbackPreparer)
         sessionConnector.setQueueNavigator(AudioQueueNavigator())
+        sessionConnector.setEnabledPlaybackActions(
+            PlaybackStateCompat.ACTION_PLAY_PAUSE
+                    or PlaybackStateCompat.ACTION_PLAY
+                    or PlaybackStateCompat.ACTION_PAUSE
+                    or PlaybackStateCompat.ACTION_STOP
+                    or PlaybackStateCompat.ACTION_SET_SHUFFLE_MODE
+                    or PlaybackStateCompat.ACTION_SET_REPEAT_MODE
+        )
 
-//        sessionConnector.setRatingCallback(object : MediaSessionConnector.RatingCallback {
-//            override fun onCommand(
-//                player: Player,
-//                command: String,
-//                extras: Bundle?,
-//                cb: ResultReceiver?
-//            ): Boolean = false
-//
-//            override fun onSetRating(player: Player, rating: RatingCompat) {
-////                Log.d("favourite", curPlayingSong?.getString(METADATA_KEY_MEDIA_ID).orEmpty())
-//                saveFavouriteAudio()
-//            }
-//
-//            override fun onSetRating(player: Player, rating: RatingCompat, extras: Bundle?) {
-//                TODO("Not yet implemented")
-//            }
-//        })
+        sessionConnector.setRatingCallback(object : MediaSessionConnector.RatingCallback {
+            override fun onCommand(
+                player: Player,
+                command: String,
+                extras: Bundle?,
+                cb: ResultReceiver?
+            ): Boolean = false
+
+            override fun onSetRating(player: Player, rating: RatingCompat) {
+                Log.d("rating isRated", rating.isRated.toString())
+                saveFavouriteAudio()
+                val list = currentPlaylistItems.toMutableList()
+                val audio = list[exoPlayer.currentMediaItemIndex]
+                val newItem = MediaMetadataCompat.Builder()
+                    .putString(METADATA_KEY_MEDIA_ID, audio.getString(METADATA_KEY_MEDIA_ID))
+                    .putString(METADATA_KEY_ARTIST, audio.getString(METADATA_KEY_ARTIST))
+                    .putString(METADATA_KEY_TITLE, audio.getString(METADATA_KEY_TITLE))
+                    .putString(METADATA_KEY_ART_URI, audio.getString(METADATA_KEY_ART_URI))
+                    .putString(METADATA_KEY_MEDIA_URI, audio.getString(METADATA_KEY_MEDIA_URI))
+                    .putString(METADATA_KEY_DISPLAY_TITLE, audio.getString(METADATA_KEY_TITLE))
+                    .putString(METADATA_KEY_DISPLAY_SUBTITLE, audio.getString(METADATA_KEY_ARTIST))
+                    .putString(METADATA_KEY_DISPLAY_ICON_URI, audio.getString(METADATA_KEY_ART_URI))
+                    .putLong(METADATA_KEY_FLAGS, MediaBrowser.MediaItem.FLAG_PLAYABLE.toLong())
+                    .putString(METADATA_KEY_ALBUM, audio.getString(METADATA_KEY_ALBUM))
+                    .putRating(METADATA_KEY_RATING, newHeartRating(true))
+                    .build()
+                list[exoPlayer.currentMediaItemIndex] = newItem
+                currentPlaylistItems = list
+                mediaSession.setMetadata(newItem)
+            }
+
+            override fun onSetRating(player: Player, rating: RatingCompat, extras: Bundle?) {
+                Log.d("rating isRated", "onSetRating2")
+            }
+        })
 
 //        notificationManager.showNotification(exoPlayer)
     }
@@ -183,16 +215,13 @@ class MusicService : MediaBrowserServiceCompat() {
                                 .setTitle(it.getString(METADATA_KEY_TITLE))
                                 .setMediaId(it.getString(METADATA_KEY_MEDIA_ID))
                                 .setDescription(it.getString(METADATA_KEY_TITLE))
-                                .build(), it.getLong(METADATA_KEY_FLAGS).toInt()
+                                .build(),
+                            it.getLong(METADATA_KEY_FLAGS).toInt()
                         )
                     } else {
                         MediaBrowserCompat.MediaItem(
-                            MediaDescriptionCompat.Builder()
-                                .setTitle(it.getString(METADATA_KEY_TITLE))
-                                .setMediaId(it.getString(METADATA_KEY_MEDIA_ID))
-                                .setDescription(it.getString(METADATA_KEY_TITLE))
-                                .setIconUri(it.getString(METADATA_KEY_ART_URI).toUri())
-                                .build(), it.getLong(METADATA_KEY_FLAGS).toInt()
+                            it.description,
+                            it.getLong(METADATA_KEY_FLAGS).toInt()
                         )
                     }
                 }?.toMutableList()
@@ -258,7 +287,7 @@ class MusicService : MediaBrowserServiceCompat() {
                 Player.STATE_READY -> {
 //                    notificationManager.showNotification(exoPlayer)
                     if (playbackState == Player.STATE_READY) {
-                          saveRecentAudio()
+                        saveRecentAudio()
 
                         if (!playWhenReady) {
                             stopForeground(false)
@@ -283,12 +312,9 @@ class MusicService : MediaBrowserServiceCompat() {
 
     private inner class AudioQueueNavigator : TimelineQueueNavigator(mediaSession) {
         override fun getMediaDescription(player: Player, windowIndex: Int): MediaDescriptionCompat {
-//            val currentList = musicSource.filter {
-//                it.getString(METADATA_KEY_ALBUM) == currentRoot
-//            }
-//            return currentList[windowIndex].description
             return currentPlaylistItems[windowIndex].description
         }
+
     }
 
     private inner class MusicPlaybackPreparer(

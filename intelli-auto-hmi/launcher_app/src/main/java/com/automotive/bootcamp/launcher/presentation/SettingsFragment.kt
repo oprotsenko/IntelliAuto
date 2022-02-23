@@ -11,6 +11,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsB
 
     override fun setListeners() {
         binding.switchNightMode.setOnClickListener {
+            MainActivity.isActiveLightSensor = false
             if (isNightMode) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             } else {

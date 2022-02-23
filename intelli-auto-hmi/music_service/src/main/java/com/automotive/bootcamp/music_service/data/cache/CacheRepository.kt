@@ -75,17 +75,12 @@ class CacheRepository(private val cacheAudioSource: RoomAudioSource) : CacheMedi
         }
     }
 
-//    override suspend fun getRecentAudios(): List<AudioItem>? {
-//        var audios: List<AudioItem>? = null
-//        pidRecent?.let {
-//            val playlist = cacheAudioSource.getPlaylist(it)
-//            val res = playlist.map { playlistItem ->
-//                playlistItem?.list
-//            }.toList()
-//            audios = res[0]
-//        }
-//        return audios
-//    }
+    override suspend fun isFavourite(aid: Long): Boolean {
+        pidFavourite?.let { pid ->
+            return cacheAudioSource.playlistHasAudio(pid, aid)
+        }
+        return false
+    }
 
     private suspend fun checkPlaylistCapacity() {
         pidRecent?.let { pid ->
