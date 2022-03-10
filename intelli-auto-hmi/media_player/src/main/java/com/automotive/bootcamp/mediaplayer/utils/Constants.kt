@@ -13,6 +13,7 @@ const val QUICK_FRAGMENT_TAG = "quick fragment tag"
 
 const val DATABASE_NAME = "audio_db"
 const val DATABASE_VERSION = 1
+const val LOCAL_PLAYLIST = "Local"
 const val FAVOURITE_PLAYLIST_NAME = "favourite"
 const val RECENT_PLAYLIST_NAME = "recent"
 const val RECENT_PLAYLIST_CAPACITY = 20

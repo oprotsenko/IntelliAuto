@@ -20,17 +20,10 @@ class LocalAudioSource(
     private val retriever = MediaMetadataRetriever()
 
     private val media = listOf(
-        R.raw.abba_just_a_notion,
-        R.raw.alina_libkind_radars,
-        R.raw.blago_white_krasavchik,
-        R.raw.janob_rasul_gejalar,
-        R.raw.stan_sono_inside_your_love,
-        R.raw.summer_feeling,
-        R.raw.two_feet_her_life,
-        R.raw.zivert_cry,
-        R.raw.lana_del_rey_love,
-        R.raw.melisa_ft_tommo_im_alone_2021,
-        R.raw.bob_moses_love_brand_new
+        R.raw.ben_lvcas_love_of_my_life,
+        R.raw.bj_wilbanks_change_your_mind,
+        R.raw.fresh_body_shop_don_t_need_a_reason,
+        R.raw.infraction_sensitive
     )
 
     fun retrieveLocalAudio(): List<AudioItem> {

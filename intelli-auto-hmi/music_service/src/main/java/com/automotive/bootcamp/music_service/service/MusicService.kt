@@ -78,6 +78,8 @@ class MusicService : MediaBrowserServiceCompat() {
 
     override fun onCreate() {
         super.onCreate()
+//        val controllerCompat = sessionToken?.let { MediaControllerCompat(this, it) }
+//        controllerCompat.transportControls
         serviceScope.launch {
             musicSource.load()
         }

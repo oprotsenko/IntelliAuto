@@ -19,5 +19,6 @@
     <string name="undo">Undo</string>
     <string name="playlist_name">Playlist name</string>
     <string name="enable_night_mode">Enable night mode</string>
+    <string name="select_service">Select media service for media:</string>
 
 </resources>

@@ -33,6 +33,7 @@
         -->
         <service
             android:name="com.automotive.bootcamp.music_service.service.MusicService"
+            android:enabled="true"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService" />

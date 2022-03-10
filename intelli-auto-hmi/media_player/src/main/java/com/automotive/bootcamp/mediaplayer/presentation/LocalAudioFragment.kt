@@ -1,5 +1,6 @@
 package com.automotive.bootcamp.mediaplayer.presentation
 
+import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.activityViewModels
@@ -44,7 +45,12 @@ class LocalAudioFragment :
     override fun initView() {
         viewModel.apply {
             viewModelScope.launch {
-                retrieveMusic()
+                if (MediaPlayerSettingsFragment.selectedService == null) {
+                    retrieveMusic()
+                }
+                else {
+                    connectToService()
+                }
             }
         }
         binding.tvSelectedPlaylistName.text = resources.getString(R.string.local_music)
@@ -65,12 +71,12 @@ class LocalAudioFragment :
                     }
                 })
         }
-        mediaPlayerViewModel.searchQuery.observe(viewLifecycleOwner){
+        mediaPlayerViewModel.searchQuery.observe(viewLifecycleOwner) {
             audioAdapter.filter(it)
         }
     }
 
-    override fun onMediaClick( id: Long) {
+    override fun onMediaClick(id: Long) {
         playAudio(id)
     }
 
@@ -132,18 +138,27 @@ class LocalAudioFragment :
     }
 
     private fun playAudio(id: Long) {
-        val playlist = viewModel.getAudioList()
-        if (playlist != null) {
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(
-                    R.id.fullScreenContainer,
-                    NowPlayingFragment.newInstance(playlist, id)
-                )
-                .addToBackStack(null)
-                .commit()
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.playbackControlsPanel, QuickPlaybackControlsFragment(), QUICK_FRAGMENT_TAG)
-                .commit()
+        if (MediaPlayerSettingsFragment.selectedService != null) {
+            viewModel.musicServiceConnection.play()
+            Log.d("listTAG", viewModel.musicServiceConnection.isConnected.value.toString())
+        } else {
+            val playlist = viewModel.getAudioList()
+            if (playlist != null) {
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(
+                        R.id.fullScreenContainer,
+                        NowPlayingFragment.newInstance(playlist, id)
+                    )
+                    .addToBackStack(null)
+                    .commit()
+                parentFragmentManager.beginTransaction()
+                    .replace(
+                        R.id.playbackControlsPanel,
+                        QuickPlaybackControlsFragment(),
+                        QUICK_FRAGMENT_TAG
+                    )
+                    .commit()
+            }
         }
     }
 }

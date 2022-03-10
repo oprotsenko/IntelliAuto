@@ -17,6 +17,7 @@ package com.automotive.bootcamp.mediaplayer.utils.serviceFinder;
 
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.FeatureInfo;
 import android.content.pm.PackageItemInfo;
 import android.content.pm.PackageManager;
@@ -53,6 +54,7 @@ public class MediaAppDetails implements Parcelable {
     public final ComponentName componentName;
     public boolean supportsAutomotive = false;
     public boolean supportsAuto = false;
+    public boolean isAudioApp = false;
 
     public MediaAppDetails(String packageName, String name, Bitmap appIcon,
                            @Nullable Bitmap appBanner, MediaSessionCompat.Token token) {
@@ -76,6 +78,10 @@ public class MediaAppDetails implements Parcelable {
                            MediaSession.Token token) {
         packageName = info.packageName;
         appName = info.loadLabel(pm).toString();
+        ServiceInfo serviceInfo = findServiceInfo(packageName, pm);
+        if (serviceInfo != null) {
+            isAudioApp = serviceInfo.applicationInfo.category == ApplicationInfo.CATEGORY_AUDIO;
+        }
         Drawable appIcon = info.loadIcon(pm);
         icon = BitmapUtils.convertDrawable(resources, appIcon, true);
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
@@ -163,6 +169,7 @@ public class MediaAppDetails implements Parcelable {
         componentName = parcel.readParcelable(MediaAppDetails.class.getClassLoader());
         supportsAuto = parcel.readInt() == 1;
         supportsAutomotive = parcel.readInt() == 1;
+        isAudioApp = parcel.readBoolean();
     }
 
     @Override
@@ -179,6 +186,7 @@ public class MediaAppDetails implements Parcelable {
         dest.writeParcelable(componentName, flags);
         dest.writeInt(supportsAuto ? 1 : 0);
         dest.writeInt(supportsAutomotive ? 1 : 0);
+        dest.writeBoolean(isAudioApp);
     }
 
     public static final Creator<MediaAppDetails> CREATOR =

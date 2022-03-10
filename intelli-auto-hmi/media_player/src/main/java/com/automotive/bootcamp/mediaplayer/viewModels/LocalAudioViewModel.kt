@@ -1,18 +1,26 @@
 package com.automotive.bootcamp.mediaplayer.viewModels
 
+import android.app.Application
+import android.support.v4.media.MediaBrowserCompat
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.automotive.bootcamp.common.utils.Resource
 import com.automotive.bootcamp.mediaplayer.domain.models.Playlist
 import com.automotive.bootcamp.mediaplayer.domain.useCases.ManageFavourite
 import com.automotive.bootcamp.mediaplayer.domain.useCases.ManagePlaylists
 import com.automotive.bootcamp.mediaplayer.domain.useCases.ManageRecent
 import com.automotive.bootcamp.mediaplayer.domain.useCases.RetrieveLocalAudio
+import com.automotive.bootcamp.mediaplayer.presentation.MediaPlayerSettingsFragment
+import com.automotive.bootcamp.mediaplayer.presentation.extensions.mapToAudioWrapper
 import com.automotive.bootcamp.mediaplayer.presentation.extensions.mapToPlaylistWrapper
 import com.automotive.bootcamp.mediaplayer.presentation.extensions.unwrap
 import com.automotive.bootcamp.mediaplayer.presentation.extensions.wrapAudio
 import com.automotive.bootcamp.mediaplayer.presentation.models.AudioWrapper
 import com.automotive.bootcamp.mediaplayer.presentation.models.PlaylistWrapper
+import com.automotive.bootcamp.mediaplayer.utils.LOCAL_PLAYLIST
+import com.automotive.bootcamp.mediaplayer.utils.MusicServiceConnection
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -21,20 +29,44 @@ class LocalAudioViewModel(
     private val manageFavourite: ManageFavourite,
     private val manageRecent: ManageRecent,
     private val managePlaylists: ManagePlaylists,
-) : ViewModel() {
+    application: Application
+) : AndroidViewModel(application) {
     val localAudioData by lazy { MutableLiveData<List<AudioWrapper>>() }
     var playlists: List<PlaylistWrapper>? = listOf()
     var dynamicallyAddAudioId: Long = 0
 
+    val musicServiceConnection by lazy { MusicServiceConnection(application) }
+
     init {
-        viewModelScope.launch {
-            retrieveMusic()
-            managePlaylists.getAllPlaylists().collect { list ->
-                playlists = list?.map { playlist ->
-                    playlist.mapToPlaylistWrapper()
+        if (MediaPlayerSettingsFragment.selectedService == null) {
+            viewModelScope.launch {
+                retrieveMusic()
+                managePlaylists.getAllPlaylists().collect { list ->
+                    playlists = list?.map { playlist ->
+                        playlist.mapToPlaylistWrapper()
+                    }
                 }
             }
+        } else {
+            connectToService()
         }
+    }
+
+    fun connectToService() {
+        musicServiceConnection.subscribe(
+            LOCAL_PLAYLIST,
+            object : MediaBrowserCompat.SubscriptionCallback() {
+                override fun onChildrenLoaded(
+                    parentId: String,
+                    children: MutableList<MediaBrowserCompat.MediaItem>
+                ) {
+                    super.onChildrenLoaded(parentId, children)
+                    val items = children.map {
+                        it.mapToAudioWrapper()
+                    }
+                    localAudioData.postValue(items)
+                }
+            })
     }
 
     suspend fun retrieveMusic() {
@@ -75,7 +107,7 @@ class LocalAudioViewModel(
                 wrapper.unwrap()
             }
         }
-        return list?.let { Playlist(name = "local", list = it).mapToPlaylistWrapper() }
+        return list?.let { Playlist(name = LOCAL_PLAYLIST, list = it).mapToPlaylistWrapper() }
     }
 
     fun createPlaylist(playlistName: String, aid: Long) {
